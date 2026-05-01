@@ -99,7 +99,7 @@ class TestDiscoverPackagesUnderPrefix:
         client = AsyncMock(spec=httpx.AsyncClient)
         client.get = AsyncMock(side_effect=mock_get)
 
-        packages = await discover_packages_under_prefix(client, "GitHub")
+        packages, _skipped = await discover_packages_under_prefix(client, "GitHub")
 
         assert sorted(packages) == ["GitHub.GitHubDesktop", "GitHub.cli"]
 
@@ -135,15 +135,52 @@ class TestDiscoverPackagesUnderPrefix:
         client = AsyncMock(spec=httpx.AsyncClient)
         client.get = AsyncMock(side_effect=mock_get)
 
-        packages = await discover_packages_under_prefix(client, "Microsoft")
+        packages, _skipped = await discover_packages_under_prefix(client, "Microsoft")
 
         assert sorted(packages) == [
             "Microsoft.VisualStudio.2022.Community",
             "Microsoft.VisualStudio.2022.Enterprise",
         ]
 
+    @pytest.mark.asyncio
+    async def test_skips_blocked_packages(self) -> None:
+        """封鎖清單中的套件應在探索階段被跳過"""
+        ms_root = [{"name": "VisualStudio", "type": "dir"}]
+        vs_dir = [{"name": "2022", "type": "dir"}]
+        vs_2022 = [
+            {"name": "Community", "type": "dir"},
+            {"name": "Enterprise", "type": "dir"},
+        ]
+        community_dir = [{"name": "17.0.0", "type": "dir"}]
+        enterprise_dir = [{"name": "17.0.0", "type": "dir"}]
 
-class TestDiscoverAllPackages:
+        def mock_get(url: str, **kwargs) -> httpx.Response:
+            path_map = {
+                "manifests/m/Microsoft": ms_root,
+                "manifests/m/Microsoft/VisualStudio": vs_dir,
+                "manifests/m/Microsoft/VisualStudio/2022": vs_2022,
+                "manifests/m/Microsoft/VisualStudio/2022/Community": community_dir,
+                "manifests/m/Microsoft/VisualStudio/2022/Enterprise": enterprise_dir,
+            }
+            for key, val in path_map.items():
+                if url.endswith(key):
+                    return httpx.Response(200, json=val, request=httpx.Request("GET", url))
+            return httpx.Response(404, request=httpx.Request("GET", url))
+
+        client = AsyncMock(spec=httpx.AsyncClient)
+        client.get = AsyncMock(side_effect=mock_get)
+
+        # 封鎖 Community 版本
+        blocklist = ["Microsoft.VisualStudio.*.Community"]
+        packages, skipped = await discover_packages_under_prefix(
+            client, "Microsoft", blocklist_patterns=blocklist,
+        )
+
+        assert packages == ["Microsoft.VisualStudio.2022.Enterprise"]
+        assert skipped == 1
+
+
+
     """測試 allowlist 模式探索"""
 
     @pytest.mark.asyncio

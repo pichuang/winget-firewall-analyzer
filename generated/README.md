@@ -6,8 +6,9 @@
 
 | 檔案 | 用途 | 產生方式 |
 |---|---|---|
-| `firewall-rules.md` | Azure Firewall Policy 規則維護清單 | `python main.py ... -f md > generated/firewall-rules.md` |
-| `deploy.sh` | Azure CLI 部署腳本 | `python main.py ... -f cli > generated/deploy.sh` |
+| `firewall-rules.md` | Azure Firewall Policy 規則維護清單 | `python main.py ... -f md` |
+| `diff-report.md` | 與前次分析的變更對比報告 | 每次執行自動產生 |
+| `deploy.sh` | Azure CLI 部署腳本 | 每次執行自動產生 |
 | `download.sh` | Bash 一鍵下載腳本（curl） | 預設自動產生 |
 | `download.ps1` | PowerShell 一鍵下載腳本 | 預設自動產生 |
 | `rules.json` | ARM Template 相容 JSON | `python main.py ... -f json > generated/rules.json` |

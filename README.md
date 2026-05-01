@@ -33,6 +33,8 @@ python main.py
 
 執行後會產生：
 - **generated/firewall-rules.md** — 防火牆規則維護清單（Markdown）
+- **generated/diff-report.md** — 與前次分析的變更對比報告
+- **generated/deploy.sh** — Azure CLI 部署腳本
 - **generated/download.sh** — Bash 一鍵下載腳本（使用 curl）
 - **generated/download.ps1** — PowerShell 一鍵下載腳本（使用 Invoke-WebRequest）
 
@@ -134,6 +136,7 @@ python main.py
 ├── packages-list.md               # 套件分類與資安報告
 ├── generated/                     # 程式產出檔案（稽核留存）
 │   ├── firewall-rules.md          # 防火牆規則維護清單
+│   ├── diff-report.md             # 與前次分析的變更對比報告
 │   ├── deploy.sh                  # Azure CLI 部署腳本
 │   ├── download.sh                # Bash 一鍵下載腳本
 │   └── download.ps1               # PowerShell 一鍵下載腳本

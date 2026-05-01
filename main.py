@@ -24,7 +24,7 @@ from src.rule_generator import (
     generate_rules,
 )
 from src.winget_api import fetch_package
-from src.audit import get_latest_audit_log, write_audit_log, write_changelog_entry
+from src.audit import generate_diff_report, get_latest_audit_log, write_audit_log, write_changelog_entry
 
 
 def load_config(config_path: str = "config.yaml") -> dict:
@@ -110,19 +110,18 @@ async def main_async(args: argparse.Namespace) -> None:
                 print("⚠️  config.yaml 中未定義 allowlist.packages", file=sys.stderr)
                 sys.exit(1)
 
+            # 取得封鎖清單模式，在探索階段直接跳過封鎖的套件
+            bl = blocklist_config.get("blocklist", {})
+            bl_patterns = bl.get("packages", []) if bl.get("enabled", False) else []
+
             print("📂 正在探索 allowlist 中的所有套件 ...", file=sys.stderr)
-            all_discovered = await discover_all_packages(client, allowed_patterns)
-            print(f"\n📊 共探索到 {len(all_discovered)} 個套件", file=sys.stderr)
-
-            # 套用封鎖清單
-            package_ids, blocked_ids = filter_packages(
-                all_discovered,
-                allowlist_config=config.get("allowlist"),
-                blocklist_config=blocklist_config,
+            all_discovered = await discover_all_packages(
+                client, allowed_patterns, blocklist_patterns=bl_patterns,
             )
-            if blocked_ids:
-                print(f"🚫 封鎖清單排除 {len(blocked_ids)} 個套件", file=sys.stderr)
+            print(f"\n📊 共探索到 {len(all_discovered)} 個套件（已排除封鎖項目）", file=sys.stderr)
 
+            package_ids = all_discovered
+            blocked_ids: list[str] = []
             print(f"✅ 最終分析目標: {len(package_ids)} 個套件", file=sys.stderr)
         else:
             # 手動指定模式 — 也套用封鎖清單
@@ -206,21 +205,31 @@ async def main_async(args: argparse.Namespace) -> None:
         output_path.chmod(0o755)
     print(f"\n📄 已寫入: {output_path.resolve()}", file=sys.stderr)
 
-    # 產生下載腳本
+    # 產生下載腳本與部署腳本
     if args.download_scripts and all_manifests:
         bash_script = generate_download_bash(all_manifests)
         ps1_script = generate_download_ps1(all_manifests)
+        deploy_script = format_azure_cli(
+            all_rules,
+            rule_collection_group_name=rcg_name,
+            rule_collection_name=rc_name,
+            priority=priority,
+        )
 
         bash_path = generated_dir / "download.sh"
         ps1_path = generated_dir / "download.ps1"
+        deploy_path = generated_dir / "deploy.sh"
 
         bash_path.write_text(bash_script, encoding="utf-8")
         ps1_path.write_text(ps1_script, encoding="utf-8")
+        deploy_path.write_text(deploy_script, encoding="utf-8")
         bash_path.chmod(0o755)
+        deploy_path.chmod(0o755)
 
-        print(f"\n📥 已產生下載腳本：", file=sys.stderr)
-        print(f"   Bash:       {bash_path.resolve()}", file=sys.stderr)
-        print(f"   PowerShell: {ps1_path.resolve()}", file=sys.stderr)
+        print(f"\n📥 已產生腳本：", file=sys.stderr)
+        print(f"   下載 Bash:       {bash_path.resolve()}", file=sys.stderr)
+        print(f"   下載 PowerShell: {ps1_path.resolve()}", file=sys.stderr)
+        print(f"   部署 Azure CLI:  {deploy_path.resolve()}", file=sys.stderr)
 
     # 寫入稽核日誌
     if all_manifests:
@@ -228,6 +237,12 @@ async def main_async(args: argparse.Namespace) -> None:
         if args.download_scripts:
             output_files["download.sh"] = "generated/download.sh"
             output_files["download.ps1"] = "generated/download.ps1"
+            output_files["deploy.sh"] = "generated/deploy.sh"
+
+        # 取得前次稽核日誌（在寫入新日誌之前）
+        from src.audit import AUDIT_DIR
+        existing_logs = sorted(AUDIT_DIR.glob("audit_*.json")) if AUDIT_DIR.exists() else []
+        prev = existing_logs[-1] if existing_logs else None
 
         # 寫入 JSON 稽核日誌
         log_path = write_audit_log(
@@ -237,15 +252,15 @@ async def main_async(args: argparse.Namespace) -> None:
         )
         print(f"\n📝 稽核日誌：{log_path.resolve()}", file=sys.stderr)
 
-        # 寫入變更記錄（與上次比對）
-        previous_log = get_latest_audit_log()
-        # 取得倒數第二個日誌（剛才寫入的是最新的）
-        from src.audit import AUDIT_DIR
-        logs = sorted(AUDIT_DIR.glob("audit_*.json"))
-        prev = logs[-2] if len(logs) >= 2 else None
-
+        # 寫入變更記錄
         changelog_path = write_changelog_entry(all_manifests, previous_log=prev)
         print(f"📋 變更記錄：{changelog_path.resolve()}", file=sys.stderr)
+
+        # 產生前後對比報告
+        diff_report = generate_diff_report(all_manifests, previous_log=prev)
+        diff_path = generated_dir / "diff-report.md"
+        diff_path.write_text(diff_report, encoding="utf-8")
+        print(f"🔄 對比報告：{diff_path.resolve()}", file=sys.stderr)
 
 
 def main() -> None:
@@ -296,13 +311,13 @@ def main() -> None:
         "--download-scripts",
         action="store_true",
         default=True,
-        help="同時產生一鍵下載腳本（generated/download.sh 和 generated/download.ps1，預設啟用）",
+        help="同時產生腳本（generated/deploy.sh、generated/download.sh 和 generated/download.ps1，預設啟用）",
     )
     parser.add_argument(
         "--no-download-scripts",
         action="store_false",
         dest="download_scripts",
-        help="不產生下載腳本",
+        help="不產生下載與部署腳本",
     )
 
     args = parser.parse_args()
