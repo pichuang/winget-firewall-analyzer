@@ -1,6 +1,6 @@
 # winget 安裝檔一鍵下載腳本
-# 產生時間：2026-05-01 12:06:36
-# 套件數量：2
+# 產生時間：2026-05-01 12:14:17
+# 套件數量：4
 #
 # 用法：.\generated\download.ps1
 # 檔案會下載到 .\downloads\{PackageId}\ 目錄
@@ -56,6 +56,52 @@ if (Test-Path $FilePath) {
         $Total++
     } catch {
         Write-Host "   ❌ 下載失敗: wslubuntu2204" -ForegroundColor Red
+        $Failed++
+        Remove-Item $FilePath -ErrorAction SilentlyContinue
+    }
+}
+
+# === WSL.Ubuntu-24.04 vUbuntu 24.04 LTS ===
+$PkgDir = "$DownloadDir\WSL\Ubuntu-24\04"
+New-Item -ItemType Directory -Path $PkgDir -Force | Out-Null
+Write-Host "📦 WSL.Ubuntu-24.04 vUbuntu 24.04 LTS" -ForegroundColor White
+
+$FilePath = "$PkgDir\noble-wsl-amd64.wsl"
+if (Test-Path $FilePath) {
+    Write-Host "   ⏭️  已存在: noble-wsl-amd64.wsl (x64)" -ForegroundColor DarkGray
+    $Skipped++
+} else {
+    Write-Host "   ⬇️  下載中: noble-wsl-amd64.wsl (x64/machine)" -ForegroundColor Yellow
+    try {
+        Invoke-WebRequest -Uri "https://cdimages.ubuntu.com/ubuntu-wsl/noble/daily-live/current/noble-wsl-amd64.wsl" -OutFile $FilePath -UseBasicParsing
+        $Size = (Get-Item $FilePath).Length / 1MB
+        Write-Host ("   ✅ 完成: {0:N1} MB" -f $Size) -ForegroundColor Green
+        $Total++
+    } catch {
+        Write-Host "   ❌ 下載失敗: noble-wsl-amd64.wsl" -ForegroundColor Red
+        $Failed++
+        Remove-Item $FilePath -ErrorAction SilentlyContinue
+    }
+}
+
+# === WSL.Ubuntu-26.04 vUbuntu 26.04 LTS ===
+$PkgDir = "$DownloadDir\WSL\Ubuntu-26\04"
+New-Item -ItemType Directory -Path $PkgDir -Force | Out-Null
+Write-Host "📦 WSL.Ubuntu-26.04 vUbuntu 26.04 LTS" -ForegroundColor White
+
+$FilePath = "$PkgDir\resolute-wsl-amd64.wsl"
+if (Test-Path $FilePath) {
+    Write-Host "   ⏭️  已存在: resolute-wsl-amd64.wsl (x64)" -ForegroundColor DarkGray
+    $Skipped++
+} else {
+    Write-Host "   ⬇️  下載中: resolute-wsl-amd64.wsl (x64/machine)" -ForegroundColor Yellow
+    try {
+        Invoke-WebRequest -Uri "https://cdimages.ubuntu.com/ubuntu-wsl/daily-live/current/resolute-wsl-amd64.wsl" -OutFile $FilePath -UseBasicParsing
+        $Size = (Get-Item $FilePath).Length / 1MB
+        Write-Host ("   ✅ 完成: {0:N1} MB" -f $Size) -ForegroundColor Green
+        $Total++
+    } catch {
+        Write-Host "   ❌ 下載失敗: resolute-wsl-amd64.wsl" -ForegroundColor Red
         $Failed++
         Remove-Item $FilePath -ErrorAction SilentlyContinue
     }

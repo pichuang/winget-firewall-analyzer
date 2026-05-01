@@ -1,53 +1,9 @@
 # winget 套件變更記錄（稽核用）
 
-## 2026-05-01 12:06:36 UTC+08:00
+## 2026-05-01 12:26:28 UTC+08:00
 
 - **操作人員**：pichuang@fly-wired.homecloud.intranet
-- **分析套件數**：2
-
-### 新增套件
-
-- `WSL.Ubuntu-20.04` vUbuntu 20.04 LTS
-- `WSL.Ubuntu-22.04` vUbuntu 22.04 LTS
-
-未變更套件：0 個
-
----
-
-## 2026-05-01 12:06:02 UTC+08:00
-
-- **操作人員**：pichuang@fly-wired.homecloud.intranet
-- **分析套件數**：295
-
-### 版本更新
-
-| 套件 | 舊版本 | 新版本 |
-|---|---|---|
-| `Microsoft.Teams` | 26072.521.4595.7966 | 26093.415.4620.1935 |
-
-未變更套件：294 個
-
----
-
-## 2026-05-01 11:46:52 UTC+08:00
-
-- **操作人員**：pichuang@fly-wired.homecloud.intranet
-- **分析套件數**：295
-
-### 版本更新
-
-| 套件 | 舊版本 | 新版本 |
-|---|---|---|
-| `Microsoft.EdgeWebView2Runtime` | 147.0.3912.86 | 147.0.3912.98 |
-
-未變更套件：294 個
-
----
-
-## 2026-05-01 11:19:48 UTC+08:00
-
-- **操作人員**：pichuang@fly-wired.homecloud.intranet
-- **分析套件數**：295
+- **分析套件數**：299
 
 ### 新增套件
 
@@ -144,7 +100,7 @@
 - `Microsoft.DotNet.UninstallTool` v1.7.661902
 - `Microsoft.DotNet.dotnet-ef` v10.0.7
 - `Microsoft.EdgeDriver` v147.0.3912.86
-- `Microsoft.EdgeWebView2Runtime` v147.0.3912.86
+- `Microsoft.EdgeWebView2Runtime` v147.0.3912.98
 - `Microsoft.Edge` v147.0.3912.86
 - `Microsoft.Edit` v2.0.0
 - `Microsoft.EnterpriseStateClassify` v1.0
@@ -275,7 +231,7 @@
 - `Microsoft.Sysinternals.ZoomIt` v11.00
 - `Microsoft.TeamMate` v0.1.15
 - `Microsoft.TeamsTxNDI` v2024.8.1.14
-- `Microsoft.Teams` v26072.521.4595.7966
+- `Microsoft.Teams` v26093.415.4620.1935
 - `Microsoft.TimeTravelDebugging` v1.11.584.0
 - `Microsoft.Tokenizer` v1.3.3
 - `Microsoft.UI.Xaml.2.7` v7.2208.15002.0
@@ -347,18 +303,21 @@
 - `WiresharkFoundation.Stratoshark` v0.9.3
 - `WiresharkFoundation.Wireshark` v4.6.5
 
-未變更套件：0 個
+未變更套件：4 個
 
 ---
 
-## 2026-05-01 10:36:27 UTC+08:00
+## 2026-05-01 12:14:17 UTC+08:00
 
 - **操作人員**：pichuang@fly-wired.homecloud.intranet
-- **分析套件數**：1
+- **分析套件數**：4
 
 ### 新增套件
 
-- `Git.Git` v2.54.0
+- `WSL.Ubuntu-20.04` vUbuntu 20.04 LTS
+- `WSL.Ubuntu-22.04` vUbuntu 22.04 LTS
+- `WSL.Ubuntu-24.04` vUbuntu 24.04 LTS
+- `WSL.Ubuntu-26.04` vUbuntu 26.04 LTS
 
 未變更套件：0 個
 

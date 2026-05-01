@@ -33,12 +33,12 @@ python main.py
 - 自動偵測 `gh auth token` 取得 GITHUB_TOKEN（無需手動設定）
 - 結果自動寫入 `generated/` 資料夾
 
-執行後會產生（檔名含時間戳記 `YYYYMMDD_HHMMSS`）：
-- **generated/firewall-rules_YYYYMMDD_HHMMSS.md** — 防火牆規則維護清單
-- **generated/diff-report_YYYYMMDD_HHMMSS.md** — 與前次分析的變更對比報告
-- **generated/deploy_YYYYMMDD_HHMMSS.sh** — Azure CLI 部署腳本
-- **generated/download_YYYYMMDD_HHMMSS.sh** — Bash 一鍵下載腳本（curl）
-- **generated/download_YYYYMMDD_HHMMSS.ps1** — PowerShell 一鍵下載腳本
+執行後會產生（每次執行建立獨立時間戳記資料夾 `generated/YYYYMMDD_HHMMSS/`）：
+- **firewall-rules_YYYYMMDD_HHMMSS.md** — 防火牆規則維護清單
+- **diff-report_YYYYMMDD_HHMMSS.md** — 與前次分析的變更對比報告
+- **deploy_YYYYMMDD_HHMMSS.sh** — Azure CLI 部署腳本
+- **download_YYYYMMDD_HHMMSS.sh** — Bash 一鍵下載腳本（curl）
+- **download_YYYYMMDD_HHMMSS.ps1** — PowerShell 一鍵下載腳本
 
 ### 日常維護流程
 

@@ -38,7 +38,7 @@ az network firewall policy rule-collection-group collection rule add \
   --source-ip-groups "ipgroup-corp-clients" "ipgroup-dev-clients"
   # 備用：--source-addresses "10.0.0.0/8"
 
-# WSL 基礎設施端點（所有 WSL 發行版共用）：wslstorestorage.blob.core.windows.net — WSL 核心元件儲存（kernel 更新、runtime）
+# WSL 基礎設施端點（所有 WSL 發行版共用）：wslstorestorage.blob.core.windows.net — WSL 核心元件儲存（kernel 更新、runtime）；cdimages.ubuntu.com — Ubuntu WSL 官方映像下載（24.04+）
 az network firewall policy rule-collection-group collection rule add \
   --policy-name "$POLICY_NAME" \
   --resource-group "$RESOURCE_GROUP" \
@@ -47,7 +47,7 @@ az network firewall policy rule-collection-group collection rule add \
   --name "wsl-infrastructure-fqdn" \
   --rule-type ApplicationRule \
   --protocols Https=443 \
-  --target-fqdns "wslstorestorage.blob.core.windows.net" \
+  --target-fqdns "cdimages.ubuntu.com" "wslstorestorage.blob.core.windows.net" \
   --source-ip-groups "ipgroup-corp-clients" "ipgroup-dev-clients"
   # 備用：--source-addresses "10.0.0.0/8"
 
@@ -100,5 +100,57 @@ az network firewall policy rule-collection-group collection rule add \
   --rule-type ApplicationRule \
   --protocols Https=443 \
   --target-fqdns "aka.ms" "wslstorestorage.blob.core.windows.net" \
+  --source-ip-groups "ipgroup-corp-clients" "ipgroup-dev-clients"
+  # 備用：--source-addresses "10.0.0.0/8"
+
+# winget 套件 WSL.Ubuntu-24.04 vUbuntu 24.04 LTS 下載所需路徑（TLS Inspection）
+az network firewall policy rule-collection-group collection rule add \
+  --policy-name "$POLICY_NAME" \
+  --resource-group "$RESOURCE_GROUP" \
+  --rcg-name "$RCG_NAME" \
+  --collection-name "$RC_NAME" \
+  --name "winget-wsl-ubuntu-24-04-path" \
+  --rule-type ApplicationRule \
+  --protocols Https=443 \
+  --target-urls "cdimages.ubuntu.com/ubuntu-wsl/noble/daily-live/current/noble-wsl-amd64.wsl" \
+  --source-ip-groups "ipgroup-corp-clients" "ipgroup-dev-clients"
+  # 備用：--source-addresses "10.0.0.0/8"
+
+# winget 套件 WSL.Ubuntu-24.04 vUbuntu 24.04 LTS 下載所需網域（FQDN 層級）
+az network firewall policy rule-collection-group collection rule add \
+  --policy-name "$POLICY_NAME" \
+  --resource-group "$RESOURCE_GROUP" \
+  --rcg-name "$RCG_NAME" \
+  --collection-name "$RC_NAME" \
+  --name "winget-wsl-ubuntu-24-04-fqdn" \
+  --rule-type ApplicationRule \
+  --protocols Https=443 \
+  --target-fqdns "cdimages.ubuntu.com" \
+  --source-ip-groups "ipgroup-corp-clients" "ipgroup-dev-clients"
+  # 備用：--source-addresses "10.0.0.0/8"
+
+# winget 套件 WSL.Ubuntu-26.04 vUbuntu 26.04 LTS 下載所需路徑（TLS Inspection）
+az network firewall policy rule-collection-group collection rule add \
+  --policy-name "$POLICY_NAME" \
+  --resource-group "$RESOURCE_GROUP" \
+  --rcg-name "$RCG_NAME" \
+  --collection-name "$RC_NAME" \
+  --name "winget-wsl-ubuntu-26-04-path" \
+  --rule-type ApplicationRule \
+  --protocols Https=443 \
+  --target-urls "cdimages.ubuntu.com/ubuntu-wsl/daily-live/current/resolute-wsl-amd64.wsl" \
+  --source-ip-groups "ipgroup-corp-clients" "ipgroup-dev-clients"
+  # 備用：--source-addresses "10.0.0.0/8"
+
+# winget 套件 WSL.Ubuntu-26.04 vUbuntu 26.04 LTS 下載所需網域（FQDN 層級）
+az network firewall policy rule-collection-group collection rule add \
+  --policy-name "$POLICY_NAME" \
+  --resource-group "$RESOURCE_GROUP" \
+  --rcg-name "$RCG_NAME" \
+  --collection-name "$RC_NAME" \
+  --name "winget-wsl-ubuntu-26-04-fqdn" \
+  --rule-type ApplicationRule \
+  --protocols Https=443 \
+  --target-fqdns "cdimages.ubuntu.com" \
   --source-ip-groups "ipgroup-corp-clients" "ipgroup-dev-clients"
   # 備用：--source-addresses "10.0.0.0/8"

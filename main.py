@@ -229,9 +229,13 @@ async def main_async(args: argparse.Namespace) -> None:
     rcg_name = firewall_config.get("rule_collection_group_name", "winget-rules")
     priority = firewall_config.get("priority", 500)
 
-    # 時間戳記（用於所有產出檔案的檔名）
+    # 時間戳記（用於產出資料夾名稱）
     from datetime import datetime, timedelta, timezone
     ts = datetime.now(timezone(timedelta(hours=8))).strftime("%Y%m%d_%H%M%S")
+
+    # 建立時間戳記子目錄：generated/YYYYMMDD_HHMMSS/
+    generated_dir = Path("generated") / ts
+    generated_dir.mkdir(parents=True, exist_ok=True)
 
     format_ext_map = {
         "json": f"rules_{ts}.json",
@@ -258,10 +262,8 @@ async def main_async(args: argparse.Namespace) -> None:
     else:
         output = format_json(all_rules, rc_name, rcg_name, priority)
 
-    # 自動寫入 generated/ 資料夾
-    generated_dir = Path("generated")
-    generated_dir.mkdir(exist_ok=True)
-    output_filename = format_ext_map.get(args.format, f"rules_{ts}.json")
+    # 自動寫入 generated/{ts}/ 資料夾
+    output_filename = format_ext_map.get(args.format, "rules.json")
     output_path = generated_dir / output_filename
     output_path.write_text(output, encoding="utf-8")
     if args.format == "cli":
@@ -324,6 +326,8 @@ async def main_async(args: argparse.Namespace) -> None:
         diff_path = generated_dir / f"diff-report_{ts}.md"
         diff_path.write_text(diff_report, encoding="utf-8")
         print(f"🔄 對比報告：{diff_path.resolve()}", file=sys.stderr)
+
+    print(f"\n📂 本次產出目錄：{generated_dir.resolve()}", file=sys.stderr)
 
 
 def main() -> None:

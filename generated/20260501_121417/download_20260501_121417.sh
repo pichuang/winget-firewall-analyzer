@@ -1,7 +1,7 @@
 #!/bin/bash
 # winget 安裝檔一鍵下載腳本
-# 產生時間：2026-05-01 12:06:36
-# 套件數量：2
+# 產生時間：2026-05-01 12:14:17
+# 套件數量：4
 #
 # 用法：bash generated/download.sh
 # 檔案會下載到 ./downloads/{PackageId}/ 目錄
@@ -55,6 +55,50 @@ else
     TOTAL=$((TOTAL + 1))
   else
     echo "   ❌ 下載失敗: wslubuntu2204"
+    FAILED=$((FAILED + 1))
+    rm -f "$FILEPATH"
+  fi
+fi
+
+# === WSL.Ubuntu-24.04 vUbuntu 24.04 LTS ===
+PKG_DIR="$DOWNLOAD_DIR/WSL/Ubuntu-24/04"
+mkdir -p "$PKG_DIR"
+echo "📦 WSL.Ubuntu-24.04 vUbuntu 24.04 LTS"
+
+FILEPATH="$PKG_DIR/noble-wsl-amd64.wsl"
+if [ -f "$FILEPATH" ]; then
+  echo "   ⏭️  已存在: noble-wsl-amd64.wsl (x64)"
+  SKIPPED=$((SKIPPED + 1))
+else
+  echo "   ⬇️  下載中: noble-wsl-amd64.wsl (x64/machine)"
+  if curl -fSL -o "$FILEPATH" "https://cdimages.ubuntu.com/ubuntu-wsl/noble/daily-live/current/noble-wsl-amd64.wsl" 2>/dev/null; then
+    SIZE=$(du -h "$FILEPATH" | cut -f1)
+    echo "   ✅ 完成: $SIZE"
+    TOTAL=$((TOTAL + 1))
+  else
+    echo "   ❌ 下載失敗: noble-wsl-amd64.wsl"
+    FAILED=$((FAILED + 1))
+    rm -f "$FILEPATH"
+  fi
+fi
+
+# === WSL.Ubuntu-26.04 vUbuntu 26.04 LTS ===
+PKG_DIR="$DOWNLOAD_DIR/WSL/Ubuntu-26/04"
+mkdir -p "$PKG_DIR"
+echo "📦 WSL.Ubuntu-26.04 vUbuntu 26.04 LTS"
+
+FILEPATH="$PKG_DIR/resolute-wsl-amd64.wsl"
+if [ -f "$FILEPATH" ]; then
+  echo "   ⏭️  已存在: resolute-wsl-amd64.wsl (x64)"
+  SKIPPED=$((SKIPPED + 1))
+else
+  echo "   ⬇️  下載中: resolute-wsl-amd64.wsl (x64/machine)"
+  if curl -fSL -o "$FILEPATH" "https://cdimages.ubuntu.com/ubuntu-wsl/daily-live/current/resolute-wsl-amd64.wsl" 2>/dev/null; then
+    SIZE=$(du -h "$FILEPATH" | cut -f1)
+    echo "   ✅ 完成: $SIZE"
+    TOTAL=$((TOTAL + 1))
+  else
+    echo "   ❌ 下載失敗: resolute-wsl-amd64.wsl"
     FAILED=$((FAILED + 1))
     rm -f "$FILEPATH"
   fi
