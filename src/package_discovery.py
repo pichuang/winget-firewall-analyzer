@@ -96,22 +96,24 @@ async def discover_packages_under_prefix(
 
 
 def _is_prefix_blocked(prefix: str, blocklist_patterns: list[str]) -> bool:
-    """檢查套件 ID 前綴是否整個子樹都被封鎖。
+    """檢查套件 ID 前綴是否整個子樹都被封鎖，或本身就是封鎖項。
 
-    例如封鎖清單有 "Microsoft.VisualStudio.2017.*"，
-    則前綴 "Microsoft.VisualStudio.2017" 整棵子樹可跳過。
-    同時也檢查精確匹配（如封鎖 "GitHub.Atom"）。
+    檢查策略：
+    1. 精確匹配：封鎖清單直接列出此 ID（如 "GitHub.Atom"）
+    2. 子樹匹配：封鎖清單有 "prefix.*"（如 "Microsoft.Gaming.*"）
+    3. fnmatch 匹配：前綴本身符合萬用字元模式（如 "Microsoft.*.Beta" 匹配 "Microsoft.Edge.Beta"）
     """
     prefix_lower = prefix.lower()
     for pattern in blocklist_patterns:
         p = pattern.lower()
-        # 精確匹配：封鎖清單直接列出此 ID
+        # 精確匹配
         if p == prefix_lower:
             return True
-        # 子樹匹配：封鎖清單有 "prefix.*"，整個子樹可跳過
+        # 子樹匹配
         if p == f"{prefix_lower}.*":
             return True
-    return False
+    # fnmatch 完整匹配（涵蓋萬用字元模式）
+    return matches_any_pattern(prefix, blocklist_patterns)
 
 
 async def _scan_recursive(
@@ -160,10 +162,17 @@ async def _scan_recursive(
         results.append(pkg_id)
         return
 
-    # 非 leaf → 繼續遞迴
+    # 非 leaf → 繼續遞迴（先檢查封鎖清單再掃描）
     for subdir in subdirs:
         sub_path = f"{path}/{subdir['name']}"
-        print(f"   🔍 掃描: {_path_to_package_id(sub_path)} ...", file=sys.stderr)
+        sub_pkg_id = _path_to_package_id(sub_path)
+
+        # 在遞迴前檢查：子目錄對應的 ID 是否被封鎖
+        if blocklist_patterns and _is_prefix_blocked(sub_pkg_id, blocklist_patterns):
+            skipped_count[0] += 1
+            continue
+
+        print(f"   🔍 掃描: {sub_pkg_id} ...", file=sys.stderr)
         await _scan_recursive(
             client, sub_path, results, depth + 1, max_depth,
             blocklist_patterns, skipped_count,
