@@ -86,7 +86,7 @@ blocklist:
 
     # -----------------------------------------------------------------
     # .NET Core / .NET 已 EOL 版本
-    # （僅保留目前受支援的 LTS 與 STS 版本：6, 8, 9, 10）
+    # （僅保留目前受支援的 LTS 與 STS 版本：8, 9, 10）
     # -----------------------------------------------------------------
     # .NET Core 2.x — EOL 2019~2021
     - "Microsoft.DotNet.AspNetCore.2_1"
@@ -109,6 +109,13 @@ blocklist:
     - "Microsoft.DotNet.Runtime.5"
     - "Microsoft.DotNet.SDK.5"
 
+    # .NET 6 — EOL 2024/11/12（LTS 已到期）
+    - "Microsoft.DotNet.AspNetCore.6"
+    - "Microsoft.DotNet.DesktopRuntime.6"
+    - "Microsoft.DotNet.HostingBundle.6"
+    - "Microsoft.DotNet.Runtime.6"
+    - "Microsoft.DotNet.SDK.6"
+
     # .NET 7 — EOL 2024/05
     - "Microsoft.DotNet.AspNetCore.7"
     - "Microsoft.DotNet.DesktopRuntime.7"
@@ -120,9 +127,10 @@ blocklist:
     - "Microsoft.DotNet.CodeContracts"              # Code Contracts 已停止維護
     - "Microsoft.DotNet.Framework.Redistributable.1_1"  # .NET Framework 1.1，極度老舊
     - "Microsoft.DotNet.Framework.DeveloperPack.4.5"    # .NET Framework 4.5，老舊
+    - "Microsoft.DotNet.Framework.DeveloperPack.4.6"    # .NET Framework 4.6，EOL 2022/04/26（SHA-1 憑證）
 
     # -----------------------------------------------------------------
-    # Visual C++ Redistributable 老舊版本（僅保留 2013 以上）
+    # Visual C++ Redistributable 老舊版本（僅保留 2015+ 以上）
     # -----------------------------------------------------------------
     - "Microsoft.VCRedist.2005.x64"
     - "Microsoft.VCRedist.2005.x86"
@@ -130,6 +138,10 @@ blocklist:
     - "Microsoft.VCRedist.2008.x86"
     - "Microsoft.VCRedist.2010.x64"
     - "Microsoft.VCRedist.2010.x86"
+    - "Microsoft.VCRedist.2012.x64"                # VS 2012 Extended Support EOL 2023/01/10
+    - "Microsoft.VCRedist.2012.x86"                # VS 2012 Extended Support EOL 2023/01/10
+    - "Microsoft.VCRedist.2013.x64"                # VS 2013 Extended Support EOL 2024/04/09
+    - "Microsoft.VCRedist.2013.x86"                # VS 2013 Extended Support EOL 2024/04/09
 
     # -----------------------------------------------------------------
     # SQL Server 老舊版本（僅保留 2019 以上）
@@ -151,16 +163,20 @@ blocklist:
     - "Microsoft.WindowsSDK.10.0.18362"             # 1903
     - "Microsoft.WindowsSDK.10.0.19041"             # 2004
     - "Microsoft.WindowsSDK.10.0.20348"             # Server 2022
+    - "Microsoft.WindowsSDK.10.0.22000"             # Win11 21H2，OS EOL 2023/10，Legacy SDK
     - "Microsoft.WindowsWDK.10.0.19041"             # WDK 2004
+    - "Microsoft.WindowsWDK.10.0.22000"             # Win11 21H2，Legacy WDK，含 CVE-2024-29187
 
     # -----------------------------------------------------------------
-    # Windows App Runtime 老舊版本（僅保留 1.6 以上）
+    # Windows App Runtime 老舊版本（僅保留 1.7 以上）
     # -----------------------------------------------------------------
     - "Microsoft.WindowsAppRuntime.1.0"
     - "Microsoft.WindowsAppRuntime.1.1"
     - "Microsoft.WindowsAppRuntime.1.2"
     - "Microsoft.WindowsAppRuntime.1.3"
     - "Microsoft.WindowsAppRuntime.1.4"
+    - "Microsoft.WindowsAppRuntime.1.5"             # EOL 2025/02/28
+    - "Microsoft.WindowsAppRuntime.1.6"             # EOL 2025/09/04
 
     # -----------------------------------------------------------------
     # WinUI / XAML 老舊版本（僅保留 2.8 以上）
@@ -196,6 +212,15 @@ blocklist:
     - "Microsoft.Gaming.*"                          # 遊戲開發工具，非企業必要
     - "Microsoft.msmpi"                             # MPI 高效能運算，非企業一般需求
     - "Microsoft.msmpisdk"                          # MPI SDK，非企業一般需求
+
+    # -----------------------------------------------------------------
+    # 已歸檔 / 已停產的 GitHub 專案與工具
+    # -----------------------------------------------------------------
+    - "Microsoft.BotFrameworkComposer"              # GitHub 倉庫已歸檔，已被 Copilot Studio 取代
+    - "Microsoft.BotFrameworkEmulator"              # GitHub 倉庫已歸檔（2025/12），已被 Agents Playground 取代
+    - "Microsoft.AIShell"                           # GitHub 倉庫已歸檔（PowerShell/AIShell, 2026/01）
+    - "Microsoft.DirectAccessCTST"                  # DirectAccess 2024/06 正式棄用，將從 Windows 移除
+    - "Microsoft.FRSDiag"                           # FRS 已從 Windows Server 2019+ 移除，診斷工具已無用途
 
     # -----------------------------------------------------------------
     # 高資安風險工具
