@@ -240,6 +240,13 @@ blocklist:
 firewall:
   source_addresses:
     - "10.0.0.0/8"
+
+  # IP Group（建議使用，可集中管理來源 IP）
+  # 若設定 source_ip_groups，deploy.sh 預設使用 IP Group；source_addresses 以註解備用
+  source_ip_groups:
+    - "ipgroup-corp-clients"
+    - "ipgroup-dev-clients"
+
   rule_collection_group_name: "winget-rules"
   rule_collection_name: "winget-download"
   priority: 500

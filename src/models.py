@@ -124,6 +124,7 @@ class FirewallRule:
     target_urls: list[str] = field(default_factory=list)
     target_fqdns: list[str] = field(default_factory=list)
     source_addresses: list[str] = field(default_factory=list)
+    source_ip_groups: list[str] = field(default_factory=list)
     description: str = ""
     package_id: str = ""
     confidence: Confidence = Confidence.HIGH

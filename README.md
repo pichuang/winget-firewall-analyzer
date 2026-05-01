@@ -93,6 +93,7 @@ allowlist:
     - "GitHub.*"
 
 # 封鎖清單 — 排除不需要的套件（優先於允許清單）
+# 封鎖的套件在探索階段即跳過，節省 API 呼叫
 blocklist:
   packages:
     - "Microsoft.*.Preview"      # Preview 版本
@@ -100,7 +101,26 @@ blocklist:
     - "Microsoft.VisualStudio.*.Community"  # VS Community
 ```
 
-修改後重新執行 `--all --dry-run` 確認結果。
+修改後重新執行 `--dry-run` 確認結果。
+
+### 防火牆來源設定
+
+`config.yaml` 支援 IP Group 與 Source Addresses 兩種來源方式：
+
+```yaml
+firewall:
+  # IP Group（建議使用，可集中管理來源 IP）
+  source_ip_groups:
+    - "ipgroup-corp-clients"
+    - "ipgroup-dev-clients"
+
+  # Source Addresses（備用，未設定 IP Group 時使用）
+  source_addresses:
+    - "10.0.0.0/8"
+```
+
+- 設定 `source_ip_groups` 時，`deploy.sh` 預設使用 `--source-ip-groups`，並以註解附帶 `--source-addresses` 備用
+- 未設定 IP Group 時，自動使用 `--source-addresses`
 
 ### 套件清單與資安報告
 
@@ -142,6 +162,7 @@ python main.py
 │   └── download.ps1               # PowerShell 一鍵下載腳本
 ├── audit_logs/                    # 稽核日誌
 ├── src/
+│   ├── audit.py                   # 稽核日誌與變更對比報告
 │   ├── models.py                  # 資料模型（RedirectHop, FirewallRule 等）
 │   ├── winget_api.py              # GitHub API 查詢 winget-pkgs manifest
 │   ├── redirect_tracer.py         # HTTP 重導向鏈追蹤（HEAD 優先，GET fallback）
@@ -151,6 +172,7 @@ python main.py
 │   ├── package_discovery.py       # 遞迴掃描 winget-pkgs 探索套件
 │   └── blocklist.py               # 允許/封鎖清單 fnmatch 過濾
 └── tests/
+    ├── test_audit.py
     ├── test_models.py
     ├── test_winget_api.py
     ├── test_redirect_tracer.py
@@ -173,7 +195,7 @@ pip install -r requirements.txt
 ### 執行測試
 
 ```bash
-# 單元測試（120 個，不需網路）
+# 單元測試（128 個，不需網路）
 python -m pytest tests/ --ignore=tests/test_integration.py -v
 
 # 整合測試（需網路，測試 Microsoft.Git / GitHub.cli / GitHub.GitHubDesktop）
@@ -210,6 +232,9 @@ formatters.py ── 輸出 JSON / CSV / CLI / Markdown
 - **版本萬用字元**：URL path 中的版本號與 UUID 自動替換為 `*`，版本更新時不需修改規則
 - **Query string 移除**：`targetUrls` 不包含 query string（簽章參數會過期）
 - **Leaf 套件判斷**：子目錄名稱符合 `x.y` 格式才視為版本目錄（避免 `2022` 被誤判）
+- **封鎖清單早期跳過**：探索階段即比對封鎖清單，跳過封鎖的套件與子樹，節省 API 呼叫
+- **IP Group 優先**：設定 `source_ip_groups` 時，CLI 腳本預設使用 IP Group，`source_addresses` 以註解備用
+- **變更對比報告**：每次執行自動產生 `diff-report.md`，比對套件、FQDN、URL 變更及防火牆規則影響
 
 ### 新增輸出格式
 

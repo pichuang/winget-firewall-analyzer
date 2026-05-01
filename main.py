@@ -67,6 +67,7 @@ async def main_async(args: argparse.Namespace) -> None:
     config = load_config(args.config)
     firewall_config = config.get("firewall", {})
     source_addresses = firewall_config.get("source_addresses", ["10.0.0.0/8"])
+    source_ip_groups = firewall_config.get("source_ip_groups", [])
     base_fqdns = config.get("winget_base_fqdns", [])
 
     # blocklist 從同一份設定檔讀取
@@ -153,6 +154,7 @@ async def main_async(args: argparse.Namespace) -> None:
                 manifest, rules = await analyze_package(client, package_id)
                 for rule in rules:
                     rule.source_addresses = source_addresses
+                    rule.source_ip_groups = source_ip_groups
                 all_rules.extend(rules)
                 all_manifests.append(manifest)
                 print(f"   ✅ {manifest.package_id} v{manifest.version} 分析完成", file=sys.stderr)
@@ -161,7 +163,7 @@ async def main_async(args: argparse.Namespace) -> None:
 
     # 加入基礎設施規則
     if base_fqdns:
-        infra_rule = generate_base_infrastructure_rule(base_fqdns, source_addresses)
+        infra_rule = generate_base_infrastructure_rule(base_fqdns, source_addresses, source_ip_groups)
         all_rules.insert(0, infra_rule)
 
     if not all_rules:

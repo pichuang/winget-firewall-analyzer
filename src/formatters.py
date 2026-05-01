@@ -17,8 +17,11 @@ def _rule_to_arm_dict(rule: FirewallRule) -> dict[str, Any]:
         "name": rule.name,
         "ruleType": rule.rule_type,
         "protocols": rule.protocols,
-        "sourceAddresses": rule.source_addresses,
     }
+    if rule.source_ip_groups:
+        result["sourceIpGroups"] = rule.source_ip_groups
+    else:
+        result["sourceAddresses"] = rule.source_addresses
     if rule.target_urls:
         result["targetUrls"] = rule.target_urls
     if rule.target_fqdns:
@@ -61,7 +64,7 @@ def format_csv(rules: list[FirewallRule]) -> str:
     writer = csv.writer(output)
     writer.writerow([
         "規則名稱", "套件識別碼", "類型", "目標（FQDN 或 URL）",
-        "通訊協定", "來源位址", "信心等級", "說明",
+        "通訊協定", "來源位址", "來源 IP Group", "信心等級", "說明",
     ])
 
     for rule in rules:
@@ -76,6 +79,7 @@ def format_csv(rules: list[FirewallRule]) -> str:
                 target,
                 "Https:443",
                 ";".join(rule.source_addresses),
+                ";".join(rule.source_ip_groups),
                 rule.confidence.value,
                 rule.description,
             ])
@@ -91,7 +95,11 @@ def format_azure_cli(
     rule_collection_name: str = "winget-download",
     priority: int = 500,
 ) -> str:
-    """產出 Azure CLI 指令。"""
+    """產出 Azure CLI 指令。
+
+    若規則包含 source_ip_groups，預設使用 --source-ip-groups，
+    並以註解附帶 --source-addresses 備用方案。
+    """
     lines: list[str] = [
         "#!/bin/bash",
         "# Azure Firewall Policy 規則部署指令",
@@ -125,12 +133,14 @@ def format_azure_cli(
     for rule in rules:
         targets = rule.target_urls if rule.target_urls else rule.target_fqdns
         target_flag = "--target-urls" if rule.target_urls else "--target-fqdns"
-
         targets_str = " ".join(f'"{t}"' for t in targets)
-        sources_str = " ".join(f'"{s}"' for s in rule.source_addresses)
 
+        use_ip_groups = bool(rule.source_ip_groups)
+        sources_str = " ".join(f'"{s}"' for s in rule.source_addresses)
+        ip_groups_str = " ".join(f'"{g}"' for g in rule.source_ip_groups) if use_ip_groups else ""
+
+        lines.append(f"# {rule.description}")
         lines.extend([
-            f"# {rule.description}",
             "az network firewall policy rule-collection-group collection rule add \\",
             '  --policy-name "$POLICY_NAME" \\',
             '  --resource-group "$RESOURCE_GROUP" \\',
@@ -140,9 +150,15 @@ def format_azure_cli(
             "  --rule-type ApplicationRule \\",
             f"  --protocols Https=443 \\",
             f"  {target_flag} {targets_str} \\",
-            f"  --source-addresses {sources_str}",
-            "",
         ])
+
+        if use_ip_groups:
+            lines.append(f"  --source-ip-groups {ip_groups_str}")
+            lines.append(f"  # 備用：--source-addresses {sources_str}")
+        else:
+            lines.append(f"  --source-addresses {sources_str}")
+
+        lines.append("")
 
     return "\n".join(lines)
 
@@ -166,6 +182,7 @@ def format_markdown(
     rc_name = fw.get("rule_collection_name", "winget-download")
     priority = fw.get("priority", 500)
     source_addresses = fw.get("source_addresses", ["10.0.0.0/8"])
+    source_ip_groups = fw.get("source_ip_groups", [])
 
     lines: list[str] = [
         "# winget Azure Firewall Policy 規則清單",
@@ -184,7 +201,8 @@ def format_markdown(
         f"| Rule Collection Group | `{rcg_name}` |",
         f"| Rule Collection | `{rc_name}` |",
         f"| Priority | `{priority}` |",
-        f"| Source Addresses | `{', '.join(source_addresses)}` |",
+        f"| Source IP Groups | `{', '.join(source_ip_groups)}`{' （主要）' if source_ip_groups else ' —'} |",
+        f"| Source Addresses | `{', '.join(source_addresses)}`{' （備用）' if source_ip_groups else ''} |",
         f"| 規則總數 | {len(rules)} |",
         f"| 分析時間 | {now} |",
         "",

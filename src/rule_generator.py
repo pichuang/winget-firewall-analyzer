@@ -126,6 +126,7 @@ def generate_rules(
 def generate_base_infrastructure_rule(
     base_fqdns: list[dict[str, str]],
     source_addresses: list[str],
+    source_ip_groups: list[str] | None = None,
 ) -> FirewallRule:
     """產生 winget 基礎設施的通用防火牆規則（所有套件共用）。"""
     fqdns = [entry["fqdn"] for entry in base_fqdns]
@@ -135,6 +136,7 @@ def generate_base_infrastructure_rule(
         name="winget-infrastructure-fqdn",
         target_fqdns=sorted(fqdns),
         source_addresses=source_addresses,
+        source_ip_groups=source_ip_groups or [],
         description="winget 基礎設施端點（所有套件共用）：" + "；".join(descriptions),
         package_id="*",
         confidence=Confidence.HIGH,
