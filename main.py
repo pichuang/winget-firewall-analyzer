@@ -249,8 +249,22 @@ async def main_async(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
+    examples = """\
+使用範例：
+  python main.py                                 # 自動分析 config.yaml 中所有允許的套件
+  python main.py Microsoft.Git GitHub.cli        # 分析指定套件
+  python main.py --dry-run                       # 僅列出套件清單，不分析
+  python main.py -f json                         # 輸出 JSON 格式（ARM Template 相容）
+  python main.py -f csv                          # 輸出 CSV（匯入試算表審閱）
+  python main.py -f cli                          # 輸出 Azure CLI 部署腳本
+  python main.py --no-download-scripts           # 不產生下載腳本
+
+結果自動寫入 generated/ 資料夾，GITHUB_TOKEN 自動從 gh CLI 取得。"""
+
     parser = argparse.ArgumentParser(
         description="分析 winget 套件下載路徑，產生 Azure Firewall Policy 規則建議",
+        epilog=examples,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "packages",
