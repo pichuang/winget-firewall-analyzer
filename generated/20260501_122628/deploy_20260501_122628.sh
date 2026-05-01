@@ -4,9 +4,9 @@
 
 POLICY_NAME="<FIREWALL_POLICY_NAME>"
 RESOURCE_GROUP="<RESOURCE_GROUP>"
-RCG_NAME="winget-rules"
-RC_NAME="winget-download"
-PRIORITY=500
+RCG_NAME="rcg-1100-mirror-winget"
+RC_NAME="action-allow-mirror"
+PRIORITY=1100
 
 # 建立 Rule Collection Group（若不存在）
 az network firewall policy rule-collection-group create \
@@ -23,7 +23,7 @@ az network firewall policy rule-collection-group collection add-filter-collectio
   --rcg-name "$RCG_NAME" \
   --rule-type ApplicationRule \
   --action Allow \
-  --priority 600
+  --priority 1200
 
 # winget 基礎設施端點（所有套件共用）：cdn.winget.microsoft.com — winget 套件來源索引與 manifest；winget.azureedge.net — winget 套件來源 CDN
 az network firewall policy rule-collection-group collection rule add \

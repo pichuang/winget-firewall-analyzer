@@ -33,9 +33,9 @@ def _rule_to_arm_dict(rule: FirewallRule) -> dict[str, Any]:
 
 def format_json(
     rules: list[FirewallRule],
-    rule_collection_name: str = "winget-download",
-    rule_collection_group_name: str = "winget-rules",
-    priority: int = 500,
+    rule_collection_name: str = "action-allow-mirror",
+    rule_collection_group_name: str = "rcg-1100-mirror-winget",
+    priority: int = 1100,
 ) -> str:
     """產出 JSON 格式（ARM Template 相容）。"""
     arm_rules = [_rule_to_arm_dict(r) for r in rules]
@@ -91,9 +91,9 @@ def format_azure_cli(
     rules: list[FirewallRule],
     firewall_policy_name: str = "<FIREWALL_POLICY_NAME>",
     resource_group: str = "<RESOURCE_GROUP>",
-    rule_collection_group_name: str = "winget-rules",
-    rule_collection_name: str = "winget-download",
-    priority: int = 500,
+    rule_collection_group_name: str = "rcg-1100-mirror-winget",
+    rule_collection_name: str = "action-allow-mirror",
+    priority: int = 1100,
 ) -> str:
     """產出 Azure CLI 指令。
 
@@ -178,9 +178,9 @@ def format_markdown(
 
     now = datetime.now(timezone(timedelta(hours=8))).strftime("%Y-%m-%d %H:%M:%S %Z")
     fw = firewall_config or {}
-    rcg_name = fw.get("rule_collection_group_name", "winget-rules")
-    rc_name = fw.get("rule_collection_name", "winget-download")
-    priority = fw.get("priority", 500)
+    rcg_name = fw.get("rule_collection_group_name", "rcg-1100-mirror-winget")
+    rc_name = fw.get("rule_collection_name", "action-allow-mirror")
+    priority = fw.get("priority", 1100)
     source_addresses = fw.get("source_addresses", ["10.0.0.0/8"])
     source_ip_groups = fw.get("source_ip_groups", [])
 

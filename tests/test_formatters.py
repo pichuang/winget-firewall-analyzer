@@ -253,6 +253,6 @@ class TestFormatMarkdown:
         rules = _make_test_rules()
         output = format_markdown(manifests, rules)
 
-        assert "`winget-rules`" in output
-        assert "`winget-download`" in output
-        assert "`500`" in output
+        assert "`rcg-1100-mirror-winget`" in output
+        assert "`action-allow-mirror`" in output
+        assert "`1100`" in output

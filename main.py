@@ -225,9 +225,9 @@ async def main_async(args: argparse.Namespace) -> None:
     # 輸出結果
     print(f"\n📋 共產出 {len(all_rules)} 條規則", file=sys.stderr)
 
-    rc_name = firewall_config.get("rule_collection_name", "winget-download")
-    rcg_name = firewall_config.get("rule_collection_group_name", "winget-rules")
-    priority = firewall_config.get("priority", 500)
+    rc_name = firewall_config.get("rule_collection_name", "action-allow-mirror")
+    rcg_name = firewall_config.get("rule_collection_group_name", "rcg-1100-mirror-winget")
+    priority = firewall_config.get("priority", 1100)
 
     # 時間戳記（用於產出資料夾名稱）
     from datetime import datetime, timedelta, timezone

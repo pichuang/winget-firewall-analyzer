@@ -247,9 +247,9 @@ firewall:
     - "ipgroup-corp-clients"
     - "ipgroup-dev-clients"
 
-  rule_collection_group_name: "winget-rules"
-  rule_collection_name: "winget-download"
-  priority: 500
+  rule_collection_group_name: "rcg-1100-mirror-winget"
+  rule_collection_name: "action-allow-mirror"
+  priority: 1100
 
 
 # =============================================================================
