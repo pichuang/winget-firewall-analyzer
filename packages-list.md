@@ -1,6 +1,6 @@
 # winget 套件清單 — 分類報告
 
-> 產生時間：2026-05-01 | 共 399 個探索到的套件 | ✅ 允許 292 個 | ❌ 封鎖 107 個
+> 產生時間：2026-05-01 | 共 399 個探索到的套件 | ✅ 允許 272 個 | ❌ 封鎖 127 個
 
 ## 📊 分類摘要
 
@@ -8,21 +8,21 @@
 |---|---|---|
 | ☁️ Azure 雲端工具 | Azure 雲端平台管理、部署、監控相關工具 | 29 |
 | 💻 開發工具與 IDE | 軟體開發、程式碼編輯、建置、偵錯工具 | 35 |
-| 🔧 .NET 開發與執行環境 | .NET SDK、Runtime、ASP.NET Core 等開發與部署元件 | 26 |
+| 🔧 .NET 開發與執行環境 | .NET SDK、Runtime、ASP.NET Core 等開發與部署元件 | 20 |
 | 🗄️ 資料庫工具 | SQL Server、資料庫管理、資料遷移工具 | 20 |
-| 📊 商業智慧與 AI 工具 | Power BI、資料分析、AI/ML、Foundry 相關工具 | 9 |
+| 📊 商業智慧與 AI 工具 | Power BI、資料分析、AI/ML、Foundry 相關工具 | 8 |
 | 🏢 Office 與生產力工具 | Microsoft 365、Teams、OneDrive 等辦公生產力工具 | 20 |
 | 🖥️ Windows 系統管理 | Windows 作業系統管理、部署、診斷、組態工具 | 48 |
 | 🛡️ 資安與合規工具 | 安全性掃描、合規檢查、加密與憑證管理 | 8 |
 | 🔍 Sysinternals 診斷工具套件 | Microsoft Sysinternals 系統診斷與監控工具 | 23 |
-| 🌐 網路與 Web 工具 | 網路診斷、IIS、Web 部署、通訊協定分析 | 19 |
-| 📦 執行環境與程式庫 | VC++ Redistributable、WinUI、Windows App Runtime、Java 等執行環境 | 26 |
-| 🔨 Windows SDK 與驅動開發 | Windows SDK、WDK、驅動程式開發與硬體測試工具 | 15 |
+| 🌐 網路與 Web 工具 | 網路診斷、IIS、Web 部署、通訊協定分析 | 17 |
+| 📦 執行環境與程式庫 | VC++ Redistributable、WinUI、Windows App Runtime、Java 等執行環境 | 19 |
+| 🔨 Windows SDK 與驅動開發 | Windows SDK、WDK、驅動程式開發與硬體測試工具 | 13 |
 | 📋 應用程式封裝與部署 | MSIX 封裝、應用程式部署與散佈工具 | 4 |
-| 🤖 Bot 與 API 工具 | Bot Framework、OpenAPI、微服務相關工具 | 7 |
+| 🤖 Bot 與 API 工具 | Bot Framework、OpenAPI、微服務相關工具 | 5 |
 | 🌐 瀏覽器 | Microsoft Edge 瀏覽器與相關元件 | 3 |
-| **✅ 允許合計** | | **292** |
-| ❌ 封鎖 | 已 EOL / 已停產 / Preview 等 | 107 |
+| **✅ 允許合計** | | **272** |
+| ❌ 封鎖 | 已 EOL / 已停產 / Preview 等 | 127 |
 
 ---
 
@@ -321,27 +321,21 @@
 > .NET SDK、Runtime、ASP.NET Core 等開發與部署元件
 
 - `Microsoft.DotNet.AspNetCore.10`
-- `Microsoft.DotNet.AspNetCore.6`
 - `Microsoft.DotNet.AspNetCore.8`
 - `Microsoft.DotNet.AspNetCore.9`
 - `Microsoft.DotNet.DesktopRuntime.10`
-- `Microsoft.DotNet.DesktopRuntime.6`
 - `Microsoft.DotNet.DesktopRuntime.8`
 - `Microsoft.DotNet.DesktopRuntime.9`
-- `Microsoft.DotNet.Framework.DeveloperPack.4.6`
 - `Microsoft.DotNet.Framework.DeveloperPack_4`
 - `Microsoft.DotNet.Framework.Runtime`
 - `Microsoft.DotNet.HostingBundle.10`
-- `Microsoft.DotNet.HostingBundle.6`
 - `Microsoft.DotNet.HostingBundle.8`
 - `Microsoft.DotNet.HostingBundle.9`
 - `Microsoft.DotNet.RepairTool`
 - `Microsoft.DotNet.Runtime.10`
-- `Microsoft.DotNet.Runtime.6`
 - `Microsoft.DotNet.Runtime.8`
 - `Microsoft.DotNet.Runtime.9`
 - `Microsoft.DotNet.SDK.10`
-- `Microsoft.DotNet.SDK.6`
 - `Microsoft.DotNet.SDK.8`
 - `Microsoft.DotNet.SDK.9`
 - `Microsoft.DotNet.UninstallTool`
@@ -380,7 +374,6 @@
 
 > Power BI、資料分析、AI/ML、Foundry 相關工具
 
-- `Microsoft.AIShell`
 - `Microsoft.FoundryLocal`
 - `Microsoft.FuzzyLookupAddExcel`
 - `Microsoft.LightGBM`
@@ -526,8 +519,6 @@
 - `Microsoft.APM`
 - `Microsoft.ASRTestTool`
 - `Microsoft.AccountLockoutStatus`
-- `Microsoft.DirectAccessCTST`
-- `Microsoft.FRSDiag`
 - `Microsoft.IIS.Compression`
 - `Microsoft.IIS.ServiceMonitor`
 - `Microsoft.IIS.URLRewrite`
@@ -553,7 +544,6 @@
 - `Microsoft.DirectXTex.Texassemble`
 - `Microsoft.DirectXTex.Texconv`
 - `Microsoft.DirectXTex.Texdiag`
-- `Microsoft.GameInput`
 - `Microsoft.IronPython.3`
 - `Microsoft.OpenCLGLVulkanCompatibilityPack`
 - `Microsoft.OpenJDK.11`
@@ -564,15 +554,9 @@
 - `Microsoft.UI.Xaml.2.8`
 - `Microsoft.VCLibs.14`
 - `Microsoft.VCLibs.Desktop.14`
-- `Microsoft.VCRedist.2012.x64`
-- `Microsoft.VCRedist.2012.x86`
-- `Microsoft.VCRedist.2013.x64`
-- `Microsoft.VCRedist.2013.x86`
 - `Microsoft.VCRedist.2015+.arm64`
 - `Microsoft.VCRedist.2015+.x64`
 - `Microsoft.VCRedist.2015+.x86`
-- `Microsoft.WindowsAppRuntime.1.5`
-- `Microsoft.WindowsAppRuntime.1.6`
 - `Microsoft.WindowsAppRuntime.1.7`
 - `Microsoft.WindowsAppRuntime.1.8`
 
@@ -590,11 +574,9 @@
 - `Microsoft.WindowsApplicationDriver`
 - `Microsoft.WindowsBusesTracing`
 - `Microsoft.WindowsMIDIServicesSDK`
-- `Microsoft.WindowsSDK.10.0.22000`
 - `Microsoft.WindowsSDK.10.0.22621`
 - `Microsoft.WindowsSDK.10.0.26100`
 - `Microsoft.WindowsSDK.10.0.28000`
-- `Microsoft.WindowsWDK.10.0.22000`
 - `Microsoft.WindowsWDK.10.0.22621`
 - `Microsoft.WindowsWDK.10.0.26100`
 
@@ -615,8 +597,6 @@
 
 > Bot Framework、OpenAPI、微服務相關工具
 
-- `Microsoft.BotFrameworkComposer`
-- `Microsoft.BotFrameworkEmulator`
 - `Microsoft.CmdPalGitHubExtension`
 - `Microsoft.OpenAPI.Hidi`
 - `Microsoft.OpenAPI.Kiota`
@@ -635,7 +615,7 @@
 
 ---
 
-## ❌ 封鎖的套件（107 個）
+## ❌ 封鎖的套件（127 個）
 
 > 以下套件已被封鎖清單排除（已 EOL、已停產、Preview/Beta 版本等），不進行防火牆規則分析。
 
@@ -746,3 +726,23 @@
 - `Microsoft.msodbcsql.13`
 - `Microsoft.vott`
 - `Microsoft.webpicmd`
+- `Microsoft.AIShell`
+- `Microsoft.BotFrameworkComposer`
+- `Microsoft.BotFrameworkEmulator`
+- `Microsoft.DirectAccessCTST`
+- `Microsoft.DotNet.AspNetCore.6`
+- `Microsoft.DotNet.DesktopRuntime.6`
+- `Microsoft.DotNet.Framework.DeveloperPack.4.6`
+- `Microsoft.DotNet.HostingBundle.6`
+- `Microsoft.DotNet.Runtime.6`
+- `Microsoft.DotNet.SDK.6`
+- `Microsoft.FRSDiag`
+- `Microsoft.GameInput`
+- `Microsoft.VCRedist.2012.x64`
+- `Microsoft.VCRedist.2012.x86`
+- `Microsoft.VCRedist.2013.x64`
+- `Microsoft.VCRedist.2013.x86`
+- `Microsoft.WindowsAppRuntime.1.5`
+- `Microsoft.WindowsAppRuntime.1.6`
+- `Microsoft.WindowsSDK.10.0.22000`
+- `Microsoft.WindowsWDK.10.0.22000`

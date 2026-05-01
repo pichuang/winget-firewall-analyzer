@@ -210,6 +210,7 @@ blocklist:
     - "Microsoft.WinGetStudio.Experimental"         # 實驗性套件
     - "Microsoft.BingWallpaper"                     # Bing 桌布，非必要
     - "Microsoft.Gaming.*"                          # 遊戲開發工具，非企業必要
+    - "Microsoft.GameInput"                          # 遊戲輸入 SDK，非企業必要
     - "Microsoft.msmpi"                             # MPI 高效能運算，非企業一般需求
     - "Microsoft.msmpisdk"                          # MPI SDK，非企業一般需求
 
