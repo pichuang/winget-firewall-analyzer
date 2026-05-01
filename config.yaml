@@ -263,3 +263,41 @@ winget_base_fqdns:
   - fqdn: "winget.azureedge.net"
     category: "winget-source"
     description: "winget 套件來源 CDN"
+
+
+# =============================================================================
+# WSL 發行版分析設定
+# 用途：分析 WSL (Windows Subsystem for Linux) 發行版下載時所需的防火牆規則
+# 使用 --wsl 旗標，或預設模式下自動包含（若 enabled: true）
+# =============================================================================
+wsl_distros:
+  # 是否啟用 WSL 發行版分析
+  enabled: true
+
+  # -------------------------------------------------------------------
+  # 支援的 WSL 發行版清單
+  # 每個項目包含：
+  #   name        — 顯示名稱
+  #   id          — 內部識別碼（用於規則命名）
+  #   download_url — 離線下載 URL（aka.ms 短網址或直接連結）
+  #   install_cmd  — Windows 端安裝指令（參考用）
+  # -------------------------------------------------------------------
+  distributions:
+    - name: "Ubuntu 20.04 LTS"
+      id: "WSL.Ubuntu-20.04"
+      download_url: "https://aka.ms/wslubuntu2004"
+      install_cmd: "wsl --install -d Ubuntu-20.04"
+
+    - name: "Ubuntu 22.04 LTS"
+      id: "WSL.Ubuntu-22.04"
+      download_url: "https://aka.ms/wslubuntu2204"
+      install_cmd: "wsl --install -d Ubuntu-22.04"
+
+  # -------------------------------------------------------------------
+  # WSL 基礎設施端點（所有 WSL 發行版共用）
+  # wsl --install / wsl --update 運作時必須存取的網域
+  # -------------------------------------------------------------------
+  base_fqdns:
+    - fqdn: "wslstorestorage.blob.core.windows.net"
+      category: "wsl-infrastructure"
+      description: "WSL 核心元件儲存（kernel 更新、runtime）"

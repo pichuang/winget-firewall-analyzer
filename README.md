@@ -1,15 +1,16 @@
 # winget Azure Firewall Policy 分析工具
 
-分析 winget 套件的下載路徑，自動產生 Azure Firewall Policy Application Rule 建議，確保企業環境中 winget 可正常運作。
+分析 winget 套件與 WSL 發行版的下載路徑，自動產生 Azure Firewall Policy Application Rule 建議，確保企業環境中 winget 與 WSL 可正常運作。
 
 ## 這個工具解決什麼問題？
 
-企業透過 Azure Firewall 控管出站流量時，需要知道 winget 安裝每個套件時會存取哪些網域。手動測試數百個套件不切實際，這個工具自動化完成：
+企業透過 Azure Firewall 控管出站流量時，需要知道 winget 安裝每個套件、以及 WSL 安裝發行版時會存取哪些網域。手動測試數百個套件不切實際，這個工具自動化完成：
 
 1. 查詢 winget 套件的安裝檔下載 URL
-2. 追蹤每個 URL 的 HTTP 重導向鏈（github.com → CDN → 最終下載位置）
-3. 產出精確到 **URL path 層級**的 Azure Firewall 規則（需啟用 TLS Inspection）
-4. 同時提供 FQDN 層級規則作為備用
+2. 查詢 WSL 發行版的離線下載 URL（aka.ms 短網址）
+3. 追蹤每個 URL 的 HTTP 重導向鏈（github.com → CDN → 最終下載位置）
+4. 產出精確到 **URL path 層級**的 Azure Firewall 規則（需啟用 TLS Inspection）
+5. 同時提供 FQDN 層級規則作為備用
 
 ---
 
@@ -23,11 +24,12 @@ python3.14 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# 2. 一鍵分析（自動探索 config.yaml 中所有允許的套件）
+# 2. 一鍵分析（自動探索 config.yaml 中所有允許的套件 + WSL 發行版）
 python main.py
 ```
 
 - 未指定套件時，自動使用 `--all` 模式依 `config.yaml` 探索
+- WSL 發行版分析在 `config.yaml` 中啟用時自動包含
 - 自動偵測 `gh auth token` 取得 GITHUB_TOKEN（無需手動設定）
 - 結果自動寫入 `generated/` 資料夾
 
@@ -103,6 +105,44 @@ blocklist:
 
 修改後重新執行 `--dry-run` 確認結果。
 
+### WSL 發行版分析
+
+工具支援分析 WSL (Windows Subsystem for Linux) 發行版下載路徑：
+
+```bash
+# 僅分析 WSL 發行版
+python main.py --wsl
+
+# 分析指定套件 + WSL 發行版
+python main.py Microsoft.Git --wsl
+
+# 預設模式自動包含 WSL（若 config.yaml 中已啟用）
+python main.py
+```
+
+在 `config.yaml` 設定 WSL 發行版：
+
+```yaml
+wsl_distros:
+  enabled: true
+  distributions:
+    - name: "Ubuntu 20.04 LTS"
+      id: "WSL.Ubuntu-20.04"
+      download_url: "https://aka.ms/wslubuntu2004"
+      install_cmd: "wsl --install -d Ubuntu-20.04"
+    - name: "Ubuntu 22.04 LTS"
+      id: "WSL.Ubuntu-22.04"
+      download_url: "https://aka.ms/wslubuntu2204"
+      install_cmd: "wsl --install -d Ubuntu-22.04"
+  base_fqdns:
+    - fqdn: "wslstorestorage.blob.core.windows.net"
+      description: "WSL 核心元件儲存"
+```
+
+- WSL 分析複用與 winget 相同的重導向追蹤與規則產生機制
+- 產出的防火牆規則與 winget 規則合併在同一份報告中
+- WSL 基礎設施端點（如 `wslstorestorage.blob.core.windows.net`）獨立列為共用規則
+
 ### 防火牆來源設定
 
 `config.yaml` 支援 IP Group 與 Source Addresses 兩種來源方式：
@@ -170,7 +210,8 @@ python main.py
 │   ├── formatters.py              # 輸出格式化（JSON/CSV/CLI/Markdown）
 │   ├── download_scripts.py        # 下載腳本產生器（Bash/PowerShell）
 │   ├── package_discovery.py       # 遞迴掃描 winget-pkgs 探索套件
-│   └── blocklist.py               # 允許/封鎖清單 fnmatch 過濾
+│   ├── blocklist.py               # 允許/封鎖清單 fnmatch 過濾
+│   └── wsl_analyzer.py            # WSL 發行版下載分析
 └── tests/
     ├── test_audit.py
     ├── test_models.py
@@ -181,6 +222,7 @@ python main.py
     ├── test_download_scripts.py
     ├── test_blocklist.py
     ├── test_package_discovery.py
+    ├── test_wsl_analyzer.py       # WSL 分析器測試
     └── test_integration.py        # 整合測試（需網路）
 ```
 
@@ -195,7 +237,7 @@ pip install -r requirements.txt
 ### 執行測試
 
 ```bash
-# 單元測試（128 個，不需網路）
+# 單元測試（137 個，不需網路）
 python -m pytest tests/ --ignore=tests/test_integration.py -v
 
 # 整合測試（需網路，測試 Microsoft.Git / GitHub.cli / GitHub.GitHubDesktop）
@@ -208,15 +250,20 @@ python -m pytest tests/test_blocklist.py::TestIsBlocked::test_edge_beta_blocked 
 ### 核心流程
 
 ```
-使用者輸入套件 ID
+使用者輸入套件 ID 或 --wsl
     │
-    ▼
-winget_api.py ── GitHub API 查詢 winget-pkgs 倉庫
-    │              └─ manifests/{letter}/{Publisher}/{Name}/{version}/
-    │                  └─ *.installer.yaml → InstallerUrl
-    ▼
+    ├─── winget 套件 ─────────────────────────────────────┐
+    │    winget_api.py ── GitHub API 查詢 winget-pkgs 倉庫 │
+    │        └─ manifests/{letter}/{Publisher}/{Name}/      │
+    │            └─ *.installer.yaml → InstallerUrl         │
+    │                                                       │
+    ├─── WSL 發行版 ──────────────────────────────────────┐│
+    │    wsl_analyzer.py ── config.yaml 載入發行版清單     ││
+    │        └─ aka.ms 短網址 → 追蹤重導向                ││
+    │                                                      ││
+    ▼                                                      ▼▼
 redirect_tracer.py ── HEAD 請求逐跳追蹤重導向鏈
-    │                   └─ github.com → 302 → release-assets.githubusercontent.com → 200
+    │                   └─ aka.ms → 302 → CDN → 200
     ▼
 rule_generator.py ── 收集所有 FQDN，產生規則
     │                  ├─ targetUrls（path 層級，TLS Inspection）
@@ -235,6 +282,7 @@ formatters.py ── 輸出 JSON / CSV / CLI / Markdown
 - **封鎖清單早期跳過**：探索階段即比對封鎖清單，跳過封鎖的套件與子樹，節省 API 呼叫
 - **IP Group 優先**：設定 `source_ip_groups` 時，CLI 腳本預設使用 IP Group，`source_addresses` 以註解備用
 - **變更對比報告**：每次執行自動產生 `diff-report.md`，比對套件、FQDN、URL 變更及防火牆規則影響
+- **WSL 發行版分析**：透過 `aka.ms` 短網址追蹤重導向鏈，複用 winget 相同的規則產生機制，WSL 規則與 winget 規則合併輸出
 
 ### 新增輸出格式
 

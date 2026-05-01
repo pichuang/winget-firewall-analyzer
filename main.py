@@ -24,6 +24,7 @@ from src.rule_generator import (
     generate_rules,
 )
 from src.winget_api import fetch_package
+from src.wsl_analyzer import analyze_all_wsl_distros, get_wsl_base_fqdns, load_wsl_distros
 from src.audit import generate_diff_report, get_latest_audit_log, write_audit_log, write_changelog_entry
 
 
@@ -98,6 +99,10 @@ async def main_async(args: argparse.Namespace) -> None:
     else:
         print("⚠️  未偵測到 GITHUB_TOKEN，API 配額較低（建議執行 gh auth login）", file=sys.stderr)
 
+    # 結果容器（winget + WSL 共用）
+    all_rules: list[FirewallRule] = []
+    all_manifests: list[PackageManifest] = []
+
     async with httpx.AsyncClient(
         headers=headers,
         follow_redirects=False,
@@ -142,13 +147,16 @@ async def main_async(args: argparse.Namespace) -> None:
                 print(f"\n🚫 被封鎖的套件：", file=sys.stderr)
                 for pkg_id in blocked_ids:
                     print(f"  ❌ {pkg_id}")
+            if args.wsl:
+                wsl_distros = load_wsl_distros(config)
+                if wsl_distros:
+                    print(f"\n🐧 WSL 發行版：", file=sys.stderr)
+                    for d in wsl_distros:
+                        print(f"  🐧 {d.name} ({d.download_url})")
             print(f"\n共 {len(package_ids)} 個允許 / {len(blocked_ids)} 個封鎖", file=sys.stderr)
             return
 
         # 分析每個套件
-        all_rules: list[FirewallRule] = []
-        all_manifests: list[PackageManifest] = []
-
         for package_id in package_ids:
             try:
                 manifest, rules = await analyze_package(client, package_id)
@@ -165,6 +173,50 @@ async def main_async(args: argparse.Namespace) -> None:
     if base_fqdns:
         infra_rule = generate_base_infrastructure_rule(base_fqdns, source_addresses, source_ip_groups)
         all_rules.insert(0, infra_rule)
+
+    # ── WSL 發行版分析 ──
+    wsl_manifests: list[PackageManifest] = []
+    wsl_rules: list[FirewallRule] = []
+    if args.wsl:
+        wsl_distros = load_wsl_distros(config)
+        wsl_base_fqdns = get_wsl_base_fqdns(config)
+
+        if not wsl_distros:
+            print("⚠️  config.yaml 中未定義或未啟用 WSL 發行版", file=sys.stderr)
+        else:
+            async with httpx.AsyncClient(
+                headers=headers,
+                follow_redirects=False,
+                timeout=30.0,
+            ) as wsl_client:
+                print(f"\n🐧 開始分析 WSL 發行版（共 {len(wsl_distros)} 個）...", file=sys.stderr)
+
+                wsl_manifests, wsl_rules = await analyze_all_wsl_distros(
+                    wsl_client, wsl_distros, source_addresses, source_ip_groups,
+                )
+
+                for m in wsl_manifests:
+                    for inst in m.installers:
+                        hops_info = " → ".join(hop.fqdn for hop in inst.redirect_chain)
+                        print(f"   🔗 {m.package_id}: {hops_info}", file=sys.stderr)
+                    print(f"   ✅ {m.package_id} ({m.version}) 分析完成", file=sys.stderr)
+
+                print(f"\n📊 WSL 分析完成：{len(wsl_manifests)} 個發行版", file=sys.stderr)
+
+            # 加入 WSL 基礎設施規則
+            if wsl_base_fqdns:
+                wsl_infra_rule = generate_base_infrastructure_rule(
+                    wsl_base_fqdns, source_addresses, source_ip_groups,
+                )
+                wsl_infra_rule.name = "wsl-infrastructure-fqdn"
+                wsl_infra_rule.description = "WSL 基礎設施端點（所有 WSL 發行版共用）：" + "；".join(
+                    f"{e['fqdn']} — {e.get('description', '')}" for e in wsl_base_fqdns
+                )
+                wsl_infra_rule.package_id = "*（WSL）"
+                all_rules.append(wsl_infra_rule)
+
+            all_rules.extend(wsl_rules)
+            all_manifests.extend(wsl_manifests)
 
     if not all_rules:
         print("\n⚠️  沒有產出任何規則", file=sys.stderr)
@@ -277,8 +329,10 @@ async def main_async(args: argparse.Namespace) -> None:
 def main() -> None:
     examples = """\
 使用範例：
-  python main.py                                 # 自動分析 config.yaml 中所有允許的套件
+  python main.py                                 # 自動分析 config.yaml 中所有允許的套件 + WSL
   python main.py Microsoft.Git GitHub.cli        # 分析指定套件
+  python main.py --wsl                           # 僅分析 WSL 發行版下載路徑
+  python main.py Microsoft.Git --wsl             # 分析指定套件 + WSL 發行版
   python main.py --dry-run                       # 僅列出套件清單，不分析
   python main.py -f json                         # 輸出 JSON 格式（ARM Template 相容）
   python main.py -f csv                          # 輸出 CSV（匯入試算表審閱）
@@ -301,6 +355,11 @@ def main() -> None:
         "--all", "-a",
         action="store_true",
         help="依據 config.yaml 的 allowlist 自動探索並分析所有匹配套件",
+    )
+    parser.add_argument(
+        "--wsl",
+        action="store_true",
+        help="同時分析 WSL 發行版下載路徑（依 config.yaml 的 wsl_distros 設定）",
     )
     parser.add_argument(
         "--dry-run",
@@ -333,10 +392,21 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    # 未指定任何套件時，預設使用 --all 模式
+    # 未指定任何套件時的預設行為
     if not args.all and not args.packages:
-        args.all = True
-        print("ℹ️  未指定套件，自動使用 --all 模式（依 config.yaml 探索）", file=sys.stderr)
+        if args.wsl:
+            # 僅指定 --wsl 時，不自動啟用 --all（僅分析 WSL）
+            print("ℹ️  僅分析 WSL 發行版（未指定 winget 套件）", file=sys.stderr)
+        else:
+            args.all = True
+            print("ℹ️  未指定套件，自動使用 --all 模式（依 config.yaml 探索）", file=sys.stderr)
+
+    # 自動啟用 WSL 分析（若 config 中已啟用且使用 --all 模式）
+    if not args.wsl and args.all:
+        _cfg = load_config(args.config)
+        if _cfg.get("wsl_distros", {}).get("enabled", False):
+            args.wsl = True
+            print("ℹ️  WSL 發行版分析已啟用（依 config.yaml 設定）", file=sys.stderr)
 
     asyncio.run(main_async(args))
 
