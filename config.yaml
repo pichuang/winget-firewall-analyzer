@@ -1,0 +1,256 @@
+# =============================================================================
+# config.yaml — winget 防火牆規則分析工具設定檔
+# =============================================================================
+
+
+# =============================================================================
+# 套件允許清單（Allowlist）
+# 用途：定義要分析的 winget 套件範圍
+# 使用 --all 時，程式會依據此清單自動探索所有匹配的套件
+# =============================================================================
+allowlist:
+  # 是否啟用允許清單功能（啟用後僅同步清單內的套件）
+  enabled: true
+
+  # -------------------------------------------------------------------
+  # 依發行者名稱過濾（匹配 manifest 中的 Publisher 欄位）
+  # 支援完全匹配與萬用字元 (*) 模式
+  # 此處列出的發行者，其所有套件皆會被同步
+  # -------------------------------------------------------------------
+  publishers:
+    - "Microsoft"
+    - "Microsoft Corporation"
+    - "GitHub, Inc."
+
+  # -------------------------------------------------------------------
+  # 依套件識別碼過濾（匹配 PackageIdentifier 欄位）
+  # 支援萬用字元模式，例如 "Microsoft.*" 匹配所有 Microsoft 開頭的套件
+  # 與 publishers 為聯集關係（OR）：符合任一條件即允許同步
+  # -------------------------------------------------------------------
+  packages:
+    - "Microsoft.*"
+    - "GitHub.*"
+
+
+# =============================================================================
+# 套件封鎖清單（Blocklist）
+# 用途：定義禁止同步的 winget 套件識別碼
+# ⚠️ 封鎖清單優先於允許清單：即使符合允許條件，仍不會被同步
+# =============================================================================
+blocklist:
+  # 是否啟用封鎖清單功能
+  enabled: true
+
+  # -------------------------------------------------------------------
+  # 依發行者名稱封鎖（匹配 manifest 中的 Publisher 欄位）
+  # -------------------------------------------------------------------
+  publishers: []
+
+  # -------------------------------------------------------------------
+  # 依套件識別碼封鎖（支援萬用字元）
+  # -------------------------------------------------------------------
+  packages:
+    # -----------------------------------------------------------------
+    # Visual Studio Community 版本
+    # -----------------------------------------------------------------
+    - "Microsoft.VisualStudio.*.Community"
+    - "Microsoft.VisualStudio.Community"
+
+    # -----------------------------------------------------------------
+    # Beta / Preview / Insider / Canary / Dev 版本
+    # -----------------------------------------------------------------
+    - "Microsoft.*.Beta"
+    - "Microsoft.*.Preview"
+    - "Microsoft.*.Insider"
+    - "Microsoft.*.Insiders"
+    - "Microsoft.*.Canary"
+    - "Microsoft.*.Dev"
+    - "GitHub.*.Beta"
+
+    # -----------------------------------------------------------------
+    # 模擬器
+    # -----------------------------------------------------------------
+    - "Microsoft.*.Emulator"
+    - "Microsoft.*.Emulator.*"
+    - "Microsoft.SurfaceDuoEmulator.Android11"  # Surface Duo 已停產
+
+    # -----------------------------------------------------------------
+    # 已停止維護 / 已歸檔的 GitHub 專案
+    # -----------------------------------------------------------------
+    - "GitHub.Atom"                    # Atom 編輯器 2022/12 停止維護
+    - "GitHub.ClassroomAssistant"      # GitHub Classroom Assistant 已棄用
+    - "GitHub.hub"                     # 已被 GitHub.cli (gh) 取代
+    - "GitHub.smimesign"               # 已被 SSH 簽署取代
+
+    # -----------------------------------------------------------------
+    # .NET Core / .NET 已 EOL 版本
+    # （僅保留目前受支援的 LTS 與 STS 版本：6, 8, 9, 10）
+    # -----------------------------------------------------------------
+    # .NET Core 2.x — EOL 2019~2021
+    - "Microsoft.DotNet.AspNetCore.2_1"
+    - "Microsoft.DotNet.AspNetCore.2_2"
+    - "Microsoft.DotNet.AspNetCore.2_2_402"
+    - "Microsoft.DotNet.Runtime.2_2"
+
+    # .NET Core 3.x — EOL 2020~2022
+    - "Microsoft.DotNet.AspNetCore.3_0"
+    - "Microsoft.DotNet.AspNetCore.3_1"
+    - "Microsoft.DotNet.DesktopRuntime.3_1"
+    - "Microsoft.DotNet.HostingBundle.3_1"
+    - "Microsoft.DotNet.Runtime.3_1"
+    - "Microsoft.DotNet.SDK.3_1"
+
+    # .NET 5 — EOL 2022/05
+    - "Microsoft.DotNet.AspNetCore.5"
+    - "Microsoft.DotNet.DesktopRuntime.5"
+    - "Microsoft.DotNet.HostingBundle.5"
+    - "Microsoft.DotNet.Runtime.5"
+    - "Microsoft.DotNet.SDK.5"
+
+    # .NET 7 — EOL 2024/05
+    - "Microsoft.DotNet.AspNetCore.7"
+    - "Microsoft.DotNet.DesktopRuntime.7"
+    - "Microsoft.DotNet.HostingBundle.7"
+    - "Microsoft.DotNet.Runtime.7"
+    - "Microsoft.DotNet.SDK.7"
+
+    # .NET 相關已棄用工具
+    - "Microsoft.DotNet.CodeContracts"              # Code Contracts 已停止維護
+    - "Microsoft.DotNet.Framework.Redistributable.1_1"  # .NET Framework 1.1，極度老舊
+    - "Microsoft.DotNet.Framework.DeveloperPack.4.5"    # .NET Framework 4.5，老舊
+
+    # -----------------------------------------------------------------
+    # Visual C++ Redistributable 老舊版本（僅保留 2013 以上）
+    # -----------------------------------------------------------------
+    - "Microsoft.VCRedist.2005.x64"
+    - "Microsoft.VCRedist.2005.x86"
+    - "Microsoft.VCRedist.2008.x64"
+    - "Microsoft.VCRedist.2008.x86"
+    - "Microsoft.VCRedist.2010.x64"
+    - "Microsoft.VCRedist.2010.x86"
+
+    # -----------------------------------------------------------------
+    # SQL Server 老舊版本（僅保留 2019 以上）
+    # -----------------------------------------------------------------
+    - "Microsoft.SQLServer.11.ODBC"                 # SQL Server 2012 ODBC
+    - "Microsoft.SQLServer.2012.NativeClient"       # SQL Server 2012 Native Client
+    - "Microsoft.SQLServer.2017.Developer"          # SQL Server 2017
+    - "Microsoft.SQLServer.2017.Express"            # SQL Server 2017
+
+    # ODBC Driver 老舊版本（僅保留 17 以上）
+    - "Microsoft.msodbcsql.11"
+    - "Microsoft.msodbcsql.13"
+
+    # -----------------------------------------------------------------
+    # Windows SDK / WDK 老舊版本（僅保留 22621 以上）
+    # -----------------------------------------------------------------
+    - "Microsoft.WindowsSDK.10.0.17134"             # 1803
+    - "Microsoft.WindowsSDK.10.0.17763"             # 1809
+    - "Microsoft.WindowsSDK.10.0.18362"             # 1903
+    - "Microsoft.WindowsSDK.10.0.19041"             # 2004
+    - "Microsoft.WindowsSDK.10.0.20348"             # Server 2022
+    - "Microsoft.WindowsWDK.10.0.19041"             # WDK 2004
+
+    # -----------------------------------------------------------------
+    # Windows App Runtime 老舊版本（僅保留 1.6 以上）
+    # -----------------------------------------------------------------
+    - "Microsoft.WindowsAppRuntime.1.0"
+    - "Microsoft.WindowsAppRuntime.1.1"
+    - "Microsoft.WindowsAppRuntime.1.2"
+    - "Microsoft.WindowsAppRuntime.1.3"
+    - "Microsoft.WindowsAppRuntime.1.4"
+
+    # -----------------------------------------------------------------
+    # WinUI / XAML 老舊版本（僅保留 2.8 以上）
+    # -----------------------------------------------------------------
+    - "Microsoft.UI.Xaml.2.5"
+    - "Microsoft.UI.Xaml.2.6"
+
+    # -----------------------------------------------------------------
+    # OpenJDK 非 LTS 版本（僅保留 LTS：11, 17, 21, 25）
+    # -----------------------------------------------------------------
+    - "Microsoft.OpenJDK.16"                        # JDK 16 非 LTS，已 EOL
+
+    # -----------------------------------------------------------------
+    # 已停產 / 已棄用的 Microsoft 服務與工具
+    # -----------------------------------------------------------------
+    - "Microsoft.16BitInstallShieldSupport"         # 16 位元支援，極度老舊
+    - "Microsoft.Firewire1394LegacyDriver"          # IEEE 1394 驅動程式，老舊硬體
+    - "Microsoft.MSNExplorer"                       # MSN Explorer，已停產
+    - "Microsoft.XNARedist"                         # XNA Framework，2013 年停產
+    - "Microsoft.WindowsJournal"                    # Windows Journal，已從 Windows 移除
+    - "Microsoft.HyperlapsePro"                     # Microsoft Hyperlapse，已停產
+    - "Microsoft.ProjectMyScreen"                   # Windows Phone 投影，已停產
+    - "Microsoft.SmallBasic"                        # Small Basic，老舊教學工具
+    - "Microsoft.MakeBingYourSearchEngine"          # Bing 搜尋引擎推廣工具
+    - "Microsoft.NetMon"                            # Network Monitor，已被 Message Analyzer 取代（也已棄用）
+    - "Microsoft.vott"                              # VoTT 標記工具，已歸檔
+    - "Microsoft.webpicmd"                          # Web Platform Installer，已棄用
+    - "Microsoft.WCFDataServices50.ODatav3"         # WCF Data Services，已棄用
+    - "Microsoft.IronPython.2"                      # IronPython 2（Python 2），已棄用
+    - "Microsoft.ESRPWingetTest"                    # 內部測試用套件
+    - "Microsoft.WinGetStudio.Experimental"         # 實驗性套件
+    - "Microsoft.BingWallpaper"                     # Bing 桌布，非必要
+    - "Microsoft.Gaming.*"                          # 遊戲開發工具，非企業必要
+    - "Microsoft.msmpi"                             # MPI 高效能運算，非企業一般需求
+    - "Microsoft.msmpisdk"                          # MPI SDK，非企業一般需求
+
+    # -----------------------------------------------------------------
+    # 高資安風險工具
+    # -----------------------------------------------------------------
+    - "Microsoft.devtunnel"                         # 反向隧道，可將內部服務暴露至公網，繞過防火牆
+
+    # -----------------------------------------------------------------
+    # 已棄用的 Azure 工具
+    # -----------------------------------------------------------------
+    - "Microsoft.Azure.StorageEmulator"             # 已被 Azurite 取代
+    - "Microsoft.Azure.Aztfy"                       # 已更名為 Microsoft.Azure.AztfExport
+    - "Microsoft.Azure.aks-engine-azurestack"       # aks-engine 已棄用
+    - "Microsoft.AzureMediaServicesExplorer"        # Azure Media Services 2024/06 停止服務
+    - "Microsoft.AzureDevOpsOfficeIntegration.2019" # 2019 版整合，老舊
+
+    # -----------------------------------------------------------------
+    # 已棄用的 Visual Studio 老舊版本（僅保留 2022）
+    # -----------------------------------------------------------------
+    - "Microsoft.VisualStudio.2017.Enterprise"
+    - "Microsoft.VisualStudio.2019.BuildTools"
+    - "Microsoft.VisualStudio.2019.Enterprise"
+    - "Microsoft.VisualStudio.2019.Professional"
+    - "Microsoft.VisualStudio.Enterprise"           # 無版本號，老舊
+    - "Microsoft.VisualStudio.Professional"         # 無版本號，老舊
+    - "Microsoft.VisualStudio.BuildTools"           # 無版本號，老舊
+    - "Microsoft.VisualStudio.OnecoreMsvsmon"       # 無版本號，老舊
+    - "Microsoft.VisualStudio.RemoteTools"          # 無版本號，老舊
+    - "Microsoft.BuildTools2015"                    # VS 2015 Build Tools
+
+    # -----------------------------------------------------------------
+    # 其他已棄用或不常用工具
+    # -----------------------------------------------------------------
+    - "Microsoft.VFSforGit"                         # 已被 Microsoft.Git (Scalar) 取代
+    - "Microsoft.ServerSpeechPlatformRuntime"       # 老舊語音平台
+    - "Microsoft.MixedRealityFeatureTool"           # Mixed Reality 逐步退場
+    - "Microsoft.AccessDatabaseEngine.2016"         # Access 2016，老舊
+
+
+# =============================================================================
+# Azure Firewall Policy 規則設定
+# =============================================================================
+firewall:
+  source_addresses:
+    - "10.0.0.0/8"
+  rule_collection_group_name: "winget-rules"
+  rule_collection_name: "winget-download"
+  priority: 500
+
+
+# =============================================================================
+# winget 基礎設施端點
+# 用途：winget 用戶端運作時必定存取的網域（所有套件共用）
+# =============================================================================
+winget_base_fqdns:
+  - fqdn: "cdn.winget.microsoft.com"
+    category: "winget-source"
+    description: "winget 套件來源索引與 manifest"
+  - fqdn: "winget.azureedge.net"
+    category: "winget-source"
+    description: "winget 套件來源 CDN"

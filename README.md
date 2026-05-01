@@ -1,0 +1,217 @@
+# winget Azure Firewall Policy 分析工具
+
+分析 winget 套件的下載路徑，自動產生 Azure Firewall Policy Application Rule 建議，確保企業環境中 winget 可正常運作。
+
+## 這個工具解決什麼問題？
+
+企業透過 Azure Firewall 控管出站流量時，需要知道 winget 安裝每個套件時會存取哪些網域。手動測試數百個套件不切實際，這個工具自動化完成：
+
+1. 查詢 winget 套件的安裝檔下載 URL
+2. 追蹤每個 URL 的 HTTP 重導向鏈（github.com → CDN → 最終下載位置）
+3. 產出精確到 **URL path 層級**的 Azure Firewall 規則（需啟用 TLS Inspection）
+4. 同時提供 FQDN 層級規則作為備用
+
+---
+
+## 👤 給套件維護人員
+
+### 快速開始
+
+```bash
+# 1. 設定環境（首次）
+python3.14 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# 2. 分析指定套件（輸出 Markdown + 下載腳本）
+GITHUB_TOKEN=$(gh auth token) python main.py Git.Git GitHub.cli GitHub.GitHubDesktop
+```
+
+執行後會產生：
+- **stdout** — Markdown 格式的防火牆規則維護清單
+- **download.sh** — Bash 一鍵下載腳本（使用 curl）
+- **download.ps1** — PowerShell 一鍵下載腳本（使用 Invoke-WebRequest）
+
+### 日常維護流程
+
+#### 分析特定套件
+
+```bash
+# 分析單一套件
+GITHUB_TOKEN=$(gh auth token) python main.py Microsoft.PowerToys > firewall-rules.md
+
+# 分析多個套件
+GITHUB_TOKEN=$(gh auth token) python main.py Git.Git GitHub.cli Microsoft.VisualStudioCode > firewall-rules.md
+```
+
+#### 批次分析所有允許的套件
+
+```bash
+# 先確認會分析哪些套件（dry-run）
+GITHUB_TOKEN=$(gh auth token) python main.py --all --dry-run
+
+# 正式分析（⚠️ 約 300 個套件，需要數分鐘）
+GITHUB_TOKEN=$(gh auth token) python main.py --all > firewall-rules.md
+```
+
+#### 不同輸出格式
+
+```bash
+# Markdown 維護清單（預設）
+python main.py Git.Git -f md > firewall-rules.md
+
+# JSON（ARM Template 相容，可直接部署）
+python main.py Git.Git -f json > rules.json
+
+# CSV（匯入試算表審閱）
+python main.py Git.Git -f csv > rules.csv
+
+# Azure CLI 部署腳本
+python main.py Git.Git -f cli > deploy.sh
+```
+
+#### 不需要下載腳本時
+
+```bash
+python main.py Git.Git --no-download-scripts > firewall-rules.md
+```
+
+### 管理允許/封鎖清單
+
+編輯 `config.yaml` 即可：
+
+```yaml
+# 允許清單 — 定義要分析的套件範圍
+allowlist:
+  packages:
+    - "Microsoft.*"
+    - "GitHub.*"
+
+# 封鎖清單 — 排除不需要的套件（優先於允許清單）
+blocklist:
+  packages:
+    - "Microsoft.*.Preview"      # Preview 版本
+    - "Microsoft.*.Beta"         # Beta 版本
+    - "Microsoft.VisualStudio.*.Community"  # VS Community
+```
+
+修改後重新執行 `--all --dry-run` 確認結果。
+
+### 套件清單與資安報告
+
+`packages-list.md` 包含：
+- **分類摘要** — 16 個分類，每個分類的套件數量
+- **資安風險評估** — 🔴 高 / 🟡 中 / 🟢 低風險標注
+- **紅隊工具對照** — MITRE ATT&CK 戰術對應
+- **存取控制建議** — 四級分級（IT 管理員 / 開發人員 / 需審批 / 一般使用者）
+
+### GITHUB_TOKEN
+
+`--all` 模式需要大量 GitHub API 呼叫（約 400+ 次），未認證配額僅 60 次/小時。設定方式：
+
+```bash
+# 方式一：使用 gh CLI（推薦）
+GITHUB_TOKEN=$(gh auth token) python main.py --all
+
+# 方式二：設定環境變數
+export GITHUB_TOKEN="ghp_你的token"
+python main.py --all
+```
+
+---
+
+## 🛠️ 給開發人員
+
+### 專案結構
+
+```
+├── main.py                        # CLI 入口
+├── config.yaml                    # 允許/封鎖清單與防火牆設定
+├── requirements.txt               # Python 依賴
+├── pyproject.toml                 # pytest 設定
+├── packages-list.md               # 套件分類與資安報告
+├── src/
+│   ├── models.py                  # 資料模型（RedirectHop, FirewallRule 等）
+│   ├── winget_api.py              # GitHub API 查詢 winget-pkgs manifest
+│   ├── redirect_tracer.py         # HTTP 重導向鏈追蹤（HEAD 優先，GET fallback）
+│   ├── rule_generator.py          # Azure Firewall 規則產生器
+│   ├── formatters.py              # 輸出格式化（JSON/CSV/CLI/Markdown）
+│   ├── download_scripts.py        # 下載腳本產生器（Bash/PowerShell）
+│   ├── package_discovery.py       # 遞迴掃描 winget-pkgs 探索套件
+│   └── blocklist.py               # 允許/封鎖清單 fnmatch 過濾
+└── tests/
+    ├── test_models.py
+    ├── test_winget_api.py
+    ├── test_redirect_tracer.py
+    ├── test_rule_generator.py
+    ├── test_formatters.py
+    ├── test_download_scripts.py
+    ├── test_blocklist.py
+    ├── test_package_discovery.py
+    └── test_integration.py        # 整合測試（需網路）
+```
+
+### 開發環境設定
+
+```bash
+python3.14 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 執行測試
+
+```bash
+# 單元測試（120 個，不需網路）
+python -m pytest tests/ --ignore=tests/test_integration.py -v
+
+# 整合測試（需網路，測試 Git.Git / GitHub.cli / GitHub.GitHubDesktop）
+GITHUB_TOKEN=$(gh auth token) python -m pytest tests/test_integration.py -v
+
+# 執行單一測試
+python -m pytest tests/test_blocklist.py::TestIsBlocked::test_edge_beta_blocked -v
+```
+
+### 核心流程
+
+```
+使用者輸入套件 ID
+    │
+    ▼
+winget_api.py ── GitHub API 查詢 winget-pkgs 倉庫
+    │              └─ manifests/{letter}/{Publisher}/{Name}/{version}/
+    │                  └─ *.installer.yaml → InstallerUrl
+    ▼
+redirect_tracer.py ── HEAD 請求逐跳追蹤重導向鏈
+    │                   └─ github.com → 302 → release-assets.githubusercontent.com → 200
+    ▼
+rule_generator.py ── 收集所有 FQDN，產生規則
+    │                  ├─ targetUrls（path 層級，TLS Inspection）
+    │                  └─ targetFqdns（FQDN 層級，備用）
+    ▼
+formatters.py ── 輸出 JSON / CSV / CLI / Markdown
+```
+
+### 關鍵設計決策
+
+- **資料來源**：GitHub API 查詢 `microsoft/winget-pkgs`，非 winget REST API（社群套件不在 storeedgefd 端點）
+- **重導向追蹤**：HEAD 優先，403/405 時 fallback 到 GET + `Range: bytes=0-0`，避免下載完整檔案
+- **版本萬用字元**：URL path 中的版本號與 UUID 自動替換為 `*`，版本更新時不需修改規則
+- **Query string 移除**：`targetUrls` 不包含 query string（簽章參數會過期）
+- **Leaf 套件判斷**：子目錄名稱符合 `x.y` 格式才視為版本目錄（避免 `2022` 被誤判）
+
+### 新增輸出格式
+
+在 `src/formatters.py` 新增函式，然後在 `main.py` 的 format 分支加入即可。
+
+### 新增封鎖規則
+
+編輯 `config.yaml` 的 `blocklist.packages`，支援 `fnmatch` 萬用字元：
+- `Microsoft.*.Beta` — 匹配所有 Beta 版
+- `Microsoft.VisualStudio.*.Community` — 匹配所有年份的 VS Community
+
+---
+
+## 授權
+
+內部工具，僅供企業內部使用。

@@ -1,0 +1,219 @@
+"""稽核日誌 — 記錄每次套件清單更新與軟體分析的完整歷程"""
+
+from __future__ import annotations
+
+import getpass
+import hashlib
+import json
+import os
+import platform
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from typing import Any
+
+from src.models import PackageManifest
+
+AUDIT_DIR = Path("audit_logs")
+TZ = timezone(timedelta(hours=8))
+
+
+def _now() -> str:
+    return datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S %Z")
+
+
+def _now_filename() -> str:
+    return datetime.now(TZ).strftime("%Y%m%d_%H%M%S")
+
+
+def _file_sha256(path: str | Path) -> str:
+    """計算檔案 SHA-256。"""
+    h = hashlib.sha256()
+    p = Path(path)
+    if not p.exists():
+        return ""
+    with open(p, "rb") as f:
+        for chunk in iter(lambda: f.read(8192), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def _get_operator() -> str:
+    """取得操作人員資訊。"""
+    user = getpass.getuser()
+    hostname = platform.node()
+    return f"{user}@{hostname}"
+
+
+def ensure_audit_dir() -> Path:
+    """確保稽核日誌目錄存在。"""
+    AUDIT_DIR.mkdir(parents=True, exist_ok=True)
+    return AUDIT_DIR
+
+
+def write_audit_log(
+    manifests: list[PackageManifest],
+    config_path: str = "config.yaml",
+    output_files: dict[str, str] | None = None,
+) -> Path:
+    """寫入稽核日誌（JSON 格式）。
+
+    記錄內容：
+    - 操作時間、操作人員、執行環境
+    - 設定檔快照（allowlist / blocklist SHA-256）
+    - 每個套件的版本、安裝檔 URL、SHA-256（manifest 中的值）
+    - 產出檔案清單與 SHA-256
+    """
+    audit_dir = ensure_audit_dir()
+    timestamp = _now_filename()
+
+    # 套件詳細記錄
+    packages_record: list[dict[str, Any]] = []
+    for manifest in manifests:
+        installers_record = []
+        for inst in manifest.installers:
+            fqdns = []
+            for hop in inst.redirect_chain:
+                if hop.fqdn:
+                    fqdns.append(hop.fqdn)
+
+            installers_record.append({
+                "url": inst.url,
+                "architecture": inst.architecture,
+                "scope": inst.scope,
+                "installer_type": inst.installer_type,
+                "redirect_chain_fqdns": fqdns,
+            })
+
+        packages_record.append({
+            "package_id": manifest.package_id,
+            "version": manifest.version,
+            "publisher": manifest.publisher,
+            "installer_count": len(manifest.installers),
+            "installers": installers_record,
+        })
+
+    # 產出檔案記錄
+    output_files_record: dict[str, dict[str, str]] = {}
+    if output_files:
+        for name, path in output_files.items():
+            p = Path(path)
+            output_files_record[name] = {
+                "path": str(p.resolve()) if p.exists() else path,
+                "sha256": _file_sha256(p),
+                "size_bytes": str(p.stat().st_size) if p.exists() else "0",
+            }
+
+    audit_entry = {
+        "audit_version": "1.0",
+        "timestamp": _now(),
+        "operator": _get_operator(),
+        "environment": {
+            "os": platform.platform(),
+            "python": platform.python_version(),
+            "hostname": platform.node(),
+        },
+        "config": {
+            "path": config_path,
+            "sha256": _file_sha256(config_path),
+        },
+        "summary": {
+            "total_packages_analyzed": len(manifests),
+            "package_ids": [m.package_id for m in manifests],
+        },
+        "packages": packages_record,
+        "output_files": output_files_record,
+    }
+
+    # 寫入 JSON
+    log_path = audit_dir / f"audit_{timestamp}.json"
+    with open(log_path, "w", encoding="utf-8") as f:
+        json.dump(audit_entry, f, indent=2, ensure_ascii=False)
+
+    return log_path
+
+
+def write_changelog_entry(
+    manifests: list[PackageManifest],
+    previous_log: Path | None = None,
+) -> Path:
+    """寫入變更記錄（Markdown 追加格式），記錄版本變更。"""
+    changelog_path = AUDIT_DIR / "CHANGELOG.md"
+    ensure_audit_dir()
+
+    # 讀取上一次的套件版本（若有）
+    previous_versions: dict[str, str] = {}
+    if previous_log and previous_log.exists():
+        with open(previous_log, encoding="utf-8") as f:
+            prev_data = json.load(f)
+        for pkg in prev_data.get("packages", []):
+            previous_versions[pkg["package_id"]] = pkg["version"]
+
+    # 比對差異
+    new_packages: list[str] = []
+    updated_packages: list[tuple[str, str, str]] = []  # (id, old, new)
+    unchanged_packages: list[str] = []
+
+    for manifest in manifests:
+        pid = manifest.package_id
+        if pid not in previous_versions:
+            new_packages.append(f"`{pid}` v{manifest.version}")
+        elif previous_versions[pid] != manifest.version:
+            updated_packages.append((pid, previous_versions[pid], manifest.version))
+        else:
+            unchanged_packages.append(pid)
+
+    # 產出 Markdown 段落
+    entry_lines = [
+        f"## {_now()}",
+        "",
+        f"- **操作人員**：{_get_operator()}",
+        f"- **分析套件數**：{len(manifests)}",
+    ]
+
+    if updated_packages:
+        entry_lines.extend(["", "### 版本更新", ""])
+        entry_lines.append("| 套件 | 舊版本 | 新版本 |")
+        entry_lines.append("|---|---|---|")
+        for pid, old, new in sorted(updated_packages):
+            entry_lines.append(f"| `{pid}` | {old} | {new} |")
+
+    if new_packages:
+        entry_lines.extend(["", "### 新增套件", ""])
+        for p in sorted(new_packages):
+            entry_lines.append(f"- {p}")
+
+    if not updated_packages and not new_packages:
+        entry_lines.extend(["", "無版本變更。"])
+
+    entry_lines.extend([
+        "",
+        f"未變更套件：{len(unchanged_packages)} 個",
+        "",
+        "---",
+        "",
+    ])
+
+    entry_text = "\n".join(entry_lines)
+
+    # 追加到 CHANGELOG
+    if changelog_path.exists():
+        existing = changelog_path.read_text(encoding="utf-8")
+        # 插入到標題之後
+        if existing.startswith("# "):
+            header_end = existing.index("\n") + 1
+            new_content = existing[:header_end] + "\n" + entry_text + existing[header_end:]
+        else:
+            new_content = entry_text + existing
+    else:
+        new_content = "# winget 套件變更記錄（稽核用）\n\n" + entry_text
+
+    changelog_path.write_text(new_content, encoding="utf-8")
+    return changelog_path
+
+
+def get_latest_audit_log() -> Path | None:
+    """取得最新的稽核日誌檔案路徑。"""
+    if not AUDIT_DIR.exists():
+        return None
+    logs = sorted(AUDIT_DIR.glob("audit_*.json"))
+    return logs[-1] if logs else None

@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+    "slow: 需要網路連線的整合測試",
+]
