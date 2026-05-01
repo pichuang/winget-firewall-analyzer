@@ -23,12 +23,16 @@ python3.14 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 
-# 2. 分析指定套件（輸出 Markdown + 下載腳本）
-GITHUB_TOKEN=$(gh auth token) python main.py Microsoft.Git GitHub.cli GitHub.GitHubDesktop
+# 2. 一鍵分析（自動探索 config.yaml 中所有允許的套件）
+python main.py
 ```
 
+- 未指定套件時，自動使用 `--all` 模式依 `config.yaml` 探索
+- 自動偵測 `gh auth token` 取得 GITHUB_TOKEN（無需手動設定）
+- 結果自動寫入 `generated/` 資料夾
+
 執行後會產生：
-- **stdout** — Markdown 格式的防火牆規則維護清單
+- **generated/firewall-rules.md** — 防火牆規則維護清單（Markdown）
 - **generated/download.sh** — Bash 一鍵下載腳本（使用 curl）
 - **generated/download.ps1** — PowerShell 一鍵下載腳本（使用 Invoke-WebRequest）
 
@@ -37,43 +41,42 @@ GITHUB_TOKEN=$(gh auth token) python main.py Microsoft.Git GitHub.cli GitHub.Git
 #### 分析特定套件
 
 ```bash
-# 分析單一套件
-GITHUB_TOKEN=$(gh auth token) python main.py Microsoft.PowerToys > generated/firewall-rules.md
-
-# 分析多個套件
-GITHUB_TOKEN=$(gh auth token) python main.py Microsoft.Git GitHub.cli Microsoft.VisualStudioCode > generated/firewall-rules.md
+python main.py Microsoft.PowerToys
+python main.py Microsoft.Git GitHub.cli Microsoft.VisualStudioCode
 ```
 
 #### 批次分析所有允許的套件
 
 ```bash
 # 先確認會分析哪些套件（dry-run）
-GITHUB_TOKEN=$(gh auth token) python main.py --all --dry-run
+python main.py --dry-run
 
 # 正式分析（⚠️ 約 300 個套件，需要數分鐘）
-GITHUB_TOKEN=$(gh auth token) python main.py --all > generated/firewall-rules.md
+python main.py
 ```
 
 #### 不同輸出格式
 
 ```bash
 # Markdown 維護清單（預設）
-python main.py Microsoft.Git -f md > generated/firewall-rules.md
+python main.py Microsoft.Git -f md
 
 # JSON（ARM Template 相容，可直接部署）
-python main.py Microsoft.Git -f json > generated/rules.json
+python main.py Microsoft.Git -f json
 
 # CSV（匯入試算表審閱）
-python main.py Microsoft.Git -f csv > generated/rules.csv
+python main.py Microsoft.Git -f csv
 
 # Azure CLI 部署腳本
-python main.py Microsoft.Git -f cli > generated/deploy.sh
+python main.py Microsoft.Git -f cli
 ```
+
+所有格式皆自動寫入 `generated/` 資料夾（`firewall-rules.md`、`rules.json`、`rules.csv`、`deploy.sh`）。
 
 #### 不需要下載腳本時
 
 ```bash
-python main.py Microsoft.Git --no-download-scripts > generated/firewall-rules.md
+python main.py Microsoft.Git --no-download-scripts
 ```
 
 ### 管理允許/封鎖清單
@@ -107,15 +110,14 @@ blocklist:
 
 ### GITHUB_TOKEN
 
-`--all` 模式需要大量 GitHub API 呼叫（約 400+ 次），未認證配額僅 60 次/小時。設定方式：
+`--all` 模式需要大量 GitHub API 呼叫（約 400+ 次），未認證配額僅 60 次/小時。
+
+程式會自動透過 `gh auth token` 取得認證，前提是已執行過 `gh auth login`。也可手動設定：
 
 ```bash
-# 方式一：使用 gh CLI（推薦）
-GITHUB_TOKEN=$(gh auth token) python main.py --all
-
-# 方式二：設定環境變數
+# 手動設定環境變數（覆蓋自動偵測）
 export GITHUB_TOKEN="ghp_你的token"
-python main.py --all
+python main.py
 ```
 
 ---
@@ -172,7 +174,7 @@ pip install -r requirements.txt
 python -m pytest tests/ --ignore=tests/test_integration.py -v
 
 # 整合測試（需網路，測試 Microsoft.Git / GitHub.cli / GitHub.GitHubDesktop）
-GITHUB_TOKEN=$(gh auth token) python -m pytest tests/test_integration.py -v
+python -m pytest tests/test_integration.py -v
 
 # 執行單一測試
 python -m pytest tests/test_blocklist.py::TestIsBlocked::test_edge_beta_blocked -v

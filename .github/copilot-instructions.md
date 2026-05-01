@@ -5,6 +5,11 @@
 - 所有程式碼註解、commit message、文件、CLI 輸出訊息一律使用**繁體中文**
 - 變數名稱與函式名稱使用英文（snake_case）
 
+## 變更後必做事項
+
+- **每次修改程式碼或行為後，必須同步更新 `README.md`**，確保文件與實際行為一致
+- 涉及 CLI 參數、輸出路徑、預設行為、環境需求等變更時尤其重要
+
 ## 專案概述
 
 此工具針對 **winget（Windows Package Manager）** 的套件下載流程，透過 **winget REST API 查詢 + HTTP 重導向追蹤** 的方式，在 macOS 上分析 winget 安裝特定套件時實際會存取的所有 FQDN，產生精確的 Azure Firewall Policy Application Rule 清單。目標是達到最小開放原則（least-privilege），僅放行 winget 運作所需的網域。

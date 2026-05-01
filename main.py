@@ -72,13 +72,30 @@ async def main_async(args: argparse.Namespace) -> None:
     # blocklist 從同一份設定檔讀取
     blocklist_config = {"blocklist": config.get("blocklist", {"enabled": False, "publishers": [], "packages": []})}
 
-    # 建立 HTTP client（支援 GITHUB_TOKEN 環境變數）
+    # 建立 HTTP client（支援 GITHUB_TOKEN 環境變數，或自動從 gh CLI 取得）
     import os
+    import subprocess
     headers: dict[str, str] = {}
     github_token = os.environ.get("GITHUB_TOKEN")
+    if not github_token:
+        try:
+            result = subprocess.run(
+                ["gh", "auth", "token"],
+                capture_output=True, text=True, timeout=5,
+            )
+            if result.returncode == 0 and result.stdout.strip():
+                github_token = result.stdout.strip()
+                print("🔑 已透過 gh CLI 取得 GITHUB_TOKEN", file=sys.stderr)
+        except (FileNotFoundError, subprocess.TimeoutExpired):
+            pass
     if github_token:
         headers["Authorization"] = f"token {github_token}"
-        print("🔑 已偵測 GITHUB_TOKEN，使用認證模式（API 配額較高）", file=sys.stderr)
+        if not os.environ.get("GITHUB_TOKEN"):
+            pass  # 已在上方印過訊息
+        else:
+            print("🔑 已偵測 GITHUB_TOKEN 環境變數，使用認證模式（API 配額較高）", file=sys.stderr)
+    else:
+        print("⚠️  未偵測到 GITHUB_TOKEN，API 配額較低（建議執行 gh auth login）", file=sys.stderr)
 
     async with httpx.AsyncClient(
         headers=headers,
@@ -159,6 +176,8 @@ async def main_async(args: argparse.Namespace) -> None:
     rcg_name = firewall_config.get("rule_collection_group_name", "winget-rules")
     priority = firewall_config.get("priority", 500)
 
+    format_ext_map = {"json": "rules.json", "csv": "rules.csv", "cli": "deploy.sh", "md": "firewall-rules.md"}
+
     if args.format == "json":
         output = format_json(all_rules, rc_name, rcg_name, priority)
     elif args.format == "csv":
@@ -177,15 +196,21 @@ async def main_async(args: argparse.Namespace) -> None:
     else:
         output = format_json(all_rules, rc_name, rcg_name, priority)
 
-    print(output)
+    # 自動寫入 generated/ 資料夾
+    generated_dir = Path("generated")
+    generated_dir.mkdir(exist_ok=True)
+    output_filename = format_ext_map.get(args.format, "rules.json")
+    output_path = generated_dir / output_filename
+    output_path.write_text(output, encoding="utf-8")
+    if args.format == "cli":
+        output_path.chmod(0o755)
+    print(f"\n📄 已寫入: {output_path.resolve()}", file=sys.stderr)
 
     # 產生下載腳本
     if args.download_scripts and all_manifests:
         bash_script = generate_download_bash(all_manifests)
         ps1_script = generate_download_ps1(all_manifests)
 
-        generated_dir = Path("generated")
-        generated_dir.mkdir(exist_ok=True)
         bash_path = generated_dir / "download.sh"
         ps1_path = generated_dir / "download.ps1"
 
@@ -268,8 +293,10 @@ def main() -> None:
 
     args = parser.parse_args()
 
+    # 未指定任何套件時，預設使用 --all 模式
     if not args.all and not args.packages:
-        parser.error("請指定套件識別碼，或使用 --all 從 config.yaml 自動探索")
+        args.all = True
+        print("ℹ️  未指定套件，自動使用 --all 模式（依 config.yaml 探索）", file=sys.stderr)
 
     asyncio.run(main_async(args))
 
