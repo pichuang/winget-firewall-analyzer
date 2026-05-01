@@ -22,7 +22,7 @@ def _build_manifest_path(package_id: str) -> str:
     PackageIdentifier 以第一個 '.' 分割為 Publisher 與 PackageName 部分。
 
     範例：
-        Git.Git         → manifests/g/Git/Git
+        Microsoft.Git   → manifests/m/Microsoft/Git
         GitHub.cli      → manifests/g/GitHub/cli
         GitHub.GitHubDesktop → manifests/g/GitHub/GitHubDesktop
         Microsoft.VisualStudioCode → manifests/m/Microsoft/VisualStudioCode

@@ -13,17 +13,17 @@ from src.models import InstallerInfo, PackageManifest
 def _make_manifests() -> list[PackageManifest]:
     return [
         PackageManifest(
-            package_id="Git.Git",
-            version="2.54.0",
-            publisher="Git",
+            package_id="Microsoft.Git",
+            version="2.48.0.vfs.0.0",
+            publisher="Microsoft Corporation",
             installers=[
                 InstallerInfo(
-                    url="https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-64-bit.exe",
+                    url="https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe",
                     architecture="x64",
                     scope="user",
                 ),
                 InstallerInfo(
-                    url="https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-arm64.exe",
+                    url="https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-arm64.exe",
                     architecture="arm64",
                     scope="machine",
                 ),
@@ -70,7 +70,7 @@ class TestGenerateDownloadBash:
 
     def test_contains_package_sections(self) -> None:
         output = generate_download_bash(_make_manifests())
-        assert "Git.Git v2.54.0" in output
+        assert "Microsoft.Git v2.48.0.vfs.0.0" in output
         assert "GitHub.cli v2.92.0" in output
 
     def test_contains_curl_commands(self) -> None:
@@ -79,8 +79,8 @@ class TestGenerateDownloadBash:
 
     def test_contains_installer_urls(self) -> None:
         output = generate_download_bash(_make_manifests())
-        assert "Git-2.54.0-64-bit.exe" in output
-        assert "Git-2.54.0-arm64.exe" in output
+        assert "Git-2.48.0.vfs.0.0-64-bit.exe" in output
+        assert "Git-2.48.0.vfs.0.0-arm64.exe" in output
         assert "gh_2.92.0_windows_amd64.msi" in output
 
     def test_creates_directories(self) -> None:
@@ -106,7 +106,7 @@ class TestGenerateDownloadPs1:
 
     def test_contains_package_sections(self) -> None:
         output = generate_download_ps1(_make_manifests())
-        assert "Git.Git v2.54.0" in output
+        assert "Microsoft.Git v2.48.0.vfs.0.0" in output
         assert "GitHub.cli v2.92.0" in output
 
     def test_contains_invoke_webrequest(self) -> None:
@@ -115,7 +115,7 @@ class TestGenerateDownloadPs1:
 
     def test_contains_installer_urls(self) -> None:
         output = generate_download_ps1(_make_manifests())
-        assert "Git-2.54.0-64-bit.exe" in output
+        assert "Git-2.48.0.vfs.0.0-64-bit.exe" in output
         assert "gh_2.92.0_windows_amd64.msi" in output
 
     def test_creates_directories(self) -> None:
@@ -133,4 +133,4 @@ class TestGenerateDownloadPs1:
 
     def test_uses_backslash_paths(self) -> None:
         output = generate_download_ps1(_make_manifests())
-        assert "Git\\Git" in output
+        assert "Microsoft\\Git" in output

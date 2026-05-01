@@ -14,21 +14,21 @@ def _make_test_rules() -> list[FirewallRule]:
     """建立測試用規則"""
     return [
         FirewallRule(
-            name="winget-git-git-path",
+            name="winget-microsoft-git-path",
             target_urls=[
-                "github.com/git-for-windows/git/releases/download/*/Git-*-64-bit.exe",
+                "github.com/microsoft/git/releases/download/*/Git-*-64-bit.exe",
                 "release-assets.githubusercontent.com/github-production-release-asset-*/*",
             ],
             source_addresses=["10.0.0.0/8"],
-            description="winget 套件 Git.Git 下載所需路徑",
-            package_id="Git.Git",
+            description="winget 套件 Microsoft.Git 下載所需路徑",
+            package_id="Microsoft.Git",
         ),
         FirewallRule(
-            name="winget-git-git-fqdn",
+            name="winget-microsoft-git-fqdn",
             target_fqdns=["github.com", "release-assets.githubusercontent.com"],
             source_addresses=["10.0.0.0/8"],
-            description="winget 套件 Git.Git 下載所需網域",
-            package_id="Git.Git",
+            description="winget 套件 Microsoft.Git 下載所需網域",
+            package_id="Microsoft.Git",
         ),
     ]
 
@@ -97,7 +97,7 @@ class TestFormatCsv:
     def test_contains_package_id(self) -> None:
         rules = _make_test_rules()
         output = format_csv(rules)
-        assert "Git.Git" in output
+        assert "Microsoft.Git" in output
 
 
 class TestFormatAzureCli:
@@ -111,8 +111,8 @@ class TestFormatAzureCli:
     def test_contains_rule_names(self) -> None:
         rules = _make_test_rules()
         output = format_azure_cli(rules)
-        assert "winget-git-git-path" in output
-        assert "winget-git-git-fqdn" in output
+        assert "winget-microsoft-git-path" in output
+        assert "winget-microsoft-git-fqdn" in output
 
     def test_contains_target_urls_flag(self) -> None:
         rules = _make_test_rules()
@@ -134,20 +134,20 @@ def _make_test_manifests() -> list[PackageManifest]:
     """建立測試用 manifest"""
     return [
         PackageManifest(
-            package_id="Git.Git",
-            version="2.54.0",
-            publisher="Git",
+            package_id="Microsoft.Git",
+            version="2.48.0.vfs.0.0",
+            publisher="Microsoft Corporation",
             installers=[
                 InstallerInfo(
-                    url="https://github.com/git-for-windows/git/releases/download/v2.54.0/Git-2.54.0-64-bit.exe",
+                    url="https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe",
                     architecture="x64",
                     scope="user",
                     installer_type="inno",
                     redirect_chain=[
                         RedirectHop(
-                            url="https://github.com/git-for-windows/git/releases/download/v2.54.0/Git-2.54.0-64-bit.exe",
+                            url="https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe",
                             fqdn="github.com",
-                            path="/git-for-windows/git/releases/download/v2.54.0/Git-2.54.0-64-bit.exe",
+                            path="/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe",
                             status_code=302,
                             is_final=False,
                         ),
@@ -211,9 +211,9 @@ class TestFormatMarkdown:
         rules = _make_test_rules()
         output = format_markdown(manifests, rules)
 
-        # github.com 應標示 Git.Git
+        # github.com 應標示 Microsoft.Git
         lines = output.split("\n")
-        github_lines = [l for l in lines if "github.com" in l and "Git.Git" in l]
+        github_lines = [l for l in lines if "github.com" in l and "Microsoft.Git" in l]
         assert len(github_lines) > 0
 
     def test_contains_maintenance_tracker(self) -> None:
@@ -223,8 +223,8 @@ class TestFormatMarkdown:
         output = format_markdown(manifests, rules)
 
         assert "規則維護追蹤" in output
-        assert "`Git.Git`" in output
-        assert "2.54.0" in output
+        assert "`Microsoft.Git`" in output
+        assert "2.48.0.vfs.0.0" in output
         assert "已分析" in output
 
     def test_contains_maintenance_suggestions(self) -> None:
@@ -242,7 +242,7 @@ class TestFormatMarkdown:
         rules = _make_test_rules()
         output = format_markdown(manifests, rules)
 
-        assert "📦 Git.Git" in output
+        assert "📦 Microsoft.Git" in output
         assert "下載路徑分析" in output
         assert "Path 層級規則" in output
         assert "FQDN 層級規則" in output

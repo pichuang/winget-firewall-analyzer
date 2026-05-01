@@ -19,7 +19,7 @@
 
 ```bash
 # 分析單一套件
-python main.py Git.Git
+python main.py Microsoft.Git
 
 # 分析多個套件
 python main.py GitHub.cli GitHub.GitHubDesktop
@@ -34,16 +34,16 @@ python main.py --all
 
 | 套件識別碼 | 預期下載來源 |
 |---|---|
-| `Git.Git` | GitHub Release（多次重導向） |
+| `Microsoft.Git` | GitHub Release（多次重導向） |
 | `GitHub.cli` | GitHub Release |
 | `GitHub.GitHubDesktop` | GitHub Release / Squirrel 更新機制 |
 
 測試時應確認這三個套件皆能正確產出 path 層級的 Azure Firewall Policy 規則。
 
-輸入 `Git.Git` 時，程式應：
+輸入 `Microsoft.Git` 時，程式應：
 
-1. 查詢 winget REST API 取得 `Git.Git` 的所有版本 manifest
-2. 取出最新版的 `InstallerUrl`（例如 `https://github.com/git-for-windows/git/releases/download/v2.47.0.windows.1/Git-2.47.0-64-bit.exe`）
+1. 查詢 winget REST API 取得 `Microsoft.Git` 的所有版本 manifest
+2. 取出最新版的 `InstallerUrl`（例如 `https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe`）
 3. 追蹤該 URL 的完整重導向鏈，記錄每一跳的 FQDN + 完整 URL path
 4. 產出該套件所需的 Azure Firewall Policy Application Rule 建議
 
@@ -168,10 +168,10 @@ pip install -r requirements.txt
 ### 規則產出要求
 
 - **預設產出 path 層級規則**（`targetUrls`），同時附帶 FQDN 層級（`targetFqdns`）作為備用
-- 每個規則須標註對應的套件識別碼（如 `Git.Git`）與用途分類
+- 每個規則須標註對應的套件識別碼（如 `Microsoft.Git`）與用途分類
 - `targetUrls` 中的版本號部分應替換為萬用字元 `*`，以便版本更新時無需修改規則
 - `sourceAddresses` 預設為設定檔中的值，不寫死
-- 規則命名格式：`winget-{package-id}-{用途}`（如 `winget-git.git-download`）
+- 規則命名格式：`winget-{package-id}-{用途}`（如 `winget-microsoft.git-download`）
 
 ### 輸出格式
 

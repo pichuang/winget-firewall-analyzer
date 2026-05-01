@@ -97,7 +97,7 @@ class TestFqdnEntry:
             fqdn="github.com",
             category=FqdnCategory.DOWNLOAD,
             confidence=Confidence.HIGH,
-            source_package="Git.Git",
+            source_package="Microsoft.Git",
             sample_paths=["/git-for-windows/git/releases/download/v2.54.0/Git.exe"],
         )
         assert entry.fqdn == "github.com"

@@ -11,15 +11,15 @@ from src.winget_api import fetch_package
 
 
 @pytest.mark.slow
-class TestIntegrationGitGit:
-    """整合測試：Git.Git 套件"""
+class TestIntegrationMicrosoftGit:
+    """整合測試：Microsoft.Git 套件"""
 
     @pytest.mark.asyncio
-    async def test_fetch_and_trace_git(self) -> None:
+    async def test_fetch_and_trace_microsoft_git(self) -> None:
         async with httpx.AsyncClient(follow_redirects=False, timeout=30.0) as client:
-            manifest = await fetch_package(client, "Git.Git")
+            manifest = await fetch_package(client, "Microsoft.Git")
 
-            assert manifest.package_id == "Git.Git"
+            assert manifest.package_id == "Microsoft.Git"
             assert len(manifest.installers) > 0
 
             # 追蹤第一個 installer 的重導向

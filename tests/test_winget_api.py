@@ -20,7 +20,7 @@ class TestBuildManifestPath:
     """測試 manifest 路徑建構"""
 
     def test_two_part_id(self) -> None:
-        assert _build_manifest_path("Git.Git") == "manifests/g/Git/Git"
+        assert _build_manifest_path("Microsoft.Git") == "manifests/m/Microsoft/Git"
 
     def test_github_cli(self) -> None:
         assert _build_manifest_path("GitHub.cli") == "manifests/g/GitHub/cli"
@@ -70,7 +70,7 @@ class TestListVersions:
         client = AsyncMock(spec=httpx.AsyncClient)
         client.get = AsyncMock(return_value=mock_response)
 
-        versions = await list_versions(client, "Git.Git")
+        versions = await list_versions(client, "Microsoft.Git")
         assert versions == ["2.53.0", "2.54.0"]
         assert "PreRelease" not in versions
 
@@ -79,21 +79,21 @@ class TestFetchInstallerManifest:
     """測試 installer manifest 解析"""
 
     SAMPLE_INSTALLER_YAML = """\
-PackageIdentifier: Git.Git
-PackageVersion: 2.54.0
+PackageIdentifier: Microsoft.Git
+PackageVersion: 2.48.0.vfs.0.0
 InstallerType: inno
 Installers:
 - Architecture: x64
   Scope: user
-  InstallerUrl: https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-64-bit.exe
+  InstallerUrl: https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe
   InstallerSha256: ABC123
 - Architecture: x64
   Scope: machine
-  InstallerUrl: https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-64-bit.exe
+  InstallerUrl: https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe
   InstallerSha256: ABC123
 - Architecture: arm64
   Scope: user
-  InstallerUrl: https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-arm64.exe
+  InstallerUrl: https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-arm64.exe
   InstallerSha256: DEF456
 """
 
@@ -108,15 +108,15 @@ Installers:
         client = AsyncMock(spec=httpx.AsyncClient)
         client.get = AsyncMock(return_value=mock_response)
 
-        manifest = await fetch_installer_manifest(client, "Git.Git", "2.54.0")
+        manifest = await fetch_installer_manifest(client, "Microsoft.Git", "2.48.0.vfs.0.0")
 
-        assert manifest.package_id == "Git.Git"
-        assert manifest.version == "2.54.0"
+        assert manifest.package_id == "Microsoft.Git"
+        assert manifest.version == "2.48.0.vfs.0.0"
         # 同一 URL 應去重（x64 user 和 machine 的 URL 相同）
         assert len(manifest.installers) == 2
         urls = {inst.url for inst in manifest.installers}
-        assert "https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-64-bit.exe" in urls
-        assert "https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-arm64.exe" in urls
+        assert "https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe" in urls
+        assert "https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-arm64.exe" in urls
 
     @pytest.mark.asyncio
     async def test_parse_manifest_extracts_architecture(self) -> None:
@@ -129,7 +129,7 @@ Installers:
         client = AsyncMock(spec=httpx.AsyncClient)
         client.get = AsyncMock(return_value=mock_response)
 
-        manifest = await fetch_installer_manifest(client, "Git.Git", "2.54.0")
+        manifest = await fetch_installer_manifest(client, "Microsoft.Git", "2.48.0.vfs.0.0")
 
         architectures = {inst.architecture for inst in manifest.installers}
         assert "x64" in architectures

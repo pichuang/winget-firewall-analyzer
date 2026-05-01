@@ -24,7 +24,7 @@ class TestMatchesAnyPattern:
         assert matches_any_pattern("microsoft.powertoys", ["Microsoft.*"])
 
     def test_no_match(self) -> None:
-        assert not matches_any_pattern("Git.Git", ["Microsoft.*"])
+        assert not matches_any_pattern("7zip.7zip", ["Microsoft.*"])
 
     def test_beta_pattern(self) -> None:
         assert matches_any_pattern("Microsoft.Edge.Beta", ["Microsoft.*.Beta"])
@@ -126,11 +126,11 @@ class TestIsInAllowlist:
         assert is_in_allowlist("GitHub.cli", self.ALLOWLIST)
 
     def test_git_not_allowed(self) -> None:
-        assert not is_in_allowlist("Git.Git", self.ALLOWLIST)
+        assert not is_in_allowlist("7zip.7zip", self.ALLOWLIST)
 
     def test_disabled_allows_all(self) -> None:
         al = {"allowlist": {"enabled": False, "packages": ["Microsoft.*"]}}
-        assert is_in_allowlist("Git.Git", al)
+        assert is_in_allowlist("7zip.7zip", al)
 
 
 class TestFilterPackages:
@@ -161,10 +161,10 @@ class TestFilterPackages:
         assert "GitHub.SomeTool.Beta" in blocked
 
     def test_no_blocklist(self) -> None:
-        packages = ["Microsoft.PowerToys", "Git.Git"]
+        packages = ["Microsoft.PowerToys", "7zip.7zip"]
         al = {"allowlist": {"enabled": True, "packages": ["Microsoft.*"]}}
 
         allowed, blocked = filter_packages(packages, al, None)
 
         assert allowed == ["Microsoft.PowerToys"]
-        assert blocked == ["Git.Git"]
+        assert blocked == ["7zip.7zip"]

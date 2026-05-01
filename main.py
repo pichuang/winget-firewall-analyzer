@@ -184,8 +184,10 @@ async def main_async(args: argparse.Namespace) -> None:
         bash_script = generate_download_bash(all_manifests)
         ps1_script = generate_download_ps1(all_manifests)
 
-        bash_path = Path("download.sh")
-        ps1_path = Path("download.ps1")
+        generated_dir = Path("generated")
+        generated_dir.mkdir(exist_ok=True)
+        bash_path = generated_dir / "download.sh"
+        ps1_path = generated_dir / "download.ps1"
 
         bash_path.write_text(bash_script, encoding="utf-8")
         ps1_path.write_text(ps1_script, encoding="utf-8")
@@ -199,8 +201,8 @@ async def main_async(args: argparse.Namespace) -> None:
     if all_manifests:
         output_files: dict[str, str] = {}
         if args.download_scripts:
-            output_files["download.sh"] = "download.sh"
-            output_files["download.ps1"] = "download.ps1"
+            output_files["download.sh"] = "generated/download.sh"
+            output_files["download.ps1"] = "generated/download.ps1"
 
         # 寫入 JSON 稽核日誌
         log_path = write_audit_log(
@@ -228,7 +230,7 @@ def main() -> None:
     parser.add_argument(
         "packages",
         nargs="*",
-        help="要分析的套件識別碼（例如 Git.Git GitHub.cli）",
+        help="要分析的套件識別碼（例如 Microsoft.Git GitHub.cli）",
     )
     parser.add_argument(
         "--all", "-a",
@@ -255,7 +257,7 @@ def main() -> None:
         "--download-scripts",
         action="store_true",
         default=True,
-        help="同時產生一鍵下載腳本（download.sh 和 download.ps1，預設啟用）",
+        help="同時產生一鍵下載腳本（generated/download.sh 和 generated/download.ps1，預設啟用）",
     )
     parser.add_argument(
         "--no-download-scripts",

@@ -24,13 +24,13 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # 2. 分析指定套件（輸出 Markdown + 下載腳本）
-GITHUB_TOKEN=$(gh auth token) python main.py Git.Git GitHub.cli GitHub.GitHubDesktop
+GITHUB_TOKEN=$(gh auth token) python main.py Microsoft.Git GitHub.cli GitHub.GitHubDesktop
 ```
 
 執行後會產生：
 - **stdout** — Markdown 格式的防火牆規則維護清單
-- **download.sh** — Bash 一鍵下載腳本（使用 curl）
-- **download.ps1** — PowerShell 一鍵下載腳本（使用 Invoke-WebRequest）
+- **generated/download.sh** — Bash 一鍵下載腳本（使用 curl）
+- **generated/download.ps1** — PowerShell 一鍵下載腳本（使用 Invoke-WebRequest）
 
 ### 日常維護流程
 
@@ -38,10 +38,10 @@ GITHUB_TOKEN=$(gh auth token) python main.py Git.Git GitHub.cli GitHub.GitHubDes
 
 ```bash
 # 分析單一套件
-GITHUB_TOKEN=$(gh auth token) python main.py Microsoft.PowerToys > firewall-rules.md
+GITHUB_TOKEN=$(gh auth token) python main.py Microsoft.PowerToys > generated/firewall-rules.md
 
 # 分析多個套件
-GITHUB_TOKEN=$(gh auth token) python main.py Git.Git GitHub.cli Microsoft.VisualStudioCode > firewall-rules.md
+GITHUB_TOKEN=$(gh auth token) python main.py Microsoft.Git GitHub.cli Microsoft.VisualStudioCode > generated/firewall-rules.md
 ```
 
 #### 批次分析所有允許的套件
@@ -51,29 +51,29 @@ GITHUB_TOKEN=$(gh auth token) python main.py Git.Git GitHub.cli Microsoft.Visual
 GITHUB_TOKEN=$(gh auth token) python main.py --all --dry-run
 
 # 正式分析（⚠️ 約 300 個套件，需要數分鐘）
-GITHUB_TOKEN=$(gh auth token) python main.py --all > firewall-rules.md
+GITHUB_TOKEN=$(gh auth token) python main.py --all > generated/firewall-rules.md
 ```
 
 #### 不同輸出格式
 
 ```bash
 # Markdown 維護清單（預設）
-python main.py Git.Git -f md > firewall-rules.md
+python main.py Microsoft.Git -f md > generated/firewall-rules.md
 
 # JSON（ARM Template 相容，可直接部署）
-python main.py Git.Git -f json > rules.json
+python main.py Microsoft.Git -f json > generated/rules.json
 
 # CSV（匯入試算表審閱）
-python main.py Git.Git -f csv > rules.csv
+python main.py Microsoft.Git -f csv > generated/rules.csv
 
 # Azure CLI 部署腳本
-python main.py Git.Git -f cli > deploy.sh
+python main.py Microsoft.Git -f cli > generated/deploy.sh
 ```
 
 #### 不需要下載腳本時
 
 ```bash
-python main.py Git.Git --no-download-scripts > firewall-rules.md
+python main.py Microsoft.Git --no-download-scripts > generated/firewall-rules.md
 ```
 
 ### 管理允許/封鎖清單
@@ -130,6 +130,12 @@ python main.py --all
 ├── requirements.txt               # Python 依賴
 ├── pyproject.toml                 # pytest 設定
 ├── packages-list.md               # 套件分類與資安報告
+├── generated/                     # 程式產出檔案（稽核留存）
+│   ├── firewall-rules.md          # 防火牆規則維護清單
+│   ├── deploy.sh                  # Azure CLI 部署腳本
+│   ├── download.sh                # Bash 一鍵下載腳本
+│   └── download.ps1               # PowerShell 一鍵下載腳本
+├── audit_logs/                    # 稽核日誌
 ├── src/
 │   ├── models.py                  # 資料模型（RedirectHop, FirewallRule 等）
 │   ├── winget_api.py              # GitHub API 查詢 winget-pkgs manifest
@@ -165,7 +171,7 @@ pip install -r requirements.txt
 # 單元測試（120 個，不需網路）
 python -m pytest tests/ --ignore=tests/test_integration.py -v
 
-# 整合測試（需網路，測試 Git.Git / GitHub.cli / GitHub.GitHubDesktop）
+# 整合測試（需網路，測試 Microsoft.Git / GitHub.cli / GitHub.GitHubDesktop）
 GITHUB_TOKEN=$(gh auth token) python -m pytest tests/test_integration.py -v
 
 # 執行單一測試

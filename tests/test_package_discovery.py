@@ -19,7 +19,7 @@ class TestPathToPackageId:
     """測試路徑轉換"""
 
     def test_two_level(self) -> None:
-        assert _path_to_package_id("manifests/g/Git/Git") == "Git.Git"
+        assert _path_to_package_id("manifests/m/Microsoft/Git") == "Microsoft.Git"
 
     def test_three_level(self) -> None:
         assert _path_to_package_id("manifests/g/GitHub/GitHubDesktop") == "GitHub.GitHubDesktop"
@@ -162,7 +162,7 @@ class TestDiscoverAllPackages:
         client = AsyncMock(spec=httpx.AsyncClient)
         client.get = AsyncMock(side_effect=mock_get)
 
-        packages = await discover_all_packages(client, ["GitHub.*", "Git.Git"])
+        packages = await discover_all_packages(client, ["GitHub.*", "Microsoft.Git"])
 
         assert "GitHub.cli" in packages
-        assert "Git.Git" in packages
+        assert "Microsoft.Git" in packages

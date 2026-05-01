@@ -46,22 +46,22 @@ class TestClassifyFqdn:
 
 
 def _make_test_manifest() -> PackageManifest:
-    """建立測試用 manifest（模擬 Git.Git）"""
+    """建立測試用 manifest（模擬 Microsoft.Git）"""
     return PackageManifest(
-        package_id="Git.Git",
-        version="2.54.0",
-        publisher="Git",
+        package_id="Microsoft.Git",
+        version="2.48.0.vfs.0.0",
+        publisher="Microsoft Corporation",
         installers=[
             InstallerInfo(
-                url="https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-64-bit.exe",
+                url="https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe",
                 architecture="x64",
                 scope="user",
                 installer_type="inno",
                 redirect_chain=[
                     RedirectHop(
-                        url="https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-64-bit.exe",
+                        url="https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe",
                         fqdn="github.com",
-                        path="/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-64-bit.exe",
+                        path="/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe",
                         status_code=302,
                         is_final=False,
                     ),
@@ -114,8 +114,8 @@ class TestGenerateRules:
             source_addresses=["10.0.0.0/8"],
         )
 
-        assert path_rule.name == "winget-git-git-path"
-        assert fqdn_rule.name == "winget-git-git-fqdn"
+        assert path_rule.name == "winget-microsoft-git-path"
+        assert fqdn_rule.name == "winget-microsoft-git-fqdn"
 
     def test_path_rule_has_target_urls(self) -> None:
         manifest = _make_test_manifest()
@@ -124,7 +124,7 @@ class TestGenerateRules:
         assert len(path_rule.target_urls) > 0
         # 版本號應已被替換為萬用字元
         for url in path_rule.target_urls:
-            assert "2.54.0" not in url
+            assert "2.48.0" not in url
 
     def test_fqdn_rule_has_target_fqdns(self) -> None:
         manifest = _make_test_manifest()
