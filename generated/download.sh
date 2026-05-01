@@ -16,40 +16,40 @@ FAILED=0
 echo "🚀 開始下載 winget 安裝檔 ..."
 echo ""
 
-# === Git.Git v2.54.0 ===
-PKG_DIR="$DOWNLOAD_DIR/Git/Git"
+# === Microsoft.Git v2.48.0.vfs.0.0 ===
+PKG_DIR="$DOWNLOAD_DIR/Microsoft/Git"
 mkdir -p "$PKG_DIR"
-echo "📦 Git.Git v2.54.0"
+echo "📦 Microsoft.Git v2.48.0.vfs.0.0"
 
-FILEPATH="$PKG_DIR/Git-2.54.0-64-bit.exe"
+FILEPATH="$PKG_DIR/Git-2.48.0.vfs.0.0-64-bit.exe"
 if [ -f "$FILEPATH" ]; then
-  echo "   ⏭️  已存在: Git-2.54.0-64-bit.exe (x64)"
+  echo "   ⏭️  已存在: Git-2.48.0.vfs.0.0-64-bit.exe (x64)"
   SKIPPED=$((SKIPPED + 1))
 else
-  echo "   ⬇️  下載中: Git-2.54.0-64-bit.exe (x64/user)"
-  if curl -fSL -o "$FILEPATH" "https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-64-bit.exe" 2>/dev/null; then
+  echo "   ⬇️  下載中: Git-2.48.0.vfs.0.0-64-bit.exe (x64/user)"
+  if curl -fSL -o "$FILEPATH" "https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe" 2>/dev/null; then
     SIZE=$(du -h "$FILEPATH" | cut -f1)
     echo "   ✅ 完成: $SIZE"
     TOTAL=$((TOTAL + 1))
   else
-    echo "   ❌ 下載失敗: Git-2.54.0-64-bit.exe"
+    echo "   ❌ 下載失敗: Git-2.48.0.vfs.0.0-64-bit.exe"
     FAILED=$((FAILED + 1))
     rm -f "$FILEPATH"
   fi
 fi
 
-FILEPATH="$PKG_DIR/Git-2.54.0-arm64.exe"
+FILEPATH="$PKG_DIR/Git-2.48.0.vfs.0.0-arm64.exe"
 if [ -f "$FILEPATH" ]; then
-  echo "   ⏭️  已存在: Git-2.54.0-arm64.exe (arm64)"
+  echo "   ⏭️  已存在: Git-2.48.0.vfs.0.0-arm64.exe (arm64)"
   SKIPPED=$((SKIPPED + 1))
 else
-  echo "   ⬇️  下載中: Git-2.54.0-arm64.exe (arm64/user)"
-  if curl -fSL -o "$FILEPATH" "https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-arm64.exe" 2>/dev/null; then
+  echo "   ⬇️  下載中: Git-2.48.0.vfs.0.0-arm64.exe (arm64/user)"
+  if curl -fSL -o "$FILEPATH" "https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-arm64.exe" 2>/dev/null; then
     SIZE=$(du -h "$FILEPATH" | cut -f1)
     echo "   ✅ 完成: $SIZE"
     TOTAL=$((TOTAL + 1))
   else
-    echo "   ❌ 下載失敗: Git-2.54.0-arm64.exe"
+    echo "   ❌ 下載失敗: Git-2.48.0.vfs.0.0-arm64.exe"
     FAILED=$((FAILED + 1))
     rm -f "$FILEPATH"
   fi

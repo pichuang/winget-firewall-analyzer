@@ -37,25 +37,25 @@ az network firewall policy rule-collection-group collection rule add \
   --target-fqdns "cdn.winget.microsoft.com" "winget.azureedge.net" \
   --source-addresses "10.0.0.0/8"
 
-# winget 套件 Git.Git v2.54.0 下載所需路徑（TLS Inspection）
+# winget 套件 Microsoft.Git v2.48.0.vfs.0.0 下載所需路徑（TLS Inspection）
 az network firewall policy rule-collection-group collection rule add \
   --policy-name "$POLICY_NAME" \
   --resource-group "$RESOURCE_GROUP" \
   --rcg-name "$RCG_NAME" \
   --collection-name "$RC_NAME" \
-  --name "winget-git-git-path" \
+  --name "winget-microsoft-git-path" \
   --rule-type ApplicationRule \
   --protocols Https=443 \
-  --target-urls "github.com/git-for-windows/git/releases/download/*/Git-*" "objects.githubusercontent.com/github-production-release-asset-2e65be/23216272/*" \
+  --target-urls "github.com/microsoft/git/releases/download/*/Git-*" "objects.githubusercontent.com/github-production-release-asset-2e65be/23216272/*" \
   --source-addresses "10.0.0.0/8"
 
-# winget 套件 Git.Git v2.54.0 下載所需網域（FQDN 層級）
+# winget 套件 Microsoft.Git v2.48.0.vfs.0.0 下載所需網域（FQDN 層級）
 az network firewall policy rule-collection-group collection rule add \
   --policy-name "$POLICY_NAME" \
   --resource-group "$RESOURCE_GROUP" \
   --rcg-name "$RCG_NAME" \
   --collection-name "$RC_NAME" \
-  --name "winget-git-git-fqdn" \
+  --name "winget-microsoft-git-fqdn" \
   --rule-type ApplicationRule \
   --protocols Https=443 \
   --target-fqdns "github.com" "objects.githubusercontent.com" \

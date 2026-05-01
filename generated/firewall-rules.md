@@ -18,10 +18,10 @@
 
 ```bash
 # 套用所有規則（JSON 格式）
-python main.py Git.Git GitHub.cli Microsoft.VisualStudioCode -f json > rules.json
+python main.py Microsoft.Git GitHub.cli Microsoft.VisualStudioCode -f json > rules.json
 
 # 產生 Azure CLI 部署指令
-python main.py Git.Git GitHub.cli Microsoft.VisualStudioCode -f cli > deploy.sh
+python main.py Microsoft.Git GitHub.cli Microsoft.VisualStudioCode -f cli > deploy.sh
 ```
 
 ---
@@ -30,7 +30,7 @@ python main.py Git.Git GitHub.cli Microsoft.VisualStudioCode -f cli > deploy.sh
 
 | 套件識別碼 | 版本 | 安裝檔數 | 涉及 FQDN | 規則名稱（Path） | 規則名稱（FQDN） |
 |---|---|---|---|---|---|
-| `Git.Git` | 2.54.0 | 2 | 2 | `winget-git-git-path` | `winget-git-git-fqdn` |
+| `Microsoft.Git` | 2.48.0.vfs.0.0 | 2 | 2 | `winget-microsoft-git-path` | `winget-microsoft-git-fqdn` |
 | `GitHub.cli` | 2.92.0 | 6 | 2 | `winget-github-cli-path` | `winget-github-cli-fqdn` |
 | `Microsoft.VisualStudioCode` | 1.118.1 | 4 | 1 | `winget-microsoft-visualstudiocode-path` | `winget-microsoft-visualstudiocode-fqdn` |
 
@@ -43,8 +43,8 @@ python main.py Git.Git GitHub.cli Microsoft.VisualStudioCode -f cli > deploy.sh
 | FQDN | 用途分類 | 信心等級 | 最終目標 | 涉及套件 |
 |---|---|---|---|---|
 | `cdn.winget.microsoft.com` | winget-source | high | — | `*（所有套件共用）` |
-| `github.com` | download | medium | — | `Git.Git`, `GitHub.cli` |
-| `objects.githubusercontent.com` | cdn | high | ✅ | `Git.Git`, `GitHub.cli` |
+| `github.com` | download | medium | — | `Microsoft.Git`, `GitHub.cli` |
+| `objects.githubusercontent.com` | cdn | high | ✅ | `Microsoft.Git`, `GitHub.cli` |
 | `vscode.download.prss.microsoft.com` | unknown | high | ✅ | `Microsoft.VisualStudioCode` |
 | `winget.azureedge.net` | winget-source | high | — | `*（所有套件共用）` |
 
@@ -59,7 +59,7 @@ python main.py Git.Git GitHub.cli Microsoft.VisualStudioCode -f cli > deploy.sh
 
 ---
 
-## 📦 Git.Git
+## 📦 Microsoft.Git
 
 - **版本**: 2.54.0
 - **安裝檔數量**: 2
@@ -70,29 +70,29 @@ python main.py Git.Git GitHub.cli Microsoft.VisualStudioCode -f cli > deploy.sh
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `github.com` | 302 | ↪️ 重導向 | `github.com/git-for-windows/git/releases/download/*/Git-*` |
+| 1 | `github.com` | 302 | ↪️ 重導向 | `github.com/microsoft/git/releases/download/*/Git-*` |
 | 2 | `objects.githubusercontent.com` | 401 | ✅ 最終目標 | `objects.githubusercontent.com/github-production-release-asset-2e65be/23216272/*` |
 
 **安裝檔 2** — `arm64` / `user`
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `github.com` | 302 | ↪️ 重導向 | `github.com/git-for-windows/git/releases/download/*/Git-*` |
+| 1 | `github.com` | 302 | ↪️ 重導向 | `github.com/microsoft/git/releases/download/*/Git-*` |
 | 2 | `objects.githubusercontent.com` | 401 | ✅ 最終目標 | `objects.githubusercontent.com/github-production-release-asset-2e65be/23216272/*` |
 
 ### 🔒 Path 層級規則（TLS Inspection）
 
-**規則名稱**: `winget-git-git-path`
+**規則名稱**: `winget-microsoft-git-path`
 
 ```
 targetUrls:
-  - github.com/git-for-windows/git/releases/download/*/Git-*
+  - github.com/microsoft/git/releases/download/*/Git-*
   - objects.githubusercontent.com/github-production-release-asset-2e65be/23216272/*
 ```
 
 ### 🌍 FQDN 層級規則（備用）
 
-**規則名稱**: `winget-git-git-fqdn`
+**規則名稱**: `winget-microsoft-git-fqdn`
 
 ```
 targetFqdns:
@@ -231,7 +231,7 @@ targetFqdns:
 
 | 套件識別碼 | 分析版本 | 分析日期 | 狀態 |
 |---|---|---|---|
-| `Git.Git` | 2.54.0 | 2026-05-01 10:31:21 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Git` | 2.48.0.vfs.0.0 | 2026-05-01 10:31:21 UTC+08:00 | ✅ 已分析 |
 | `GitHub.cli` | 2.92.0 | 2026-05-01 10:31:21 UTC+08:00 | ✅ 已分析 |
 | `Microsoft.VisualStudioCode` | 1.118.1 | 2026-05-01 10:31:21 UTC+08:00 | ✅ 已分析 |
 
@@ -240,7 +240,7 @@ targetFqdns:
 - 建議定期重新執行分析，確認套件版本更新後下載路徑是否變更
 - 若有新版本發佈，重新產生規則並比對差異：
   ```bash
-  python main.py Git.Git GitHub.cli Microsoft.VisualStudioCode -f md > firewall-rules-new.md
+  python main.py Microsoft.Git GitHub.cli Microsoft.VisualStudioCode -f md > firewall-rules-new.md
   diff firewall-rules.md firewall-rules-new.md
   ```
 - 版本號已正規化為萬用字元 `*`，多數情況下版本更新不需修改規則

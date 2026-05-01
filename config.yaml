@@ -30,6 +30,8 @@ allowlist:
   packages:
     - "Microsoft.*"
     - "GitHub.*"
+    - "WiresharkFoundation.*"
+    - "Telerik.Fiddler.Classic"
 
 
 # =============================================================================

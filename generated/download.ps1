@@ -15,42 +15,42 @@ $Failed = 0
 Write-Host "🚀 開始下載 winget 安裝檔 ..." -ForegroundColor Cyan
 Write-Host ""
 
-# === Git.Git v2.54.0 ===
+# === Microsoft.Git v2.48.0.vfs.0.0 ===
 $PkgDir = "$DownloadDir\Git\Git"
 New-Item -ItemType Directory -Path $PkgDir -Force | Out-Null
-Write-Host "📦 Git.Git v2.54.0" -ForegroundColor White
+Write-Host "📦 Microsoft.Git v2.48.0.vfs.0.0" -ForegroundColor White
 
-$FilePath = "$PkgDir\Git-2.54.0-64-bit.exe"
+$FilePath = "$PkgDir\Git-2.48.0.vfs.0.0-64-bit.exe"
 if (Test-Path $FilePath) {
-    Write-Host "   ⏭️  已存在: Git-2.54.0-64-bit.exe (x64)" -ForegroundColor DarkGray
+    Write-Host "   ⏭️  已存在: Git-2.48.0.vfs.0.0-64-bit.exe (x64)" -ForegroundColor DarkGray
     $Skipped++
 } else {
-    Write-Host "   ⬇️  下載中: Git-2.54.0-64-bit.exe (x64/user)" -ForegroundColor Yellow
+    Write-Host "   ⬇️  下載中: Git-2.48.0.vfs.0.0-64-bit.exe (x64/user)" -ForegroundColor Yellow
     try {
-        Invoke-WebRequest -Uri "https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-64-bit.exe" -OutFile $FilePath -UseBasicParsing
+        Invoke-WebRequest -Uri "https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-64-bit.exe" -OutFile $FilePath -UseBasicParsing
         $Size = (Get-Item $FilePath).Length / 1MB
         Write-Host ("   ✅ 完成: {0:N1} MB" -f $Size) -ForegroundColor Green
         $Total++
     } catch {
-        Write-Host "   ❌ 下載失敗: Git-2.54.0-64-bit.exe" -ForegroundColor Red
+        Write-Host "   ❌ 下載失敗: Git-2.48.0.vfs.0.0-64-bit.exe" -ForegroundColor Red
         $Failed++
         Remove-Item $FilePath -ErrorAction SilentlyContinue
     }
 }
 
-$FilePath = "$PkgDir\Git-2.54.0-arm64.exe"
+$FilePath = "$PkgDir\Git-2.48.0.vfs.0.0-arm64.exe"
 if (Test-Path $FilePath) {
-    Write-Host "   ⏭️  已存在: Git-2.54.0-arm64.exe (arm64)" -ForegroundColor DarkGray
+    Write-Host "   ⏭️  已存在: Git-2.48.0.vfs.0.0-arm64.exe (arm64)" -ForegroundColor DarkGray
     $Skipped++
 } else {
-    Write-Host "   ⬇️  下載中: Git-2.54.0-arm64.exe (arm64/user)" -ForegroundColor Yellow
+    Write-Host "   ⬇️  下載中: Git-2.48.0.vfs.0.0-arm64.exe (arm64/user)" -ForegroundColor Yellow
     try {
-        Invoke-WebRequest -Uri "https://github.com/git-for-windows/git/releases/download/v2.54.0.windows.1/Git-2.54.0-arm64.exe" -OutFile $FilePath -UseBasicParsing
+        Invoke-WebRequest -Uri "https://github.com/microsoft/git/releases/download/v2.48.0.vfs.0.0/Git-2.48.0.vfs.0.0-arm64.exe" -OutFile $FilePath -UseBasicParsing
         $Size = (Get-Item $FilePath).Length / 1MB
         Write-Host ("   ✅ 完成: {0:N1} MB" -f $Size) -ForegroundColor Green
         $Total++
     } catch {
-        Write-Host "   ❌ 下載失敗: Git-2.54.0-arm64.exe" -ForegroundColor Red
+        Write-Host "   ❌ 下載失敗: Git-2.48.0.vfs.0.0-arm64.exe" -ForegroundColor Red
         $Failed++
         Remove-Item $FilePath -ErrorAction SilentlyContinue
     }
