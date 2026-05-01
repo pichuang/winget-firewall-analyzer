@@ -1,5 +1,34 @@
 # winget 套件變更記錄（稽核用）
 
+## 2026-05-01 12:06:36 UTC+08:00
+
+- **操作人員**：pichuang@fly-wired.homecloud.intranet
+- **分析套件數**：2
+
+### 新增套件
+
+- `WSL.Ubuntu-20.04` vUbuntu 20.04 LTS
+- `WSL.Ubuntu-22.04` vUbuntu 22.04 LTS
+
+未變更套件：0 個
+
+---
+
+## 2026-05-01 12:06:02 UTC+08:00
+
+- **操作人員**：pichuang@fly-wired.homecloud.intranet
+- **分析套件數**：295
+
+### 版本更新
+
+| 套件 | 舊版本 | 新版本 |
+|---|---|---|
+| `Microsoft.Teams` | 26072.521.4595.7966 | 26093.415.4620.1935 |
+
+未變更套件：294 個
+
+---
+
 ## 2026-05-01 11:46:52 UTC+08:00
 
 - **操作人員**：pichuang@fly-wired.homecloud.intranet

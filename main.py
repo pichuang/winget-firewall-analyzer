@@ -231,7 +231,7 @@ async def main_async(args: argparse.Namespace) -> None:
 
     # 時間戳記（用於所有產出檔案的檔名）
     from datetime import datetime, timedelta, timezone
-    ts = datetime.now(timezone(timedelta(hours=8))).strftime("%Y%m%d_%H%M")
+    ts = datetime.now(timezone(timedelta(hours=8))).strftime("%Y%m%d_%H%M%S")
 
     format_ext_map = {
         "json": f"rules_{ts}.json",

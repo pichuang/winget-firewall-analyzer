@@ -33,12 +33,12 @@ python main.py
 - 自動偵測 `gh auth token` 取得 GITHUB_TOKEN（無需手動設定）
 - 結果自動寫入 `generated/` 資料夾
 
-執行後會產生（檔名含時間戳記 `YYYYMMDD_HHMM`）：
-- **generated/firewall-rules_YYYYMMDD_HHMM.md** — 防火牆規則維護清單
-- **generated/diff-report_YYYYMMDD_HHMM.md** — 與前次分析的變更對比報告
-- **generated/deploy_YYYYMMDD_HHMM.sh** — Azure CLI 部署腳本
-- **generated/download_YYYYMMDD_HHMM.sh** — Bash 一鍵下載腳本（curl）
-- **generated/download_YYYYMMDD_HHMM.ps1** — PowerShell 一鍵下載腳本
+執行後會產生（檔名含時間戳記 `YYYYMMDD_HHMMSS`）：
+- **generated/firewall-rules_YYYYMMDD_HHMMSS.md** — 防火牆規則維護清單
+- **generated/diff-report_YYYYMMDD_HHMMSS.md** — 與前次分析的變更對比報告
+- **generated/deploy_YYYYMMDD_HHMMSS.sh** — Azure CLI 部署腳本
+- **generated/download_YYYYMMDD_HHMMSS.sh** — Bash 一鍵下載腳本（curl）
+- **generated/download_YYYYMMDD_HHMMSS.ps1** — PowerShell 一鍵下載腳本
 
 ### 日常維護流程
 
@@ -134,9 +134,19 @@ wsl_distros:
       id: "WSL.Ubuntu-22.04"
       download_url: "https://aka.ms/wslubuntu2204"
       install_cmd: "wsl --install -d Ubuntu-22.04"
+    - name: "Ubuntu 24.04 LTS"
+      id: "WSL.Ubuntu-24.04"
+      download_url: "https://cdimages.ubuntu.com/ubuntu-wsl/noble/daily-live/current/noble-wsl-amd64.wsl"
+      install_cmd: "wsl --install -d Ubuntu-24.04"
+    - name: "Ubuntu 26.04 LTS"
+      id: "WSL.Ubuntu-26.04"
+      download_url: "https://cdimages.ubuntu.com/ubuntu-wsl/daily-live/current/resolute-wsl-amd64.wsl"
+      install_cmd: "wsl --install -d Ubuntu-26.04"
   base_fqdns:
     - fqdn: "wslstorestorage.blob.core.windows.net"
       description: "WSL 核心元件儲存"
+    - fqdn: "cdimages.ubuntu.com"
+      description: "Ubuntu WSL 官方映像下載（24.04+）"
 ```
 
 - WSL 分析複用與 winget 相同的重導向追蹤與規則產生機制

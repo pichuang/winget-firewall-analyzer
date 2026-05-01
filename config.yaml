@@ -293,6 +293,16 @@ wsl_distros:
       download_url: "https://aka.ms/wslubuntu2204"
       install_cmd: "wsl --install -d Ubuntu-22.04"
 
+    - name: "Ubuntu 24.04 LTS"
+      id: "WSL.Ubuntu-24.04"
+      download_url: "https://cdimages.ubuntu.com/ubuntu-wsl/noble/daily-live/current/noble-wsl-amd64.wsl"
+      install_cmd: "wsl --install -d Ubuntu-24.04"
+
+    - name: "Ubuntu 26.04 LTS"
+      id: "WSL.Ubuntu-26.04"
+      download_url: "https://cdimages.ubuntu.com/ubuntu-wsl/daily-live/current/resolute-wsl-amd64.wsl"
+      install_cmd: "wsl --install -d Ubuntu-26.04"
+
   # -------------------------------------------------------------------
   # WSL 基礎設施端點（所有 WSL 發行版共用）
   # wsl --install / wsl --update 運作時必須存取的網域
@@ -301,3 +311,6 @@ wsl_distros:
     - fqdn: "wslstorestorage.blob.core.windows.net"
       category: "wsl-infrastructure"
       description: "WSL 核心元件儲存（kernel 更新、runtime）"
+    - fqdn: "cdimages.ubuntu.com"
+      category: "wsl-download"
+      description: "Ubuntu WSL 官方映像下載（24.04+）"
