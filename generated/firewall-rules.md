@@ -10,9 +10,10 @@
 | Rule Collection Group | `winget-rules` |
 | Rule Collection | `winget-download` |
 | Priority | `500` |
-| Source Addresses | `10.0.0.0/8` |
+| Source IP Groups | `ipgroup-corp-clients, ipgroup-dev-clients` （主要） |
+| Source Addresses | `10.0.0.0/8` （備用） |
 | 規則總數 | 591 |
-| 分析時間 | 2026-05-01 11:19:48 UTC+08:00 |
+| 分析時間 | 2026-05-01 11:46:52 UTC+08:00 |
 
 **快速部署參考**：
 
@@ -124,7 +125,7 @@ python main.py GitHub.Copilot GitHub.GitHubDesktop GitHub.GitLFS GitHub.cli GitH
 | `Microsoft.DotNet.dotnet-ef` | 10.0.7 | 1 | 1 | `winget-microsoft-dotnet-dotnet-ef-path` | `winget-microsoft-dotnet-dotnet-ef-fqdn` |
 | `Microsoft.Edge` | 147.0.3912.86 | 3 | 1 | `winget-microsoft-edge-path` | `winget-microsoft-edge-fqdn` |
 | `Microsoft.EdgeDriver` | 147.0.3912.86 | 3 | 1 | `winget-microsoft-edgedriver-path` | `winget-microsoft-edgedriver-fqdn` |
-| `Microsoft.EdgeWebView2Runtime` | 147.0.3912.86 | 3 | 1 | `winget-microsoft-edgewebview2runtime-path` | `winget-microsoft-edgewebview2runtime-fqdn` |
+| `Microsoft.EdgeWebView2Runtime` | 147.0.3912.98 | 3 | 1 | `winget-microsoft-edgewebview2runtime-path` | `winget-microsoft-edgewebview2runtime-fqdn` |
 | `Microsoft.Edit` | 2.0.0 | 2 | 2 | `winget-microsoft-edit-path` | `winget-microsoft-edit-fqdn` |
 | `Microsoft.EnterpriseStateClassify` | 1.0 | 1 | 2 | `winget-microsoft-enterprisestateclassify-path` | `winget-microsoft-enterprisestateclassify-fqdn` |
 | `Microsoft.EventLogExpert` | 25.12.11.1105 | 1 | 2 | `winget-microsoft-eventlogexpert-path` | `winget-microsoft-eventlogexpert-fqdn` |
@@ -456,13 +457,13 @@ targetFqdns:
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `desktop.githubusercontent.com` | 206 | ✅ 最終目標 | `desktop.githubusercontent.com/releases/*/GitHubDesktopSetup-x64.msi` |
+| 1 | `desktop.githubusercontent.com` | 200 | ✅ 最終目標 | `desktop.githubusercontent.com/releases/*/GitHubDesktopSetup-x64.msi` |
 
 **安裝檔 3** — `arm64` / `user`
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `desktop.githubusercontent.com` | 206 | ✅ 最終目標 | `desktop.githubusercontent.com/releases/*/GitHubDesktopSetup-arm64.exe` |
+| 1 | `desktop.githubusercontent.com` | 200 | ✅ 最終目標 | `desktop.githubusercontent.com/releases/*/GitHubDesktopSetup-arm64.exe` |
 
 **安裝檔 4** — `arm64` / `machine`
 
@@ -3757,7 +3758,7 @@ targetFqdns:
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `builds.dotnet.microsoft.com` | 403 | ✅ 最終目標 | `builds.dotnet.microsoft.com/dotnet/Runtime/*/dotnet-runtime-*` |
+| 1 | `builds.dotnet.microsoft.com` | 206 | ✅ 最終目標 | `builds.dotnet.microsoft.com/dotnet/Runtime/*/dotnet-runtime-*` |
 
 **安裝檔 3** — `arm64` / `—`
 
@@ -4130,7 +4131,7 @@ targetFqdns:
 
 ## 📦 Microsoft.EdgeWebView2Runtime
 
-- **版本**: 147.0.3912.86
+- **版本**: 147.0.3912.98
 - **安裝檔數量**: 3
 
 ### 下載路徑分析
@@ -8295,7 +8296,7 @@ targetFqdns:
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `download.sysinternals.com` | 403 | ✅ 最終目標 | `download.sysinternals.com/files/AutoLogon.zip` |
+| 1 | `download.sysinternals.com` | 206 | ✅ 最終目標 | `download.sysinternals.com/files/AutoLogon.zip` |
 
 ### 🔒 Path 層級規則（TLS Inspection）
 
@@ -8394,7 +8395,7 @@ targetFqdns:
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `download.sysinternals.com` | 206 | ✅ 最終目標 | `download.sysinternals.com/files/Ctrl2Cap.zip` |
+| 1 | `download.sysinternals.com` | 403 | ✅ 最終目標 | `download.sysinternals.com/files/Ctrl2Cap.zip` |
 
 ### 🔒 Path 層級規則（TLS Inspection）
 
@@ -8526,7 +8527,7 @@ targetFqdns:
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `download.sysinternals.com` | 200 | ✅ 最終目標 | `download.sysinternals.com/files/Handle.zip` |
+| 1 | `download.sysinternals.com` | 403 | ✅ 最終目標 | `download.sysinternals.com/files/Handle.zip` |
 
 ### 🔒 Path 層級規則（TLS Inspection）
 
@@ -8856,7 +8857,7 @@ targetFqdns:
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `download.sysinternals.com` | 206 | ✅ 最終目標 | `download.sysinternals.com/files/Strings.zip` |
+| 1 | `download.sysinternals.com` | 403 | ✅ 最終目標 | `download.sysinternals.com/files/Strings.zip` |
 
 ### 🔒 Path 層級規則（TLS Inspection）
 
@@ -8889,7 +8890,7 @@ targetFqdns:
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `download.sysinternals.com` | 206 | ✅ 最終目標 | `download.sysinternals.com/files/Sysmon.zip` |
+| 1 | `download.sysinternals.com` | 403 | ✅ 最終目標 | `download.sysinternals.com/files/Sysmon.zip` |
 
 ### 🔒 Path 層級規則（TLS Inspection）
 
@@ -9021,7 +9022,7 @@ targetFqdns:
 
 | 順序 | FQDN | 狀態碼 | 類型 | 正規化路徑 |
 |---|---|---|---|---|
-| 1 | `download.sysinternals.com` | 206 | ✅ 最終目標 | `download.sysinternals.com/files/ZoomIt.zip` |
+| 1 | `download.sysinternals.com` | 403 | ✅ 最終目標 | `download.sysinternals.com/files/ZoomIt.zip` |
 
 ### 🔒 Path 層級規則（TLS Inspection）
 
@@ -12411,301 +12412,301 @@ targetFqdns:
 
 | 套件識別碼 | 分析版本 | 分析日期 | 狀態 |
 |---|---|---|---|
-| `GitHub.Copilot` | 1.0.34 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `GitHub.GitHubDesktop` | 3.5.8 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `GitHub.GitLFS` | 3.7.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `GitHub.cli` | 2.92.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `GitHub.git-sizer` | 1.5.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AIShell` | 1.0.0-preview.8 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AKSdesktop` | 0.1.0-alpha | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.APM` | 0.11.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.ASRTestTool` | 4.13.17600.1000 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AccountLockoutStatus` | 1.0.0.60 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AdministrativeTemplates` | 11.25H2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AmendmentAppWordService` | 4.2.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AppControlPolicyWizard` | 2.6.0.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AppInstaller` | 1.27.470.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AppInstallerFileBuilder` | 1.2020.221.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AppLockerPolicyConverter` | 2.0.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.ApplicationInspector` | 1.9.55 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Aspire` | 13.1.3 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azd` | 1.24.300 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.ADConnectSyncDocumenter` | 1.20.0917.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.AZCopy.10` | 10.32.3 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.ArtifactSigningClientTools` | 0.1.128 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.Auth` | 0.9.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.Az` | 15.2.0.40510 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.AztfExport` | 0.19.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.BatchExplorer` | 2.23.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.CloudHSM-ClientSDK` | 2.0.2.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.ConnectedMachineAgent` | 1.63.03384.2896 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.CosmosEmulator` | 2.14.27 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.DataCLI` | 20.3.14 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.DataStudio` | 1.52.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.FunctionsCoreTools` | 4.10.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.GuestProxyAgent` | 1.0.39 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.IoTExplorer` | 0.15.12 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.Kubelogin` | 0.2.13 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.QuickReview` | 3.1.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.StorageExplorer` | 1.43.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.TemplateAnalyzer` | 0.8.5 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Azure.TrustedSigningClientTools` | 0.1.127 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AzureCLI` | 2.85.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AzureMonitorAgent` | 1.41.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.AzureVPNClient` | 4.0.5.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.BTP` | 1.14.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Bicep` | 0.42.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.BotFrameworkComposer` | 2.1.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.BotFrameworkEmulator` | 4.15.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.CLRTypesSQLServer.2019` | 15.0.2000.5 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.CertifiedToolAzureVM` | 1.6 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.CmdPalAzureExtension` | 0.200.174.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.CmdPalGitHubExtension` | 0.103.178.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DSC` | 3.1.3 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DTrace` | 2.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DataMigrationAssistant` | 5.8.5973.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DataTools.IntegrationServices` | 17.0.1010.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DebugDiag` | 2.3.2.11 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DefenderForCloud.CLI` | 2.0.03334.114 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DependencyAgent` | 9.10.18 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DeploymentToolkit` | 6.3.8456.1000 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DevSkim.CLI.DotNetTool` | 1.0.59 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DevSkim.CLI.LibraryPackage` | 1.0.59 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DirectAccessCTST` | 1.4.4.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DirectX` | 9.29.1974.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DirectXTex.Texassemble` | 2026.3.31 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DirectXTex.Texconv` | 2026.3.31 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DirectXTex.Texdiag` | 2026.3.31 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DiskSpd` | 2.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.AspNetCore.10` | 10.0.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.AspNetCore.6` | 6.0.36 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.AspNetCore.8` | 8.0.26 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.AspNetCore.9` | 9.0.15 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.DesktopRuntime.10` | 10.0.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.DesktopRuntime.6` | 6.0.36 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.DesktopRuntime.8` | 8.0.26 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.DesktopRuntime.9` | 9.0.15 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.Framework.DeveloperPack.4.6` | 4.6.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.Framework.DeveloperPack_4` | 4.8.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.Framework.Runtime` | 4.8.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.HostingBundle.10` | 10.0.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.HostingBundle.6` | 6.0.36 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.HostingBundle.8` | 8.0.26 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.HostingBundle.9` | 9.0.15 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.RepairTool` | 1.4 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.Runtime.10` | 10.0.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.Runtime.6` | 6.0.36 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.Runtime.8` | 8.0.26 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.Runtime.9` | 9.0.15 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.SDK.10` | 10.0.203 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.SDK.6` | 6.0.428 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.SDK.8` | 8.0.420 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.SDK.9` | 9.0.313 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.UninstallTool` | 1.7.661902 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.DotNet.dotnet-ef` | 10.0.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Edge` | 147.0.3912.86 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.EdgeDriver` | 147.0.3912.86 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.EdgeWebView2Runtime` | 147.0.3912.86 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Edit` | 2.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.EnterpriseStateClassify` | 1.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.EventLogExpert` | 25.12.11.1105 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.FRSDiag` | 1.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.FSLogix` | 3.26.126.19110 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.FoundryLocal` | 0.8.119.102 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.FuzzyLookupAddExcel` | 1.3.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.GameInput` | 3.3.195.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Garnet.DN8` | 1.0.83 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Garnet.DN9` | 1.0.83 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Git` | 2.53.0.0.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.GlobalSecureAccessClient` | 2.26.108 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.HIDTools.Waratah` | 1.90 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.HwpConverter` | 15.0.4454.1506 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.IIS.Compression` | 1.0.06502 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.IIS.ServiceMonitor` | 2.0.1.10 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.IIS.URLRewrite` | 7.2.1993 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.IISManagerRemoteAdministration` | 1.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.IdFix` | 2.6.0.3 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.IntegrationRuntime` | 5.65.9593.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.IntuneWSLPlugin` | 1.25.4.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.IronPython.3` | 3.4.2.1000 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Kanagawa` | 1.2.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.LAPS` | 6.2.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.LightGBM` | 4.6.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.LingeringObjectLiquidator` | 2.0.21 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.LogCheetah` | 1.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.LogParser` | 2.2.10 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.M365AgentsPlayground` | 0.2.24 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MFCMapi` | 26.0.26111.02 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MIDI.FeatureEnablementChecker` | 1.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MIDI.SDK` | 1.0.16-rc.3.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MITT` | 8.03 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MSIX-Toolkit` | 10.0.19041.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MSIXCore` | 1.2.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MSIXPackagingTool` | 1.2024.405.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MUTT` | 3.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MaliciousSoftwareRemovalTool` | 5.139 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MediaCreationTool` | 10.0.26100.7019 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MouseWithoutBorders` | 2.2.1.327 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.MouseandKeyboardCenter` | 14.41.137.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Ntttcp` | 5.40.0.99012574 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.NuGet` | 7.3.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OSCDIMG` | 2.56 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OSConfig` | 1.3.10.13 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Office` | 16.0.19929.20062 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OfficeDeploymentTool` | 16.0.19929.20062 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OneDrive` | 26.062.0402.0002 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OneLakeFileExplorer` | 1.0.14.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OneNoteDiagnostics` | 1.0.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OpenAPI.Hidi` | 3.1.2.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OpenAPI.Kiota` | 1.30.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OpenCLGLVulkanCompatibilityPack` | 1.2404.1.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OpenJDK.11` | 11.0.30.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OpenJDK.17` | 17.0.18.8 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OpenJDK.21` | 21.0.10.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.OpenJDK.25` | 25.0.2.10 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PICT` | 3.7.4.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PIX` | 2603.25 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Pave` | 0.1.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PerfView` | 3.2.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PowerAppsCLI` | 1.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PowerAutomateDesktop` | 2.67.00143.26090 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PowerAutomateProcessMining` | 6.1.2506.2252 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PowerBI` | 2.153.910.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PowerBIReportBuilder` | 15.7.1817.11 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PowerBIReportServer` | 1.25.9558.32914 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PowerShell` | 7.6.1.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PowerToys` | 0.99.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PrintMetadataTroubleshooter` | 1.0.0.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.ProfileExplorer` | 1.2.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.ProjectTelescope` | 0.15.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Promptflow` | 1.17.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.PurviewInformationProtection` | 3.2.57.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.RMSClient` | 1.0.5406.9 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.RemoteDesktopClient` | 1.2.7099.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.RemoteDesktopMMRService` | 1.0.2507.21006 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.RemoteHelp` | 5.1.1998.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.ReportBuilder` | 15.1.30001.02 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SBOMTool` | 4.1.5 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SQLServer.2019.Developer` | 15.2204.5490.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SQLServer.2019.Express` | 15.2204.5490.2 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SQLServer.2022.Developer` | 16.0.1000.6 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SQLServer.2022.Express` | 16.0.1000.6 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SQLServer.2025.Developer` | 17.0.1000.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SQLServer.2025.Express` | 17.0.1000.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SQLServer.OLEDBDriver` | 19.4.1.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SQLServer.RMLUtilities` | 09.04.0103 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SQLServerManagementStudio` | 20.2.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SaRACmd` | 17.01.3954.000 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SafetyScanner` | 1.449.54.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.ScreenRecorder` | 0.1.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SecurityComplianceToolkit.LGPO` | 3.0.2004.13001 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SecurityComplianceToolkit.PolicyAnalyzer` | 4.0.2004.13001 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SecurityComplianceToolkit.SetObjectSecurity` | 1.0.2004.13001 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.ServiceFabricRuntime` | 11.3.475.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.ServiceFabricSDK` | 8.3.475 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SetupDiag` | 1.7.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SmartDump` | 1.13 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SqlPackage` | 170.3.93 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sqlcmd` | 1.9.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SurfaceApp` | 75.11130.117.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SurfaceHubRecoveryTool` | 2.7.139.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.SymCryptUnitTest` | 103.8.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.Autologon` | 3.10 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.Autoruns` | 14.11 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.BGInfo` | 4.33 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.Ctrl2Cap` | 3.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.DebugView` | 5.00 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.Desktops` | 2.01 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.FindLinks` | 1.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.Handle` | 5.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.MoveFile` | 1.02 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.PendMoves` | 1.3 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.ProcessExplorer` | 17.11 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.ProcessMonitor` | 4.01 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.RAMMap` | 1.63 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.RDCMan` | 3.12 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.RegJump` | 1.11 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.SDelete` | 2.06 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.Sigcheck` | 2.91 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.Strings` | 2.54 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.Sysmon` | 15.20 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.TCPView` | 4.19 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.VMMap` | 3.40 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.Whois` | 1.21 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Sysinternals.ZoomIt` | 11.00 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.TeamMate` | 0.1.15 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Teams` | 26072.521.4595.7966 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.TeamsTxNDI` | 2024.8.1.14 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.TimeTravelDebugging` | 1.11.584.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Tokenizer` | 1.3.3 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.UI.Xaml.2.7` | 7.2208.15002.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.UI.Xaml.2.8` | 8.2310.30001.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.UpdateAssistant` | 1.4.19041.2183 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VCLibs.14` | 14.0.33519.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VCLibs.Desktop.14` | 14.0.33728.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VCRedist.2012.x64` | 11.0.61030.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VCRedist.2012.x86` | 11.0.61030.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VCRedist.2013.x64` | 12.0.40664.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VCRedist.2013.x86` | 12.0.40664.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VCRedist.2015+.arm64` | 14.50.35719.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VCRedist.2015+.x64` | 14.50.35719.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VCRedist.2015+.x86` | 14.50.35719.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VSDotNetLogCollect` | 17.0.35214.149 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VSIXBootstrapper` | 1.0.37 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VSTOR` | 10.0.60917 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisioViewer` | 16.0.4339.1001 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisualStudio.2022.BuildTools` | 17.14.31 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisualStudio.2022.Enterprise` | 17.14.31 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisualStudio.2022.OnecoreMsvsmon` | 17.14.6 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisualStudio.2022.Professional` | 17.14.31 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisualStudio.2022.RemoteTools` | 17.14.8 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisualStudio.ConfigFinder` | 1.0.47.55350 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisualStudio.Extensions.TypeScript` | 4.3 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisualStudio.Locator` | 3.1.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisualStudioCode` | 1.118.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.VisualTrueType` | 6.35 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WSL` | 2.6.3 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Wassette` | 0.4.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WebDeploy` | 10.0.2001 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.Win32ContentPrepTool` | 1.8.7 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WinAppCli` | 0.3.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WinDbg` | 1.2603.20001.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsADK` | 10.1.28000.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsAdminCenter` | 2.6.6.18 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsApp` | 2.0.1071.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsAppRuntime.1.5` | 1.5.8 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsAppRuntime.1.6` | 1.6.9 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsAppRuntime.1.7` | 1.7.9 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsAppRuntime.1.8` | 1.8.6 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsApplicationDriver` | 1.2.1.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsBusesTracing` | 1.1.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsCloudIOProtectionDriver` | 0.0.693 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsDeviceRecoveryTool` | 3.17.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsInstallationAssistant` | 1.4.19041.6448 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsMIDIServicesSDK` | 1.0.14-rc.1.209 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsPCHealthCheck` | 4.0.2410.23001 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsSDK.10.0.22000` | 10.0.22000.832 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsSDK.10.0.22621` | 10.0.22621.2428 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsSDK.10.0.26100` | 10.0.26100.7705 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsSDK.10.0.28000` | 10.0.28000.1721 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsTerminal` | 1.24.10921.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsVirtualDesktopAgent` | 1.0.12684.400 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsVirtualDesktopBootloader` | 1.0.9023.1100 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsWDK.10.0.22000` | 10.1.22000.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsWDK.10.0.22621` | 10.1.22621.2428 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WindowsWDK.10.0.26100` | 10.1.26100.6584 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.WingetCreate` | 1.12.8.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.XMLNotepad` | 2.9.0.21 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.bitsmanager` | 1.12.0.4 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.err` | 6.4.5 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.etl2pcapng` | 1.11.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.msodbcsql.17` | 17.10.6.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.msodbcsql.18` | 18.6.2.1 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.quicreach` | 1.3.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Microsoft.winfile` | 10.4.0.0 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `Telerik.Fiddler.Classic` | 5.0.20253.3311 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `WiresharkFoundation.Stratoshark` | 0.9.3 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
-| `WiresharkFoundation.Wireshark` | 4.6.5 | 2026-05-01 11:19:48 UTC+08:00 | ✅ 已分析 |
+| `GitHub.Copilot` | 1.0.34 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `GitHub.GitHubDesktop` | 3.5.8 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `GitHub.GitLFS` | 3.7.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `GitHub.cli` | 2.92.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `GitHub.git-sizer` | 1.5.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AIShell` | 1.0.0-preview.8 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AKSdesktop` | 0.1.0-alpha | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.APM` | 0.11.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.ASRTestTool` | 4.13.17600.1000 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AccountLockoutStatus` | 1.0.0.60 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AdministrativeTemplates` | 11.25H2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AmendmentAppWordService` | 4.2.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AppControlPolicyWizard` | 2.6.0.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AppInstaller` | 1.27.470.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AppInstallerFileBuilder` | 1.2020.221.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AppLockerPolicyConverter` | 2.0.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.ApplicationInspector` | 1.9.55 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Aspire` | 13.1.3 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azd` | 1.24.300 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.ADConnectSyncDocumenter` | 1.20.0917.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.AZCopy.10` | 10.32.3 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.ArtifactSigningClientTools` | 0.1.128 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.Auth` | 0.9.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.Az` | 15.2.0.40510 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.AztfExport` | 0.19.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.BatchExplorer` | 2.23.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.CloudHSM-ClientSDK` | 2.0.2.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.ConnectedMachineAgent` | 1.63.03384.2896 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.CosmosEmulator` | 2.14.27 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.DataCLI` | 20.3.14 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.DataStudio` | 1.52.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.FunctionsCoreTools` | 4.10.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.GuestProxyAgent` | 1.0.39 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.IoTExplorer` | 0.15.12 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.Kubelogin` | 0.2.13 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.QuickReview` | 3.1.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.StorageExplorer` | 1.43.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.TemplateAnalyzer` | 0.8.5 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Azure.TrustedSigningClientTools` | 0.1.127 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AzureCLI` | 2.85.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AzureMonitorAgent` | 1.41.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.AzureVPNClient` | 4.0.5.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.BTP` | 1.14.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Bicep` | 0.42.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.BotFrameworkComposer` | 2.1.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.BotFrameworkEmulator` | 4.15.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.CLRTypesSQLServer.2019` | 15.0.2000.5 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.CertifiedToolAzureVM` | 1.6 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.CmdPalAzureExtension` | 0.200.174.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.CmdPalGitHubExtension` | 0.103.178.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DSC` | 3.1.3 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DTrace` | 2.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DataMigrationAssistant` | 5.8.5973.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DataTools.IntegrationServices` | 17.0.1010.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DebugDiag` | 2.3.2.11 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DefenderForCloud.CLI` | 2.0.03334.114 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DependencyAgent` | 9.10.18 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DeploymentToolkit` | 6.3.8456.1000 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DevSkim.CLI.DotNetTool` | 1.0.59 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DevSkim.CLI.LibraryPackage` | 1.0.59 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DirectAccessCTST` | 1.4.4.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DirectX` | 9.29.1974.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DirectXTex.Texassemble` | 2026.3.31 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DirectXTex.Texconv` | 2026.3.31 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DirectXTex.Texdiag` | 2026.3.31 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DiskSpd` | 2.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.AspNetCore.10` | 10.0.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.AspNetCore.6` | 6.0.36 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.AspNetCore.8` | 8.0.26 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.AspNetCore.9` | 9.0.15 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.DesktopRuntime.10` | 10.0.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.DesktopRuntime.6` | 6.0.36 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.DesktopRuntime.8` | 8.0.26 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.DesktopRuntime.9` | 9.0.15 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.Framework.DeveloperPack.4.6` | 4.6.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.Framework.DeveloperPack_4` | 4.8.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.Framework.Runtime` | 4.8.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.HostingBundle.10` | 10.0.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.HostingBundle.6` | 6.0.36 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.HostingBundle.8` | 8.0.26 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.HostingBundle.9` | 9.0.15 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.RepairTool` | 1.4 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.Runtime.10` | 10.0.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.Runtime.6` | 6.0.36 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.Runtime.8` | 8.0.26 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.Runtime.9` | 9.0.15 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.SDK.10` | 10.0.203 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.SDK.6` | 6.0.428 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.SDK.8` | 8.0.420 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.SDK.9` | 9.0.313 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.UninstallTool` | 1.7.661902 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.DotNet.dotnet-ef` | 10.0.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Edge` | 147.0.3912.86 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.EdgeDriver` | 147.0.3912.86 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.EdgeWebView2Runtime` | 147.0.3912.98 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Edit` | 2.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.EnterpriseStateClassify` | 1.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.EventLogExpert` | 25.12.11.1105 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.FRSDiag` | 1.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.FSLogix` | 3.26.126.19110 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.FoundryLocal` | 0.8.119.102 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.FuzzyLookupAddExcel` | 1.3.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.GameInput` | 3.3.195.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Garnet.DN8` | 1.0.83 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Garnet.DN9` | 1.0.83 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Git` | 2.53.0.0.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.GlobalSecureAccessClient` | 2.26.108 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.HIDTools.Waratah` | 1.90 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.HwpConverter` | 15.0.4454.1506 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.IIS.Compression` | 1.0.06502 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.IIS.ServiceMonitor` | 2.0.1.10 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.IIS.URLRewrite` | 7.2.1993 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.IISManagerRemoteAdministration` | 1.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.IdFix` | 2.6.0.3 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.IntegrationRuntime` | 5.65.9593.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.IntuneWSLPlugin` | 1.25.4.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.IronPython.3` | 3.4.2.1000 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Kanagawa` | 1.2.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.LAPS` | 6.2.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.LightGBM` | 4.6.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.LingeringObjectLiquidator` | 2.0.21 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.LogCheetah` | 1.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.LogParser` | 2.2.10 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.M365AgentsPlayground` | 0.2.24 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MFCMapi` | 26.0.26111.02 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MIDI.FeatureEnablementChecker` | 1.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MIDI.SDK` | 1.0.16-rc.3.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MITT` | 8.03 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MSIX-Toolkit` | 10.0.19041.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MSIXCore` | 1.2.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MSIXPackagingTool` | 1.2024.405.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MUTT` | 3.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MaliciousSoftwareRemovalTool` | 5.139 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MediaCreationTool` | 10.0.26100.7019 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MouseWithoutBorders` | 2.2.1.327 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.MouseandKeyboardCenter` | 14.41.137.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Ntttcp` | 5.40.0.99012574 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.NuGet` | 7.3.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OSCDIMG` | 2.56 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OSConfig` | 1.3.10.13 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Office` | 16.0.19929.20062 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OfficeDeploymentTool` | 16.0.19929.20062 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OneDrive` | 26.062.0402.0002 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OneLakeFileExplorer` | 1.0.14.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OneNoteDiagnostics` | 1.0.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OpenAPI.Hidi` | 3.1.2.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OpenAPI.Kiota` | 1.30.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OpenCLGLVulkanCompatibilityPack` | 1.2404.1.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OpenJDK.11` | 11.0.30.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OpenJDK.17` | 17.0.18.8 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OpenJDK.21` | 21.0.10.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.OpenJDK.25` | 25.0.2.10 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PICT` | 3.7.4.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PIX` | 2603.25 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Pave` | 0.1.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PerfView` | 3.2.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PowerAppsCLI` | 1.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PowerAutomateDesktop` | 2.67.00143.26090 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PowerAutomateProcessMining` | 6.1.2506.2252 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PowerBI` | 2.153.910.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PowerBIReportBuilder` | 15.7.1817.11 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PowerBIReportServer` | 1.25.9558.32914 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PowerShell` | 7.6.1.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PowerToys` | 0.99.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PrintMetadataTroubleshooter` | 1.0.0.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.ProfileExplorer` | 1.2.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.ProjectTelescope` | 0.15.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Promptflow` | 1.17.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.PurviewInformationProtection` | 3.2.57.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.RMSClient` | 1.0.5406.9 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.RemoteDesktopClient` | 1.2.7099.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.RemoteDesktopMMRService` | 1.0.2507.21006 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.RemoteHelp` | 5.1.1998.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.ReportBuilder` | 15.1.30001.02 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SBOMTool` | 4.1.5 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SQLServer.2019.Developer` | 15.2204.5490.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SQLServer.2019.Express` | 15.2204.5490.2 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SQLServer.2022.Developer` | 16.0.1000.6 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SQLServer.2022.Express` | 16.0.1000.6 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SQLServer.2025.Developer` | 17.0.1000.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SQLServer.2025.Express` | 17.0.1000.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SQLServer.OLEDBDriver` | 19.4.1.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SQLServer.RMLUtilities` | 09.04.0103 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SQLServerManagementStudio` | 20.2.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SaRACmd` | 17.01.3954.000 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SafetyScanner` | 1.449.54.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.ScreenRecorder` | 0.1.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SecurityComplianceToolkit.LGPO` | 3.0.2004.13001 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SecurityComplianceToolkit.PolicyAnalyzer` | 4.0.2004.13001 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SecurityComplianceToolkit.SetObjectSecurity` | 1.0.2004.13001 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.ServiceFabricRuntime` | 11.3.475.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.ServiceFabricSDK` | 8.3.475 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SetupDiag` | 1.7.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SmartDump` | 1.13 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SqlPackage` | 170.3.93 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sqlcmd` | 1.9.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SurfaceApp` | 75.11130.117.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SurfaceHubRecoveryTool` | 2.7.139.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.SymCryptUnitTest` | 103.8.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.Autologon` | 3.10 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.Autoruns` | 14.11 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.BGInfo` | 4.33 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.Ctrl2Cap` | 3.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.DebugView` | 5.00 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.Desktops` | 2.01 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.FindLinks` | 1.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.Handle` | 5.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.MoveFile` | 1.02 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.PendMoves` | 1.3 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.ProcessExplorer` | 17.11 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.ProcessMonitor` | 4.01 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.RAMMap` | 1.63 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.RDCMan` | 3.12 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.RegJump` | 1.11 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.SDelete` | 2.06 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.Sigcheck` | 2.91 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.Strings` | 2.54 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.Sysmon` | 15.20 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.TCPView` | 4.19 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.VMMap` | 3.40 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.Whois` | 1.21 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Sysinternals.ZoomIt` | 11.00 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.TeamMate` | 0.1.15 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Teams` | 26072.521.4595.7966 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.TeamsTxNDI` | 2024.8.1.14 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.TimeTravelDebugging` | 1.11.584.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Tokenizer` | 1.3.3 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.UI.Xaml.2.7` | 7.2208.15002.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.UI.Xaml.2.8` | 8.2310.30001.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.UpdateAssistant` | 1.4.19041.2183 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VCLibs.14` | 14.0.33519.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VCLibs.Desktop.14` | 14.0.33728.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VCRedist.2012.x64` | 11.0.61030.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VCRedist.2012.x86` | 11.0.61030.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VCRedist.2013.x64` | 12.0.40664.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VCRedist.2013.x86` | 12.0.40664.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VCRedist.2015+.arm64` | 14.50.35719.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VCRedist.2015+.x64` | 14.50.35719.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VCRedist.2015+.x86` | 14.50.35719.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VSDotNetLogCollect` | 17.0.35214.149 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VSIXBootstrapper` | 1.0.37 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VSTOR` | 10.0.60917 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisioViewer` | 16.0.4339.1001 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisualStudio.2022.BuildTools` | 17.14.31 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisualStudio.2022.Enterprise` | 17.14.31 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisualStudio.2022.OnecoreMsvsmon` | 17.14.6 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisualStudio.2022.Professional` | 17.14.31 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisualStudio.2022.RemoteTools` | 17.14.8 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisualStudio.ConfigFinder` | 1.0.47.55350 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisualStudio.Extensions.TypeScript` | 4.3 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisualStudio.Locator` | 3.1.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisualStudioCode` | 1.118.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.VisualTrueType` | 6.35 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WSL` | 2.6.3 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Wassette` | 0.4.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WebDeploy` | 10.0.2001 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.Win32ContentPrepTool` | 1.8.7 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WinAppCli` | 0.3.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WinDbg` | 1.2603.20001.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsADK` | 10.1.28000.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsAdminCenter` | 2.6.6.18 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsApp` | 2.0.1071.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsAppRuntime.1.5` | 1.5.8 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsAppRuntime.1.6` | 1.6.9 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsAppRuntime.1.7` | 1.7.9 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsAppRuntime.1.8` | 1.8.6 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsApplicationDriver` | 1.2.1.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsBusesTracing` | 1.1.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsCloudIOProtectionDriver` | 0.0.693 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsDeviceRecoveryTool` | 3.17.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsInstallationAssistant` | 1.4.19041.6448 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsMIDIServicesSDK` | 1.0.14-rc.1.209 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsPCHealthCheck` | 4.0.2410.23001 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsSDK.10.0.22000` | 10.0.22000.832 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsSDK.10.0.22621` | 10.0.22621.2428 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsSDK.10.0.26100` | 10.0.26100.7705 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsSDK.10.0.28000` | 10.0.28000.1721 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsTerminal` | 1.24.10921.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsVirtualDesktopAgent` | 1.0.12684.400 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsVirtualDesktopBootloader` | 1.0.9023.1100 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsWDK.10.0.22000` | 10.1.22000.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsWDK.10.0.22621` | 10.1.22621.2428 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WindowsWDK.10.0.26100` | 10.1.26100.6584 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.WingetCreate` | 1.12.8.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.XMLNotepad` | 2.9.0.21 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.bitsmanager` | 1.12.0.4 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.err` | 6.4.5 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.etl2pcapng` | 1.11.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.msodbcsql.17` | 17.10.6.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.msodbcsql.18` | 18.6.2.1 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.quicreach` | 1.3.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Microsoft.winfile` | 10.4.0.0 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `Telerik.Fiddler.Classic` | 5.0.20253.3311 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `WiresharkFoundation.Stratoshark` | 0.9.3 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
+| `WiresharkFoundation.Wireshark` | 4.6.5 | 2026-05-01 11:46:52 UTC+08:00 | ✅ 已分析 |
 
 ### 維護建議
 

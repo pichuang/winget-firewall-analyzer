@@ -1,5 +1,5 @@
 # winget 安裝檔一鍵下載腳本
-# 產生時間：2026-05-01 11:19:48
+# 產生時間：2026-05-01 11:46:52
 # 套件數量：295
 #
 # 用法：.\generated\download.ps1
@@ -3563,10 +3563,10 @@ if (Test-Path $FilePath) {
     }
 }
 
-# === Microsoft.EdgeWebView2Runtime v147.0.3912.86 ===
+# === Microsoft.EdgeWebView2Runtime v147.0.3912.98 ===
 $PkgDir = "$DownloadDir\Microsoft\EdgeWebView2Runtime"
 New-Item -ItemType Directory -Path $PkgDir -Force | Out-Null
-Write-Host "📦 Microsoft.EdgeWebView2Runtime v147.0.3912.86" -ForegroundColor White
+Write-Host "📦 Microsoft.EdgeWebView2Runtime v147.0.3912.98" -ForegroundColor White
 
 $FilePath = "$PkgDir\MicrosoftEdgeWebView2RuntimeInstallerX86.exe"
 if (Test-Path $FilePath) {
@@ -3575,7 +3575,7 @@ if (Test-Path $FilePath) {
 } else {
     Write-Host "   ⬇️  下載中: MicrosoftEdgeWebView2RuntimeInstallerX86.exe (x86/user)" -ForegroundColor Yellow
     try {
-        Invoke-WebRequest -Uri "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/a37c3727-d166-4729-8654-b217b3c37e44/MicrosoftEdgeWebView2RuntimeInstallerX86.exe" -OutFile $FilePath -UseBasicParsing
+        Invoke-WebRequest -Uri "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/897cbefb-29fa-4846-94e9-20e01c74e00c/MicrosoftEdgeWebView2RuntimeInstallerX86.exe" -OutFile $FilePath -UseBasicParsing
         $Size = (Get-Item $FilePath).Length / 1MB
         Write-Host ("   ✅ 完成: {0:N1} MB" -f $Size) -ForegroundColor Green
         $Total++
@@ -3593,7 +3593,7 @@ if (Test-Path $FilePath) {
 } else {
     Write-Host "   ⬇️  下載中: MicrosoftEdgeWebView2RuntimeInstallerX64.exe (x64/user)" -ForegroundColor Yellow
     try {
-        Invoke-WebRequest -Uri "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/74dcb3ad-6bec-4212-bd0e-1f18ace9858a/MicrosoftEdgeWebView2RuntimeInstallerX64.exe" -OutFile $FilePath -UseBasicParsing
+        Invoke-WebRequest -Uri "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/f67cc405-2a0b-4df8-b641-023a0ee89f01/MicrosoftEdgeWebView2RuntimeInstallerX64.exe" -OutFile $FilePath -UseBasicParsing
         $Size = (Get-Item $FilePath).Length / 1MB
         Write-Host ("   ✅ 完成: {0:N1} MB" -f $Size) -ForegroundColor Green
         $Total++
@@ -3611,7 +3611,7 @@ if (Test-Path $FilePath) {
 } else {
     Write-Host "   ⬇️  下載中: MicrosoftEdgeWebView2RuntimeInstallerARM64.exe (arm64/user)" -ForegroundColor Yellow
     try {
-        Invoke-WebRequest -Uri "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/f15afe06-49b5-4a2b-875b-6ade667bbf07/MicrosoftEdgeWebView2RuntimeInstallerARM64.exe" -OutFile $FilePath -UseBasicParsing
+        Invoke-WebRequest -Uri "https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/bf488e2b-bbbe-437d-bab0-436107a31c14/MicrosoftEdgeWebView2RuntimeInstallerARM64.exe" -OutFile $FilePath -UseBasicParsing
         $Size = (Get-Item $FilePath).Length / 1MB
         Write-Host ("   ✅ 完成: {0:N1} MB" -f $Size) -ForegroundColor Green
         $Total++

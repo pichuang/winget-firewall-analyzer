@@ -1,5 +1,20 @@
 # winget 套件變更記錄（稽核用）
 
+## 2026-05-01 11:46:52 UTC+08:00
+
+- **操作人員**：pichuang@fly-wired.homecloud.intranet
+- **分析套件數**：295
+
+### 版本更新
+
+| 套件 | 舊版本 | 新版本 |
+|---|---|---|
+| `Microsoft.EdgeWebView2Runtime` | 147.0.3912.86 | 147.0.3912.98 |
+
+未變更套件：294 個
+
+---
+
 ## 2026-05-01 11:19:48 UTC+08:00
 
 - **操作人員**：pichuang@fly-wired.homecloud.intranet
