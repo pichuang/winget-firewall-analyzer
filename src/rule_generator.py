@@ -79,7 +79,12 @@ def generate_rules(
 
     回傳 (path_rule, fqdn_rule) 元組。
     """
-    package_slug = manifest.package_id.lower().replace(".", "-")
+    package_slug = (
+        manifest.package_id.lower()
+        .replace(".", "-")
+        .replace("microsoft-", "ms-")
+        .replace("github-", "gh-")
+    )
 
     # 收集所有重導向鏈中的 FQDN 與 URL
     all_fqdns: set[str] = set()
@@ -102,7 +107,7 @@ def generate_rules(
 
     # Path 層級規則（TLS Inspection 啟用時使用）
     path_rule = FirewallRule(
-        name=f"winget-{package_slug}-path",
+        name=f"mirror-to-{package_slug}-https",
         target_urls=sorted_urls,
         source_addresses=source_addresses,
         description=f"winget 套件 {manifest.package_id} v{manifest.version} 下載所需路徑（TLS Inspection）",
@@ -112,7 +117,7 @@ def generate_rules(
 
     # FQDN 層級規則（備用方案）
     fqdn_rule = FirewallRule(
-        name=f"winget-{package_slug}-fqdn",
+        name=f"mirror-to-{package_slug}-https",
         target_fqdns=sorted_fqdns,
         source_addresses=source_addresses,
         description=f"winget 套件 {manifest.package_id} v{manifest.version} 下載所需網域（FQDN 層級）",
@@ -133,7 +138,7 @@ def generate_base_infrastructure_rule(
     descriptions = [f"{e['fqdn']} — {e.get('description', '')}" for e in base_fqdns]
 
     return FirewallRule(
-        name="winget-infrastructure-fqdn",
+        name="mirror-to-winget-infra-https",
         target_fqdns=sorted(fqdns),
         source_addresses=source_addresses,
         source_ip_groups=source_ip_groups or [],

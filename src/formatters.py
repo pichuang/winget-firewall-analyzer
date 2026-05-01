@@ -94,43 +94,178 @@ def format_azure_cli(
     rule_collection_group_name: str = "rcg-1100-mirror-winget",
     rule_collection_name: str = "action-allow-mirror",
     priority: int = 1100,
+    rule_filter: str = "all",
 ) -> str:
-    """產出 Azure CLI 指令。
+    """產出 Azure CLI 指令（使用 Firewall Policy Draft 模式）。
+
+    Args:
+        rule_filter: 規則過濾模式
+            - "tls": 僅 TLS Inspection path 層級規則（targetUrls）+ 基礎設施規則
+            - "fqdn": 僅 FQDN 層級規則（targetFqdns，不含 path 規則）
+            - "all": 所有規則（預設，包含 path + fqdn）
 
     若規則包含 source_ip_groups，預設使用 --source-ip-groups，
     並以註解附帶 --source-addresses 備用方案。
+    使用 Draft 模式，規則不會直接套用，需手動執行 deploy 指令確認後才生效。
     """
+    # 過濾規則
+    if rule_filter == "tls":
+        # TLS 模式：path 規則（targetUrls）+ 基礎設施規則（targetFqdns，package_id 含 *）
+        filtered_rules = [
+            r for r in rules
+            if r.target_urls or (r.target_fqdns and "*" in r.package_id)
+        ]
+        mode_label = "TLS Inspection（Path 層級）"
+        rc_suffix = "-tls"
+    elif rule_filter == "fqdn":
+        # FQDN 模式：純 FQDN 規則（不含 path 規則）
+        filtered_rules = [
+            r for r in rules
+            if r.target_fqdns and not r.target_urls
+        ]
+        mode_label = "FQDN 層級（無 TLS Inspection）"
+        rc_suffix = "-fqdn"
+    else:
+        filtered_rules = rules
+        mode_label = "全部規則（TLS + FQDN）"
+        rc_suffix = ""
+
+    rc_name_full = f"{rule_collection_name}{rc_suffix}"
+
+    total_rules = len(filtered_rules)
+
     lines: list[str] = [
         "#!/bin/bash",
-        "# Azure Firewall Policy 規則部署指令",
+        f"# Azure Firewall Policy 規則部署指令 — {mode_label}",
+        "# ⚠️ 使用 Draft 模式：規則不會直接套用，需手動執行 deploy 指令確認後才生效",
         f"# 產生時間：請自行記錄",
+        f"# 規則數量：{total_rules}",
+        "",
+        'set -euo pipefail',
         "",
         f'POLICY_NAME="{firewall_policy_name}"',
         f'RESOURCE_GROUP="{resource_group}"',
         f'RCG_NAME="{rule_collection_group_name}"',
-        f'RC_NAME="{rule_collection_name}"',
+        f'RC_NAME="{rc_name_full}"',
         f"PRIORITY={priority}",
+        f"TOTAL_RULES={total_rules}",
+        "CURRENT=0",
+        "FAILED=0",
         "",
-        "# 建立 Rule Collection Group（若不存在）",
-        "az network firewall policy rule-collection-group create \\",
-        '  --name "$RCG_NAME" \\',
+        "# 顏色定義",
+        'RED="\\033[0;31m"',
+        'GREEN="\\033[0;32m"',
+        'YELLOW="\\033[0;33m"',
+        'CYAN="\\033[0;36m"',
+        'NC="\\033[0m" # No Color',
+        "",
+        "# =============================================",
+        "# 前置檢查",
+        "# =============================================",
+        'echo -e "${CYAN}🔍 前置檢查...${NC}"',
+        "",
+        "# 確認 az CLI 已登入",
+        'if ! az account show --output none 2>/dev/null; then',
+        '  echo -e "${RED}❌ 尚未登入 Azure CLI，請先執行 az login${NC}"',
+        "  exit 1",
+        "fi",
+        'SUBSCRIPTION=$(az account show --query "name" -o tsv)',
+        'echo -e "${GREEN}✅ 已登入 Azure：${SUBSCRIPTION}${NC}"',
+        "",
+        "# 確認 Firewall Policy 存在",
+        f'if az network firewall policy show --name "$POLICY_NAME" --resource-group "$RESOURCE_GROUP" --output none 2>/dev/null; then',
+        '  POLICY_SKU=$(az network firewall policy show --name "$POLICY_NAME" --resource-group "$RESOURCE_GROUP" --query "sku.tier" -o tsv 2>/dev/null || echo "unknown")',
+        '  echo -e "${GREEN}✅ Firewall Policy 存在：${POLICY_NAME}（SKU: ${POLICY_SKU}）${NC}"',
+        "else",
+        '  echo -e "${RED}❌ Firewall Policy 不存在：$POLICY_NAME${NC}"',
+        '  echo -e "${RED}   Resource Group: $RESOURCE_GROUP${NC}"',
+        "  exit 1",
+        "fi",
+        "",
+        'echo ""',
+        f'echo -e "${{CYAN}}📋 部署計畫：${{NC}}"',
+        f'echo "   Policy:     $POLICY_NAME"',
+        f'echo "   RCG:        $RCG_NAME"',
+        f'echo "   Collection: $RC_NAME"',
+        f'echo "   Priority:   $PRIORITY"',
+        f'echo "   規則數量:   $TOTAL_RULES"',
+        f'echo "   模式:       Draft（不會直接套用）"',
+        'echo ""',
+        "",
+        "# =============================================",
+        "# 步驟 1：建立 Rule Collection Group（若不存在）",
+        "# =============================================",
+        'echo -e "${CYAN}📦 步驟 1/6：檢查 Rule Collection Group...${NC}"',
+        'if az network firewall policy rule-collection-group show --name "$RCG_NAME" --policy-name "$POLICY_NAME" --resource-group "$RESOURCE_GROUP" --output none 2>/dev/null; then',
+        '  echo -e "${GREEN}   ✅ RCG 已存在：${RCG_NAME}${NC}"',
+        "else",
+        '  echo -e "${YELLOW}   ⏳ 建立 RCG：${RCG_NAME} ...${NC}"',
+        '  if az network firewall policy rule-collection-group create \\',
+        '    --name "$RCG_NAME" \\',
+        '    --policy-name "$POLICY_NAME" \\',
+        '    --resource-group "$RESOURCE_GROUP" \\',
+        "    --priority $PRIORITY --output none 2>&1; then",
+        '    echo -e "${GREEN}   ✅ RCG 建立成功${NC}"',
+        "  else",
+        '    echo -e "${RED}   ❌ RCG 建立失敗${NC}"',
+        "    exit 1",
+        "  fi",
+        "fi",
+        "",
+        "# =============================================",
+        "# 步驟 2：建立 Firewall Policy Draft",
+        "# =============================================",
+        'echo -e "${CYAN}📝 步驟 2/6：建立 Policy Draft...${NC}"',
+        "if az network firewall policy draft create \\",
+        '  --policy-name "$POLICY_NAME" \\',
+        "  --resource-group \"$RESOURCE_GROUP\" --output none 2>&1; then",
+        '  echo -e "${GREEN}   ✅ Policy Draft 建立成功${NC}"',
+        "else",
+        '  echo -e "${YELLOW}   ⚠️  Policy Draft 已存在或建立失敗（繼續執行）${NC}"',
+        "fi",
+        "",
+        "# =============================================",
+        "# 步驟 3：建立 RCG Draft",
+        "# =============================================",
+        'echo -e "${CYAN}📝 步驟 3/6：建立 RCG Draft...${NC}"',
+        "if az network firewall policy rule-collection-group draft create \\",
         '  --policy-name "$POLICY_NAME" \\',
         '  --resource-group "$RESOURCE_GROUP" \\',
-        '  --priority $PRIORITY 2>/dev/null || true',
+        '  --rule-collection-group-name "$RCG_NAME" \\',
+        "  --priority $PRIORITY --output none 2>&1; then",
+        '  echo -e "${GREEN}   ✅ RCG Draft 建立成功${NC}"',
+        "else",
+        '  echo -e "${RED}   ❌ RCG Draft 建立失敗${NC}"',
+        "  exit 1",
+        "fi",
         "",
-        "# 建立 Rule Collection",
-        "az network firewall policy rule-collection-group collection add-filter-collection \\",
-        '  --name "$RC_NAME" \\',
+        "# =============================================",
+        "# 步驟 3：在 Draft 中建立 Rule Collection",
+        "# =============================================",
+        'echo -e "${CYAN}📂 步驟 4/6：建立 Rule Collection...${NC}"',
+        "if az network firewall policy rule-collection-group draft collection add-filter-collection \\",
         '  --policy-name "$POLICY_NAME" \\',
         '  --resource-group "$RESOURCE_GROUP" \\',
-        '  --rcg-name "$RCG_NAME" \\',
+        '  --rule-collection-group-name "$RCG_NAME" \\',
+        f'  --name "$RC_NAME" \\',
         "  --rule-type ApplicationRule \\",
         "  --action Allow \\",
-        f"  --priority {priority + 100}",
+        f"  --collection-priority {priority + 100} --output none 2>&1; then",
+        '  echo -e "${GREEN}   ✅ Rule Collection 建立成功：$RC_NAME${NC}"',
+        "else",
+        '  echo -e "${RED}   ❌ Rule Collection 建立失敗${NC}"',
+        "  exit 1",
+        "fi",
+        "",
+        "# =============================================",
+        f"# 步驟 5：新增規則至 Draft（共 {total_rules} 條）",
+        "# =============================================",
+        f'echo -e "${{CYAN}}🔧 步驟 5/6：新增 {total_rules} 條規則至 Draft...${{NC}}"',
+        'echo ""',
         "",
     ]
 
-    for rule in rules:
+    for idx, rule in enumerate(filtered_rules, 1):
         targets = rule.target_urls if rule.target_urls else rule.target_fqdns
         target_flag = "--target-urls" if rule.target_urls else "--target-fqdns"
         targets_str = " ".join(f'"{t}"' for t in targets)
@@ -139,12 +274,12 @@ def format_azure_cli(
         sources_str = " ".join(f'"{s}"' for s in rule.source_addresses)
         ip_groups_str = " ".join(f'"{g}"' for g in rule.source_ip_groups) if use_ip_groups else ""
 
-        lines.append(f"# {rule.description}")
+        lines.append(f'echo -ne "   [{idx}/{total_rules}] {rule.name} ... "')
         lines.extend([
-            "az network firewall policy rule-collection-group collection rule add \\",
+            "if az network firewall policy rule-collection-group draft collection rule add \\",
             '  --policy-name "$POLICY_NAME" \\',
             '  --resource-group "$RESOURCE_GROUP" \\',
-            '  --rcg-name "$RCG_NAME" \\',
+            '  --rule-collection-group-name "$RCG_NAME" \\',
             '  --collection-name "$RC_NAME" \\',
             f'  --name "{rule.name}" \\',
             "  --rule-type ApplicationRule \\",
@@ -153,12 +288,53 @@ def format_azure_cli(
         ])
 
         if use_ip_groups:
-            lines.append(f"  --source-ip-groups {ip_groups_str}")
-            lines.append(f"  # 備用：--source-addresses {sources_str}")
+            lines.append(f"  --source-ip-groups {ip_groups_str} --output none 2>&1; then")
         else:
-            lines.append(f"  --source-addresses {sources_str}")
+            lines.append(f"  --source-addresses {sources_str} --output none 2>&1; then")
 
-        lines.append("")
+        lines.extend([
+            '  echo -e "${GREEN}✅${NC}"',
+            "  CURRENT=$((CURRENT + 1))",
+            "else",
+            '  echo -e "${RED}❌${NC}"',
+            "  FAILED=$((FAILED + 1))",
+            "fi",
+            "",
+        ])
+
+    # 摘要與部署指引
+    lines.extend([
+        "# =============================================",
+        "# 步驟 6：部署摘要",
+        "# =============================================",
+        'echo ""',
+        'echo "=============================="',
+        'echo -e "${CYAN}📊 部署摘要${NC}"',
+        'echo "=============================="',
+        'echo "   Policy:        $POLICY_NAME"',
+        'echo "   RCG:           $RCG_NAME"',
+        'echo "   Collection:    $RC_NAME"',
+        f'echo -e "   ✅ 成功:        ${{GREEN}}$CURRENT / {total_rules}${{NC}}"',
+        "if [ $FAILED -gt 0 ]; then",
+        '  echo -e "   ❌ 失敗:        ${RED}$FAILED${NC}"',
+        "fi",
+        'echo "=============================="',
+        'echo ""',
+        "",
+        "if [ $FAILED -gt 0 ]; then",
+        '  echo -e "${YELLOW}⚠️  有 $FAILED 條規則新增失敗，請檢查錯誤訊息${NC}"',
+        "fi",
+        "",
+        'echo -e "${YELLOW}⚠️  規則已寫入 Draft，尚未套用至正式環境${NC}"',
+        'echo -e "${YELLOW}   請在 Azure Portal 確認 Draft 內容後，執行以下指令部署：${NC}"',
+        'echo ""',
+        "echo 'az network firewall policy rule-collection-group draft deploy \\'",
+        "echo '  --policy-name \"'$POLICY_NAME'\" \\'",
+        "echo '  --resource-group \"'$RESOURCE_GROUP'\" \\'",
+        "echo '  --rule-collection-group-name \"'$RCG_NAME'\"'",
+        'echo ""',
+        "",
+    ])
 
     return "\n".join(lines)
 

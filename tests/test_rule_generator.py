@@ -114,8 +114,8 @@ class TestGenerateRules:
             source_addresses=["10.0.0.0/8"],
         )
 
-        assert path_rule.name == "winget-microsoft-git-path"
-        assert fqdn_rule.name == "winget-microsoft-git-fqdn"
+        assert path_rule.name == "mirror-to-ms-git-https"
+        assert fqdn_rule.name == "mirror-to-ms-git-https"
 
     def test_path_rule_has_target_urls(self) -> None:
         manifest = _make_test_manifest()
@@ -154,7 +154,7 @@ class TestBaseInfrastructureRule:
         ]
         rule = generate_base_infrastructure_rule(base_fqdns, ["10.0.0.0/8"])
 
-        assert rule.name == "winget-infrastructure-fqdn"
+        assert rule.name == "mirror-to-winget-infra-https"
         assert "cdn.winget.microsoft.com" in rule.target_fqdns
         assert "winget.azureedge.net" in rule.target_fqdns
         assert rule.source_addresses == ["10.0.0.0/8"]

@@ -263,6 +263,10 @@ blocklist:
 # Azure Firewall Policy 規則設定
 # =============================================================================
 firewall:
+  # Azure Firewall Policy 與 Resource Group 名稱
+  firewall_policy_name: "afwp-global-01"
+  resource_group: "rg-vdss-afwp-prd-global"
+
   source_addresses:
     - "10.0.0.0/8"
 

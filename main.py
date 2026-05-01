@@ -208,7 +208,7 @@ async def main_async(args: argparse.Namespace) -> None:
                 wsl_infra_rule = generate_base_infrastructure_rule(
                     wsl_base_fqdns, source_addresses, source_ip_groups,
                 )
-                wsl_infra_rule.name = "wsl-infrastructure-fqdn"
+                wsl_infra_rule.name = "mirror-to-wsl-infra-https"
                 wsl_infra_rule.description = "WSL 基礎設施端點（所有 WSL 發行版共用）：" + "；".join(
                     f"{e['fqdn']} — {e.get('description', '')}" for e in wsl_base_fqdns
                 )
@@ -228,6 +228,8 @@ async def main_async(args: argparse.Namespace) -> None:
     rc_name = firewall_config.get("rule_collection_name", "action-allow-mirror")
     rcg_name = firewall_config.get("rule_collection_group_name", "rcg-1100-mirror-winget")
     priority = firewall_config.get("priority", 1100)
+    fw_policy_name = firewall_config.get("firewall_policy_name", "<FIREWALL_POLICY_NAME>")
+    fw_resource_group = firewall_config.get("resource_group", "<RESOURCE_GROUP>")
 
     # 時間戳記（用於產出資料夾名稱）
     from datetime import datetime, timedelta, timezone
@@ -249,11 +251,15 @@ async def main_async(args: argparse.Namespace) -> None:
     elif args.format == "csv":
         output = format_csv(all_rules)
     elif args.format == "cli":
+        # CLI 格式預設輸出 TLS 版本
         output = format_azure_cli(
             all_rules,
+            firewall_policy_name=fw_policy_name,
+            resource_group=fw_resource_group,
             rule_collection_group_name=rcg_name,
             rule_collection_name=rc_name,
             priority=priority,
+            rule_filter="tls",
         )
     elif args.format == "md":
         output = format_markdown(
@@ -274,27 +280,45 @@ async def main_async(args: argparse.Namespace) -> None:
     if args.download_scripts and all_manifests:
         bash_script = generate_download_bash(all_manifests)
         ps1_script = generate_download_ps1(all_manifests)
-        deploy_script = format_azure_cli(
+
+        # 產生兩份部署腳本：TLS Inspection（path 層級）與 FQDN 層級
+        deploy_tls_script = format_azure_cli(
             all_rules,
+            firewall_policy_name=fw_policy_name,
+            resource_group=fw_resource_group,
             rule_collection_group_name=rcg_name,
             rule_collection_name=rc_name,
             priority=priority,
+            rule_filter="tls",
+        )
+        deploy_fqdn_script = format_azure_cli(
+            all_rules,
+            firewall_policy_name=fw_policy_name,
+            resource_group=fw_resource_group,
+            rule_collection_group_name=rcg_name,
+            rule_collection_name=rc_name,
+            priority=priority,
+            rule_filter="fqdn",
         )
 
         bash_path = generated_dir / f"download_{ts}.sh"
         ps1_path = generated_dir / f"download_{ts}.ps1"
-        deploy_path = generated_dir / f"deploy_{ts}.sh"
+        deploy_tls_path = generated_dir / f"deploy-tls_{ts}.sh"
+        deploy_fqdn_path = generated_dir / f"deploy-fqdn_{ts}.sh"
 
         bash_path.write_text(bash_script, encoding="utf-8")
         ps1_path.write_text(ps1_script, encoding="utf-8")
-        deploy_path.write_text(deploy_script, encoding="utf-8")
+        deploy_tls_path.write_text(deploy_tls_script, encoding="utf-8")
+        deploy_fqdn_path.write_text(deploy_fqdn_script, encoding="utf-8")
         bash_path.chmod(0o755)
-        deploy_path.chmod(0o755)
+        deploy_tls_path.chmod(0o755)
+        deploy_fqdn_path.chmod(0o755)
 
         print(f"\n📥 已產生腳本：", file=sys.stderr)
-        print(f"   下載 Bash:       {bash_path.resolve()}", file=sys.stderr)
-        print(f"   下載 PowerShell: {ps1_path.resolve()}", file=sys.stderr)
-        print(f"   部署 Azure CLI:  {deploy_path.resolve()}", file=sys.stderr)
+        print(f"   下載 Bash:          {bash_path.resolve()}", file=sys.stderr)
+        print(f"   下載 PowerShell:    {ps1_path.resolve()}", file=sys.stderr)
+        print(f"   部署 TLS (Draft):   {deploy_tls_path.resolve()}", file=sys.stderr)
+        print(f"   部署 FQDN (Draft):  {deploy_fqdn_path.resolve()}", file=sys.stderr)
 
     # 寫入稽核日誌
     if all_manifests:
@@ -302,7 +326,8 @@ async def main_async(args: argparse.Namespace) -> None:
         if args.download_scripts:
             output_files["download.sh"] = str(generated_dir / f"download_{ts}.sh")
             output_files["download.ps1"] = str(generated_dir / f"download_{ts}.ps1")
-            output_files["deploy.sh"] = str(generated_dir / f"deploy_{ts}.sh")
+            output_files["deploy-tls.sh"] = str(generated_dir / f"deploy-tls_{ts}.sh")
+            output_files["deploy-fqdn.sh"] = str(generated_dir / f"deploy-fqdn_{ts}.sh")
 
         # 取得前次稽核日誌（在寫入新日誌之前）
         from src.audit import AUDIT_DIR
@@ -329,6 +354,115 @@ async def main_async(args: argparse.Namespace) -> None:
 
     print(f"\n📂 本次產出目錄：{generated_dir.resolve()}", file=sys.stderr)
 
+    # ── GitHub Release 打包發布 ──
+    if args.release and generated_dir.exists():
+        _create_github_release(generated_dir, ts, all_manifests)
+
+
+def _create_github_release(
+    generated_dir: Path,
+    ts: str,
+    manifests: list[PackageManifest],
+) -> None:
+    """打包 generated/ 子目錄為 zip，透過 gh CLI 建立 GitHub Release。
+
+    版本號格式：v2026.05.01（同日多次加流水號 .2, .3...）
+    """
+    import subprocess
+    from datetime import datetime, timedelta, timezone
+
+    now = datetime.now(timezone(timedelta(hours=8)))
+    base_tag = now.strftime("v%Y.%m.%d")
+
+    # 檢查 gh CLI 是否可用
+    try:
+        subprocess.run(["gh", "--version"], capture_output=True, timeout=5, check=True)
+    except (FileNotFoundError, subprocess.TimeoutExpired, subprocess.CalledProcessError):
+        print("❌ 無法使用 gh CLI，請先安裝並執行 gh auth login", file=sys.stderr)
+        return
+
+    # 自動計算流水號：檢查同日已有的 tag
+    try:
+        result = subprocess.run(
+            ["gh", "release", "list", "--limit", "50", "--json", "tagName", "-q", ".[].tagName"],
+            capture_output=True, text=True, timeout=15,
+        )
+        existing_tags = result.stdout.strip().split("\n") if result.stdout.strip() else []
+    except (subprocess.TimeoutExpired, subprocess.CalledProcessError):
+        existing_tags = []
+
+    # 決定版本號
+    if base_tag not in existing_tags:
+        tag = base_tag
+    else:
+        seq = 2
+        while f"{base_tag}.{seq}" in existing_tags:
+            seq += 1
+        tag = f"{base_tag}.{seq}"
+
+    # 打包 zip
+    zip_name = f"winget-firewall-rules_{ts}.zip"
+    zip_path = generated_dir.parent / zip_name
+
+    import zipfile
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+        for file in sorted(generated_dir.iterdir()):
+            if file.is_file():
+                zf.write(file, file.name)
+
+    print(f"\n📦 已打包：{zip_path.resolve()}", file=sys.stderr)
+
+    # 產生 Release Notes
+    pkg_count = len([m for m in manifests if not m.package_id.startswith("WSL.")])
+    wsl_count = len([m for m in manifests if m.package_id.startswith("WSL.")])
+    notes_lines = [
+        f"## winget 防火牆規則更新 — {tag}",
+        "",
+        f"- **winget 套件數**：{pkg_count}",
+    ]
+    if wsl_count:
+        notes_lines.append(f"- **WSL 發行版數**：{wsl_count}")
+    notes_lines.extend([
+        f"- **產生時間**：{now.strftime('%Y-%m-%d %H:%M:%S')} (UTC+8)",
+        "",
+        "### 包含檔案",
+        "",
+    ])
+    for file in sorted(generated_dir.iterdir()):
+        if file.is_file():
+            notes_lines.append(f"- `{file.name}`")
+    notes_lines.extend([
+        "",
+        "### 使用方式",
+        "",
+        "1. 下載 zip 解壓縮",
+        "2. 依據環境選擇部署腳本：",
+        "   - 已啟用 TLS Inspection → `deploy-tls_*.sh`",
+        "   - 未啟用 TLS Inspection → `deploy-fqdn_*.sh`",
+        "3. 修改腳本中的 `POLICY_NAME` 和 `RESOURCE_GROUP` 變數",
+        "4. 執行腳本（Draft 模式，不會直接套用）",
+        "5. 在 Azure Portal 確認 Draft 後執行 `draft deploy`",
+    ])
+    notes = "\n".join(notes_lines)
+
+    # 建立 GitHub Release
+    print(f"🚀 建立 GitHub Release: {tag} ...", file=sys.stderr)
+    try:
+        cmd = [
+            "gh", "release", "create", tag,
+            str(zip_path),
+            "--title", f"winget 防火牆規則 {tag}",
+            "--notes", notes,
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        if result.returncode == 0:
+            release_url = result.stdout.strip()
+            print(f"✅ GitHub Release 已建立：{release_url}", file=sys.stderr)
+        else:
+            print(f"❌ GitHub Release 建立失敗：{result.stderr.strip()}", file=sys.stderr)
+    except subprocess.TimeoutExpired:
+        print("❌ GitHub Release 建立逾時", file=sys.stderr)
+
 
 def main() -> None:
     examples = """\
@@ -342,6 +476,7 @@ def main() -> None:
   python main.py -f csv                          # 輸出 CSV（匯入試算表審閱）
   python main.py -f cli                          # 輸出 Azure CLI 部署腳本
   python main.py --no-download-scripts           # 不產生下載腳本
+  python main.py --release                       # 分析後自動打包 zip 並建立 GitHub Release
 
 結果自動寫入 generated/ 資料夾，GITHUB_TOKEN 自動從 gh CLI 取得。"""
 
@@ -392,6 +527,11 @@ def main() -> None:
         action="store_false",
         dest="download_scripts",
         help="不產生下載與部署腳本",
+    )
+    parser.add_argument(
+        "--release",
+        action="store_true",
+        help="分析完成後自動打包 zip 並建立 GitHub Release（需 gh CLI）",
     )
 
     args = parser.parse_args()

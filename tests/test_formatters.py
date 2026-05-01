@@ -14,7 +14,7 @@ def _make_test_rules() -> list[FirewallRule]:
     """建立測試用規則"""
     return [
         FirewallRule(
-            name="winget-microsoft-git-path",
+            name="mirror-to-ms-git-https",
             target_urls=[
                 "github.com/microsoft/git/releases/download/*/Git-*-64-bit.exe",
                 "release-assets.githubusercontent.com/github-production-release-asset-*/*",
@@ -24,7 +24,7 @@ def _make_test_rules() -> list[FirewallRule]:
             package_id="Microsoft.Git",
         ),
         FirewallRule(
-            name="winget-microsoft-git-fqdn",
+            name="mirror-to-ms-git-https",
             target_fqdns=["github.com", "release-assets.githubusercontent.com"],
             source_addresses=["10.0.0.0/8"],
             description="winget 套件 Microsoft.Git 下載所需網域",
@@ -111,8 +111,8 @@ class TestFormatAzureCli:
     def test_contains_rule_names(self) -> None:
         rules = _make_test_rules()
         output = format_azure_cli(rules)
-        assert "winget-microsoft-git-path" in output
-        assert "winget-microsoft-git-fqdn" in output
+        assert "mirror-to-ms-git-https" in output
+        assert "mirror-to-ms-git-https" in output
 
     def test_contains_target_urls_flag(self) -> None:
         rules = _make_test_rules()
