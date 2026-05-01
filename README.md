@@ -31,12 +31,12 @@ python main.py
 - 自動偵測 `gh auth token` 取得 GITHUB_TOKEN（無需手動設定）
 - 結果自動寫入 `generated/` 資料夾
 
-執行後會產生：
-- **generated/firewall-rules.md** — 防火牆規則維護清單（Markdown）
-- **generated/diff-report.md** — 與前次分析的變更對比報告
-- **generated/deploy.sh** — Azure CLI 部署腳本
-- **generated/download.sh** — Bash 一鍵下載腳本（使用 curl）
-- **generated/download.ps1** — PowerShell 一鍵下載腳本（使用 Invoke-WebRequest）
+執行後會產生（檔名含時間戳記 `YYYYMMDD_HHMM`）：
+- **generated/firewall-rules_YYYYMMDD_HHMM.md** — 防火牆規則維護清單
+- **generated/diff-report_YYYYMMDD_HHMM.md** — 與前次分析的變更對比報告
+- **generated/deploy_YYYYMMDD_HHMM.sh** — Azure CLI 部署腳本
+- **generated/download_YYYYMMDD_HHMM.sh** — Bash 一鍵下載腳本（curl）
+- **generated/download_YYYYMMDD_HHMM.ps1** — PowerShell 一鍵下載腳本
 
 ### 日常維護流程
 
@@ -73,7 +73,7 @@ python main.py Microsoft.Git -f csv
 python main.py Microsoft.Git -f cli
 ```
 
-所有格式皆自動寫入 `generated/` 資料夾（`firewall-rules.md`、`rules.json`、`rules.csv`、`deploy.sh`）。
+所有格式皆自動寫入 `generated/` 資料夾，檔名含時間戳記。
 
 #### 不需要下載腳本時
 

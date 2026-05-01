@@ -177,7 +177,16 @@ async def main_async(args: argparse.Namespace) -> None:
     rcg_name = firewall_config.get("rule_collection_group_name", "winget-rules")
     priority = firewall_config.get("priority", 500)
 
-    format_ext_map = {"json": "rules.json", "csv": "rules.csv", "cli": "deploy.sh", "md": "firewall-rules.md"}
+    # 時間戳記（用於所有產出檔案的檔名）
+    from datetime import datetime, timedelta, timezone
+    ts = datetime.now(timezone(timedelta(hours=8))).strftime("%Y%m%d_%H%M")
+
+    format_ext_map = {
+        "json": f"rules_{ts}.json",
+        "csv": f"rules_{ts}.csv",
+        "cli": f"deploy_{ts}.sh",
+        "md": f"firewall-rules_{ts}.md",
+    }
 
     if args.format == "json":
         output = format_json(all_rules, rc_name, rcg_name, priority)
@@ -200,7 +209,7 @@ async def main_async(args: argparse.Namespace) -> None:
     # 自動寫入 generated/ 資料夾
     generated_dir = Path("generated")
     generated_dir.mkdir(exist_ok=True)
-    output_filename = format_ext_map.get(args.format, "rules.json")
+    output_filename = format_ext_map.get(args.format, f"rules_{ts}.json")
     output_path = generated_dir / output_filename
     output_path.write_text(output, encoding="utf-8")
     if args.format == "cli":
@@ -218,9 +227,9 @@ async def main_async(args: argparse.Namespace) -> None:
             priority=priority,
         )
 
-        bash_path = generated_dir / "download.sh"
-        ps1_path = generated_dir / "download.ps1"
-        deploy_path = generated_dir / "deploy.sh"
+        bash_path = generated_dir / f"download_{ts}.sh"
+        ps1_path = generated_dir / f"download_{ts}.ps1"
+        deploy_path = generated_dir / f"deploy_{ts}.sh"
 
         bash_path.write_text(bash_script, encoding="utf-8")
         ps1_path.write_text(ps1_script, encoding="utf-8")
@@ -237,9 +246,9 @@ async def main_async(args: argparse.Namespace) -> None:
     if all_manifests:
         output_files: dict[str, str] = {}
         if args.download_scripts:
-            output_files["download.sh"] = "generated/download.sh"
-            output_files["download.ps1"] = "generated/download.ps1"
-            output_files["deploy.sh"] = "generated/deploy.sh"
+            output_files["download.sh"] = str(generated_dir / f"download_{ts}.sh")
+            output_files["download.ps1"] = str(generated_dir / f"download_{ts}.ps1")
+            output_files["deploy.sh"] = str(generated_dir / f"deploy_{ts}.sh")
 
         # 取得前次稽核日誌（在寫入新日誌之前）
         from src.audit import AUDIT_DIR
@@ -260,7 +269,7 @@ async def main_async(args: argparse.Namespace) -> None:
 
         # 產生前後對比報告
         diff_report = generate_diff_report(all_manifests, previous_log=prev)
-        diff_path = generated_dir / "diff-report.md"
+        diff_path = generated_dir / f"diff-report_{ts}.md"
         diff_path.write_text(diff_report, encoding="utf-8")
         print(f"🔄 對比報告：{diff_path.resolve()}", file=sys.stderr)
 
