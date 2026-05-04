@@ -240,7 +240,7 @@ def format_azure_cli(
         "fi",
         "",
         "# =============================================",
-        "# 步驟 3：在 Draft 中建立 Rule Collection",
+        "# 步驟 4：在 Draft 中建立 Rule Collection",
         "# =============================================",
         'echo -e "${CYAN}📂 步驟 4/6：建立 Rule Collection...${NC}"',
         "if az network firewall policy rule-collection-group draft collection add-filter-collection \\",
@@ -250,6 +250,13 @@ def format_azure_cli(
         f'  --name "$RC_NAME" \\',
         "  --rule-type ApplicationRule \\",
         "  --action Allow \\",
+    ]
+
+    # TLS 模式啟用 TLS Inspection terminate
+    if rule_filter == "tls":
+        lines.append("  --enable-tls-insp true \\")
+
+    lines.extend([
         f"  --collection-priority {priority + 100} --output none 2>&1; then",
         '  echo -e "${GREEN}   ✅ Rule Collection 建立成功：$RC_NAME${NC}"',
         "else",
@@ -263,7 +270,7 @@ def format_azure_cli(
         f'echo -e "${{CYAN}}🔧 步驟 5/6：新增 {total_rules} 條規則至 Draft...${{NC}}"',
         'echo ""',
         "",
-    ]
+    ])
 
     for idx, rule in enumerate(filtered_rules, 1):
         targets = rule.target_urls if rule.target_urls else rule.target_fqdns
