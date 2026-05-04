@@ -102,6 +102,7 @@ async def main_async(args: argparse.Namespace) -> None:
     # 結果容器（winget + WSL 共用）
     all_rules: list[FirewallRule] = []
     all_manifests: list[PackageManifest] = []
+    failed_packages: list[tuple[str, str]] = []  # (套件名稱, 失敗原因)
 
     async with httpx.AsyncClient(
         headers=headers,
@@ -168,6 +169,7 @@ async def main_async(args: argparse.Namespace) -> None:
                 print(f"   ✅ {manifest.package_id} v{manifest.version} 分析完成", file=sys.stderr)
             except Exception as e:
                 print(f"   ❌ {package_id} 分析失敗: {e}", file=sys.stderr)
+                failed_packages.append((package_id, str(e)))
 
     # 加入基礎設施規則
     if base_fqdns:
@@ -191,9 +193,10 @@ async def main_async(args: argparse.Namespace) -> None:
             ) as wsl_client:
                 print(f"\n🐧 開始分析 WSL 發行版（共 {len(wsl_distros)} 個）...", file=sys.stderr)
 
-                wsl_manifests, wsl_rules = await analyze_all_wsl_distros(
+                wsl_manifests, wsl_rules, wsl_failed = await analyze_all_wsl_distros(
                     wsl_client, wsl_distros, source_addresses, source_ip_groups,
                 )
+                failed_packages.extend(wsl_failed)
 
                 for m in wsl_manifests:
                     for inst in m.installers:
@@ -353,6 +356,16 @@ async def main_async(args: argparse.Namespace) -> None:
         print(f"🔄 對比報告：{diff_path.resolve()}", file=sys.stderr)
 
     print(f"\n📂 本次產出目錄：{generated_dir.resolve()}", file=sys.stderr)
+
+    # ── 失敗套件摘要 ──
+    if failed_packages:
+        print(f"\n{'=' * 50}", file=sys.stderr)
+        print(f"❌ 分析失敗的套件（共 {len(failed_packages)} 個）", file=sys.stderr)
+        print(f"{'=' * 50}", file=sys.stderr)
+        for pkg_name, reason in failed_packages:
+            print(f"  ❌ {pkg_name}", file=sys.stderr)
+            print(f"     原因：{reason}", file=sys.stderr)
+        print(f"{'=' * 50}", file=sys.stderr)
 
     # ── GitHub Release 打包發布 ──
     if args.release and generated_dir.exists():

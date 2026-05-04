@@ -92,10 +92,11 @@ async def analyze_all_wsl_distros(
     distros: list[WslDistro],
     source_addresses: list[str],
     source_ip_groups: list[str] | None = None,
-) -> tuple[list[PackageManifest], list[FirewallRule]]:
-    """分析所有 WSL 發行版，回傳 (manifests, rules)。"""
+) -> tuple[list[PackageManifest], list[FirewallRule], list[tuple[str, str]]]:
+    """分析所有 WSL 發行版，回傳 (manifests, rules, failed)。"""
     all_manifests: list[PackageManifest] = []
     all_rules: list[FirewallRule] = []
+    failed: list[tuple[str, str]] = []
 
     for distro in distros:
         try:
@@ -109,5 +110,6 @@ async def analyze_all_wsl_distros(
         except Exception as e:
             import sys
             print(f"   ❌ WSL {distro.name} 分析失敗: {e}", file=sys.stderr)
+            failed.append((f"WSL:{distro.name}", str(e)))
 
-    return all_manifests, all_rules
+    return all_manifests, all_rules, failed
