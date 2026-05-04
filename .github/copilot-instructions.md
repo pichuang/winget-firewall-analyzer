@@ -12,7 +12,11 @@
 
 ## 專案概述
 
-此工具針對 **winget（Windows Package Manager）** 的套件下載流程，透過 **winget REST API 查詢 + HTTP 重導向追蹤** 的方式，在 macOS 上分析 winget 安裝特定套件時實際會存取的所有 FQDN，產生精確的 Azure Firewall Policy Application Rule 清單。目標是達到最小開放原則（least-privilege），僅放行 winget 運作所需的網域。
+此工具針對 **winget（Windows Package Manager）** 的套件下載流程，
+透過 **winget REST API 查詢 + HTTP 重導向追蹤** 的方式，
+在 macOS 上分析 winget 安裝特定套件時實際會存取的所有 FQDN，
+產生精確的 Azure Firewall Policy Application Rule 清單。
+目標是達到最小開放原則（least-privilege），僅放行 winget 運作所需的網域。
 
 ### 使用情境
 
@@ -88,7 +92,7 @@ packages:
 
 ### winget REST API 端點
 
-```
+```text
 # 套件搜尋
 POST https://storeedgefd.dsx.mp.microsoft.com/v9.0/manifestSearch
 
@@ -178,10 +182,24 @@ pip install -r requirements.txt
 - `sourceAddresses` 預設為設定檔中的值，不寫死
 - 規則命名格式：`winget-{package-id}-{用途}`（如 `winget-microsoft.git-download`）
 
+### 部署腳本行為要求
+
+產出的 deploy 腳本（`deploy-tls_*.sh` / `deploy-fqdn_*.sh`）必須滿足以下要求：
+
+- **全程使用 Draft 模式**：所有規則操作（建立 RCG、Rule Collection、新增/更新規則）皆透過 Azure Firewall Policy Draft API 執行，不直接套用至正式環境。最終需人工在 Azure Portal 確認後執行 `draft deploy` 才生效
+- **冪等（Idempotent）**：腳本可安全重複執行
+  - 已存在且內容相同的規則 → **跳過**（不重複操作）
+  - 已存在但內容不同的規則 → **以當前最新版本覆蓋**（先移除舊規則再新增新規則）
+  - 不存在的規則 → **新增**
+- **RCG / Rule Collection 也須冪等**：若已存在則跳過建立，不因重複執行而報錯
+- **RCG 與 RC 名稱統一**：不論 TLS 或 FQDN 模式，使用相同的 `rule_collection_group_name` 與 `rule_collection_name`（來自 `config.yaml`），確保 Azure Firewall Policy 中僅有一組 RCG + RC 可供維護，避免產生多組規則集合
+- **部署摘要**：執行結束時顯示新增、更新、跳過、失敗的規則數量
+- **前置檢查**：腳本開頭檢查 `az login`、Firewall Policy 是否存在、`jq` 是否安裝
+
 ### 輸出格式
 
 程式應支援多種輸出格式：
 
 - **JSON** — 可直接用於 ARM Template / Bicep 部署
 - **CSV** — 方便人工審閱與匯入試算表
-- **Azure CLI** — 可直接執行的 `az network firewall policy rule-collection-group` 指令
+- **Azure CLI** — 可直接執行的 `az network firewall policy rule-collection-group` 指令（冪等 + Draft 模式）
