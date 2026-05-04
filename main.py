@@ -26,6 +26,7 @@ from src.rule_generator import (
 from src.winget_api import fetch_package
 from src.wsl_analyzer import analyze_all_wsl_distros, get_wsl_base_fqdns, load_wsl_distros
 from src.audit import generate_diff_report, get_latest_audit_log, write_audit_log, write_changelog_entry
+from src.packages_list_generator import generate_from_config
 
 
 def load_config(config_path: str = "config.yaml") -> dict:
@@ -138,6 +139,39 @@ async def main_async(args: argparse.Namespace) -> None:
             )
             if blocked_ids:
                 print(f"🚫 封鎖清單排除: {', '.join(blocked_ids)}", file=sys.stderr)
+
+        # --update-packages-list 模式：產生 packages-list.md 後結束
+        if args.update_packages_list:
+            # 重新以 filter_packages 取得完整的 allowed + blocked 清單
+            # （discover_all_packages 已排除 blocked，需補回）
+            bl = blocklist_config.get("blocklist", {})
+            bl_patterns = bl.get("packages", []) if bl.get("enabled", False) else []
+            # 用所有探索到的套件 + 封鎖清單中已知的精確 ID 來產生完整清單
+            all_for_list = list(package_ids)
+            # 將封鎖清單中的精確 ID 加回（非萬用字元）
+            for p in bl_patterns:
+                if "*" not in p and "?" not in p and "[" not in p:
+                    all_for_list.append(p)
+            # 去重
+            all_for_list = sorted(set(all_for_list))
+            # 用 filter_packages 分離
+            list_allowed, list_blocked = filter_packages(
+                all_for_list,
+                allowlist_config=config.get("allowlist"),
+                blocklist_config=blocklist_config,
+            )
+            md_content, warnings = generate_from_config(
+                config,
+                discovered_ids=all_for_list,
+                security_yaml_path="packages-security.yaml",
+            )
+            for w in warnings:
+                print(w, file=sys.stderr)
+            output_path = Path("packages-list.md")
+            output_path.write_text(md_content, encoding="utf-8")
+            print(f"\n✅ 已更新 {output_path.resolve()}", file=sys.stderr)
+            print(f"   允許: {len(list_allowed)} 個 / 封鎖: {len(list_blocked)} 個", file=sys.stderr)
+            return
 
         # dry-run 模式：僅列出套件清單
         if args.dry_run:
@@ -490,6 +524,7 @@ def main() -> None:
   python main.py -f cli                          # 輸出 Azure CLI 部署腳本
   python main.py --no-download-scripts           # 不產生下載腳本
   python main.py --release                       # 分析後自動打包 zip 並建立 GitHub Release
+  python main.py --update-packages-list          # 更新 packages-list.md（探索套件 + 資安標注）
 
 結果自動寫入 generated/ 資料夾，GITHUB_TOKEN 自動從 gh CLI 取得。"""
 
@@ -546,8 +581,18 @@ def main() -> None:
         action="store_true",
         help="分析完成後自動打包 zip 並建立 GitHub Release（需 gh CLI）",
     )
+    parser.add_argument(
+        "--update-packages-list",
+        action="store_true",
+        help="更新 packages-list.md（需搭配 --all 模式探索套件清單）",
+    )
 
     args = parser.parse_args()
+
+    # --update-packages-list 強制啟用 --all 模式
+    if args.update_packages_list and not args.all and not args.packages:
+        args.all = True
+        print("ℹ️  --update-packages-list 自動啟用 --all 模式", file=sys.stderr)
 
     # 未指定任何套件時的預設行為
     if not args.all and not args.packages:

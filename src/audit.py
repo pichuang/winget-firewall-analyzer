@@ -406,12 +406,14 @@ def generate_diff_report(
 
     if new_fqdns:
         lines.append(f"⚠️ **需新增** {len(new_fqdns)} 個 FQDN 至防火牆規則：")
+        lines.append("")
         for fqdn in sorted(new_fqdns):
             lines.append(f"- `{fqdn}`")
         lines.append("")
 
     if removed_fqdns:
         lines.append(f"🗑️ **可考慮移除** {len(removed_fqdns)} 個 FQDN：")
+        lines.append("")
         for fqdn in sorted(removed_fqdns):
             lines.append(f"- `{fqdn}`")
         lines.append("")

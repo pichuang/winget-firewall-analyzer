@@ -1,0 +1,695 @@
+# =============================================================================
+# packages-security.yaml — 套件資安評估（人工維護）
+# =============================================================================
+# 此檔案由資安人員手動維護，定義每個套件的風險等級、MITRE ATT&CK 對照、
+# 存取控制分級等資訊。自動產生 packages-list.md 時會合併此檔案的內容。
+#
+# 欄位說明：
+#   risk_level:   high（🔴）/ medium（🟡）/ low（🟢），未列出的套件為 none（⚪）
+#   risk_reason:  風險說明文字
+#   mitre_tactic: MITRE ATT&CK 戰術分類
+#   mitre_technique: ATT&CK 技術編號與名稱
+#   red_team_use: 紅隊用途說明（僅高風險工具需要）
+#   access_tier:  存取控制分級（1=僅 IT 管理員, 2=僅開發人員, 3=需申請審批, 4=一般使用者）
+#   access_reason: 限制理由
+# =============================================================================
+
+
+# =============================================================================
+# 🔴 高風險套件（可直接用於資料外洩、權限提升、繞過安全控制）
+# =============================================================================
+high_risk:
+  - package_id: "Microsoft.Azure.AZCopy.10"
+    risk_reason: "大量資料複製工具，可將本機資料上傳至任意 Azure Storage，潛在資料外洩管道"
+    mitre_tactic: "資料外洩（Exfiltration）"
+    mitre_technique: "T1567.002 雲端外洩"
+    red_team_use: "大量複製資料至 Azure Storage，高速傳輸"
+    access_tier: 2
+    access_reason: "大量資料傳輸，外洩管道"
+
+  - package_id: "Microsoft.Azure.DataCLI"
+    risk_reason: "Azure 資料操作 CLI，可存取與傳輸雲端資料庫資料"
+    mitre_tactic: "資料外洩（Exfiltration）"
+    mitre_technique: "T1567.002 雲端外洩"
+    red_team_use: "存取與傳輸雲端資料庫資料"
+    access_tier: 2
+    access_reason: "雲端資料庫操作"
+
+  - package_id: "Microsoft.DTrace"
+    risk_reason: "核心層級追蹤工具，可監控系統呼叫與核心行為"
+    mitre_tactic: "防禦規避（Defense Evasion）"
+    mitre_technique: "T1014 Rootkit 手法"
+    red_team_use: "核心層級追蹤，監控系統呼叫"
+    access_tier: 1
+    access_reason: "核心層級追蹤"
+
+  - package_id: "Microsoft.OneDrive"
+    risk_reason: "雲端同步工具，可自動將本機檔案同步至個人 OneDrive，資料外洩風險"
+    mitre_tactic: "資料外洩（Exfiltration）"
+    mitre_technique: "T1567.002 雲端外洩"
+    red_team_use: "自動同步本機檔案至個人雲端空間"
+    access_tier: 3
+    access_reason: "同步至個人雲端"
+
+  - package_id: "Microsoft.PowerShell"
+    risk_reason: "功能強大的命令列工具，可執行任意腳本、修改系統、存取網路，常被濫用於攻擊"
+    mitre_tactic: "持久性與權限提升（Persistence / Privilege Escalation）"
+    mitre_technique: "T1059.001 PowerShell"
+    red_team_use: "**#1 攻擊工具**：執行混淆腳本、下載惡意程式、橫向移動、免檔案攻擊"
+    access_tier: 1
+    access_reason: "攻擊者 #1 工具，可執行任意腳本"
+
+  - package_id: "Microsoft.RemoteDesktopClient"
+    risk_reason: "遠端桌面用戶端，可連線至外部機器"
+    mitre_tactic: "橫向移動（Lateral Movement）"
+    mitre_technique: "T1021.001 RDP"
+    red_team_use: "連線至內部或外部機器"
+    access_tier: 3
+    access_reason: "遠端連線需管控目標"
+
+  - package_id: "Microsoft.RemoteHelp"
+    risk_reason: "遠端協助工具，允許外部人員操控本機"
+    mitre_tactic: "橫向移動（Lateral Movement）"
+    mitre_technique: "T1021 遠端服務"
+    red_team_use: "允許外部人員操控本機桌面"
+    access_tier: 3
+    access_reason: "外部人員操控本機"
+
+  - package_id: "Microsoft.Sysinternals.ProcessExplorer"
+    risk_reason: "進階工作管理員，可檢視所有程序詳情含安全性 token"
+    mitre_tactic: "偵察與發現（Discovery）"
+    mitre_technique: "T1057 程序發現"
+    red_team_use: "列舉所有執行中程序、檢視安全性 token、識別防毒軟體"
+    access_tier: 1
+    access_reason: "進階程序分析含 token"
+
+  - package_id: "Microsoft.Sysinternals.ProcessMonitor"
+    risk_reason: "即時監控檔案系統、Registry、程序活動，可用於偵察敏感操作"
+    mitre_tactic: "偵察與發現（Discovery）"
+    mitre_technique: "T1057 / T1083"
+    red_team_use: "即時監控檔案、Registry、網路活動，偵察目標系統行為"
+    access_tier: 1
+    access_reason: "系統活動即時監控"
+
+  - package_id: "Microsoft.Sysinternals.PsExec"
+    risk_reason: "遠端執行工具，常被攻擊者用於橫向移動"
+    mitre_tactic: "橫向移動（Lateral Movement）"
+    mitre_technique: "T1570 橫向工具傳輸"
+    red_team_use: "在遠端機器上執行任意命令"
+    access_tier: 1
+    access_reason: "遠端執行任意命令"
+
+  - package_id: "Microsoft.Sysinternals.SDelete"
+    risk_reason: "安全刪除工具，可不可逆地銷毀檔案，妨礙數位鑑識"
+    mitre_tactic: "防禦規避（Defense Evasion）"
+    mitre_technique: "T1070.004 刪除指標"
+    red_team_use: "安全刪除檔案，銷毀攻擊痕跡，妨礙數位鑑識"
+    access_tier: 1
+    access_reason: "銷毀檔案、妨礙鑑識"
+
+  - package_id: "Microsoft.Sysinternals.Sysmon"
+    risk_reason: "系統監控工具，可記錄所有程序活動，若被攻擊者利用可收集機密資訊"
+    mitre_tactic: "偵察與發現（Discovery）"
+    mitre_technique: "T1057 程序發現"
+    red_team_use: "記錄所有程序活動與系統行為"
+    access_tier: 1
+    access_reason: "全系統行為記錄"
+
+  - package_id: "Microsoft.WSL"
+    risk_reason: "Windows Subsystem for Linux，提供完整 Linux 環境，可繞過 Windows 安全控制"
+    mitre_tactic: "防禦規避（Defense Evasion）"
+    mitre_technique: "T1202 間接指令執行"
+    red_team_use: "在 Linux 子系統中執行命令，繞過 Windows EDR/防毒"
+    access_tier: 1
+    access_reason: "完整 Linux 環境，繞過 Windows EDR"
+
+  - package_id: "Microsoft.WindowsApp"
+    risk_reason: "Windows 365 / AVD 用戶端，可連線至外部虛擬桌面"
+    mitre_tactic: "橫向移動（Lateral Movement）"
+    mitre_technique: "T1021 遠端服務"
+    red_team_use: "連線至 Windows 365 / AVD 虛擬桌面"
+    access_tier: 3
+    access_reason: "連線外部虛擬桌面"
+
+  - package_id: "Microsoft.devtunnel"
+    risk_reason: "建立 dev tunnel 反向隧道，可將內部服務暴露至公網，繞過防火牆"
+    mitre_tactic: "防禦規避（Defense Evasion）"
+    mitre_technique: "T1572 隧道"
+    red_team_use: "建立反向隧道暴露內部服務至公網"
+    access_tier: 1
+    access_reason: "反向隧道繞過防火牆"
+
+
+# =============================================================================
+# 🟡 中風險套件（可間接協助攻擊、收集系統資訊、修改系統組態）
+# =============================================================================
+medium_risk:
+  - package_id: "GitHub.Copilot"
+    risk_reason: "AI 程式碼輔助工具，程式碼會傳送至雲端 AI 服務處理"
+    access_tier: 3
+    access_reason: "程式碼傳送至雲端 AI"
+
+  - package_id: "GitHub.GitHubDesktop"
+    risk_reason: "GitHub 桌面用戶端，可推送程式碼至外部 repository"
+    access_tier: 2
+    access_reason: "推送程式碼至外部"
+
+  - package_id: "GitHub.GitLFS"
+    risk_reason: "Git Large File Storage，可傳輸大型檔案至外部 Git 伺服器"
+    mitre_tactic: "資料外洩（Exfiltration）"
+    mitre_technique: "T1567 Web 服務外洩"
+    red_team_use: "傳輸大型檔案至外部 Git 伺服器"
+    access_tier: 2
+    access_reason: "大型檔案外傳"
+
+  - package_id: "GitHub.cli"
+    risk_reason: "GitHub CLI，可操作 GitHub repository、建立 PR、存取 API"
+    mitre_tactic: "資料外洩（Exfiltration）"
+    mitre_technique: "T1567 Web 服務外洩"
+    red_team_use: "透過 GitHub API 傳輸資料"
+    access_tier: 2
+    access_reason: "GitHub API 操作"
+
+  - package_id: "Microsoft.Azure.Auth"
+    risk_reason: "Azure 認證工具，管理雲端認證 token"
+    access_tier: 2
+    access_reason: "雲端認證管理"
+
+  - package_id: "Microsoft.Azure.Az"
+    risk_reason: "Azure PowerShell 模組，可管理所有 Azure 資源"
+    access_tier: 2
+    access_reason: "Azure PowerShell 管理"
+
+  - package_id: "Microsoft.Azure.ConnectedMachineAgent"
+    risk_reason: "Azure Arc Agent，可將機器連線至 Azure 管理平面"
+    access_tier: 2
+    access_reason: "連線 Azure 管理平面"
+
+  - package_id: "Microsoft.Azure.Kubelogin"
+    risk_reason: "Kubernetes 認證工具，可取得叢集存取權"
+    access_tier: 2
+    access_reason: "K8s 叢集認證"
+
+  - package_id: "Microsoft.AzureCLI"
+    risk_reason: "Azure 命令列工具，可管理所有 Azure 資源，需嚴格控管認證"
+    access_tier: 2
+    access_reason: "管理所有 Azure 資源"
+
+  - package_id: "Microsoft.DebugDiag"
+    risk_reason: "診斷與記憶體傾印分析工具"
+    access_tier: 2
+    access_reason: "記憶體傾印分析"
+
+  - package_id: "Microsoft.DeploymentToolkit"
+    risk_reason: "系統部署工具，可大規模修改作業系統映像"
+    access_tier: 1
+    access_reason: "大規模系統部署"
+
+  - package_id: "Microsoft.DiskSpd"
+    risk_reason: "磁碟效能測試工具，可產生大量 I/O 負載"
+    access_tier: 4
+    access_reason: "效能測試"
+
+  - package_id: "Microsoft.Edge"
+    risk_reason: "網頁瀏覽器，可存取任意網站，需搭配網頁過濾政策"
+    access_tier: 3
+    access_reason: "搭配網頁過濾政策即可"
+
+  - package_id: "Microsoft.Git"
+    risk_reason: "版本控制工具，可推送程式碼至外部 repository"
+    mitre_tactic: "資料外洩（Exfiltration）"
+    mitre_technique: "T1567 Web 服務外洩"
+    red_team_use: "推送程式碼/檔案至外部 Git 伺服器"
+    access_tier: 2
+    access_reason: "推送程式碼至外部"
+
+  - package_id: "Microsoft.LAPS"
+    risk_reason: "本機管理員密碼管理，操作不當可能洩露密碼"
+    mitre_tactic: "持久性與權限提升（Persistence / Privilege Escalation）"
+    mitre_technique: "T1555 憑證儲存"
+    red_team_use: "查詢本機管理員密碼，若權限控管不當可取得所有機器管理員密碼"
+    access_tier: 1
+    access_reason: "查詢本機管理員密碼"
+
+  - package_id: "Microsoft.LogParser"
+    risk_reason: "日誌分析工具，可查詢系統事件記錄擷取敏感資訊"
+    mitre_tactic: "偵察與發現（Discovery）"
+    mitre_technique: "T1005 本機資料收集"
+    red_team_use: "查詢事件日誌擷取帳號、登入、敏感操作記錄"
+    access_tier: 1
+    access_reason: "查詢敏感事件日誌"
+
+  - package_id: "Microsoft.MFCMapi"
+    risk_reason: "MAPI 操作工具，可直接存取 Exchange 信箱資料"
+    access_tier: 1
+    access_reason: "直接存取 Exchange 信箱"
+
+  - package_id: "Microsoft.Ntttcp"
+    risk_reason: "網路效能測試工具，可產生大量網路流量"
+    access_tier: 4
+    access_reason: "網路效能測試"
+
+  - package_id: "Microsoft.OSCDIMG"
+    risk_reason: "建立 ISO 映像檔工具"
+    access_tier: 1
+    access_reason: "建立 ISO 映像"
+
+  - package_id: "Microsoft.Pave"
+    risk_reason: "封包驗證工具，可分析網路通訊"
+    access_tier: 4
+    access_reason: "網路分析"
+
+  - package_id: "Microsoft.PerfView"
+    risk_reason: "效能追蹤工具，追蹤檔可能包含敏感資料"
+    access_tier: 4
+    access_reason: "效能追蹤"
+
+  - package_id: "Microsoft.SQLServerManagementStudio"
+    risk_reason: "SQL Server 管理工具，可直接存取與操作資料庫"
+    access_tier: 2
+    access_reason: "直接操作資料庫"
+
+  - package_id: "Microsoft.SmartDump"
+    risk_reason: "記憶體傾印工具，傾印檔可能包含敏感資料"
+    mitre_tactic: "記憶體分析（可擷取憑證）"
+    mitre_technique: "T1003 憑證傾印"
+    red_team_use: "產生程序記憶體傾印，傾印檔可能包含明文憑證"
+    access_tier: 1
+    access_reason: "記憶體傾印工具"
+
+  - package_id: "Microsoft.SqlPackage"
+    risk_reason: "資料庫匯出/匯入工具，可匯出整個資料庫"
+    mitre_tactic: "資料外洩（Exfiltration）"
+    mitre_technique: "T1005 本機資料收集"
+    red_team_use: "匯出整個資料庫為 .bacpac 檔案"
+    access_tier: 2
+    access_reason: "匯出整個資料庫"
+
+  - package_id: "Microsoft.Sqlcmd"
+    risk_reason: "SQL 命令列工具，可執行任意 SQL 查詢"
+    access_tier: 2
+    access_reason: "執行任意 SQL"
+
+  - package_id: "Microsoft.Sysinternals.Autoruns"
+    risk_reason: "檢視所有自動啟動項目，可用於偵察與植入持久性後門"
+    mitre_tactic: "偵察與發現（Discovery）"
+    mitre_technique: "T1518 軟體發現"
+    red_team_use: "列舉所有自動啟動項目，尋找可植入後門的位置"
+    access_tier: 1
+    access_reason: "自動啟動項偵察"
+
+  - package_id: "Microsoft.Sysinternals.Autologon"
+    risk_reason: "設定自動登入，將密碼明文儲存於 Registry"
+    mitre_tactic: "持久性與權限提升（Persistence / Privilege Escalation）"
+    mitre_technique: "T1078 有效帳號"
+    red_team_use: "設定自動登入，將密碼明文儲存於 Registry"
+    access_tier: 1
+    access_reason: "明文儲存登入密碼"
+
+  - package_id: "Microsoft.Sysinternals.DebugView"
+    risk_reason: "擷取 debug 輸出訊息，可能包含敏感資訊"
+    access_tier: 4
+    access_reason: "除錯工具"
+
+  - package_id: "Microsoft.Sysinternals.Handle"
+    risk_reason: "檢視程序開啟的檔案 handle，可偵察敏感檔案存取"
+    mitre_tactic: "偵察與發現（Discovery）"
+    mitre_technique: "T1057 程序發現"
+    red_team_use: "識別哪些程序正在存取特定檔案或 Registry"
+    access_tier: 4
+    access_reason: "程序 handle 檢視"
+
+  - package_id: "Microsoft.Sysinternals.RAMMap"
+    risk_reason: "分析實體記憶體，可能發現敏感資料"
+    mitre_tactic: "記憶體分析（可擷取憑證）"
+    mitre_technique: "T1003 憑證傾印"
+    red_team_use: "分析實體記憶體，可能發現敏感資料"
+    access_tier: 4
+    access_reason: "記憶體分析"
+
+  - package_id: "Microsoft.Sysinternals.RDCMan"
+    risk_reason: "管理多台機器的遠端桌面連線，連線資訊可能被竊取"
+    mitre_tactic: "橫向移動（Lateral Movement）"
+    mitre_technique: "T1021.001 RDP"
+    red_team_use: "管理多台機器的遠端桌面連線，連線資訊可能被竊取"
+    access_tier: 4
+    access_reason: "遠端桌面管理"
+
+  - package_id: "Microsoft.Sysinternals.RegJump"
+    risk_reason: "快速跳轉 Registry 位置，協助修改系統設定"
+    access_tier: 4
+    access_reason: "Registry 操作"
+
+  - package_id: "Microsoft.Sysinternals.Sigcheck"
+    risk_reason: "驗證檔案簽章，可用於識別未簽章的可執行檔"
+    mitre_tactic: "偵察與發現（Discovery）"
+    mitre_technique: "T1518 軟體發現"
+    red_team_use: "識別未簽章或異常簽章的執行檔"
+    access_tier: 4
+    access_reason: "簽章驗證"
+
+  - package_id: "Microsoft.Sysinternals.Strings"
+    risk_reason: "擷取二進位檔中的字串，可用於分析程式或擷取內嵌密碼"
+    mitre_tactic: "偵察與發現（Discovery）"
+    mitre_technique: "T1005 本機資料收集"
+    red_team_use: "從二進位檔中擷取字串，尋找內嵌密碼、API Key、連線字串"
+    access_tier: 1
+    access_reason: "擷取二進位檔中密碼"
+
+  - package_id: "Microsoft.Sysinternals.TCPView"
+    risk_reason: "即時網路連線監控，可偵察網路拓撲與服務端口"
+    mitre_tactic: "偵察與發現（Discovery）"
+    mitre_technique: "T1049 網路連線發現"
+    red_team_use: "列舉所有 TCP/UDP 連線，識別內部服務與網路拓撲"
+    access_tier: 4
+    access_reason: "網路連線監控"
+
+  - package_id: "Microsoft.Sysinternals.VMMap"
+    risk_reason: "記憶體分析工具，可檢視程序記憶體配置"
+    mitre_tactic: "記憶體分析（可擷取憑證）"
+    mitre_technique: "T1003 憑證傾印"
+    red_team_use: "檢視程序記憶體配置"
+    access_tier: 4
+    access_reason: "記憶體分析"
+
+  - package_id: "Microsoft.Sysinternals.Whois"
+    risk_reason: "網域查詢工具，可用於偵察外部目標"
+    mitre_tactic: "偵察與發現（Discovery）"
+    mitre_technique: "T1596 搜尋開放技術資料"
+    red_team_use: "查詢網域註冊資訊，偵察攻擊目標"
+    access_tier: 4
+    access_reason: "網域查詢"
+
+  - package_id: "Microsoft.TimeTravelDebugging"
+    risk_reason: "時光旅行偵錯，可重播程序執行過程"
+    access_tier: 2
+    access_reason: "程序執行重播"
+
+  - package_id: "Microsoft.VisualStudioCode"
+    risk_reason: "程式碼編輯器含擴充套件生態系，擴充套件可能有安全風險"
+    access_tier: 2
+    access_reason: "擴充套件有安全風險"
+
+  - package_id: "Microsoft.WinDbg"
+    risk_reason: "Windows 核心偵錯工具，可分析記憶體傾印與核心行為"
+    mitre_tactic: "記憶體分析（可擷取憑證）"
+    mitre_technique: "T1003 憑證傾印"
+    red_team_use: "分析記憶體傾印，可從 lsass.exe 傾印中擷取密碼"
+    access_tier: 1
+    access_reason: "記憶體傾印分析、可擷取憑證"
+
+  - package_id: "Microsoft.WindowsADK"
+    risk_reason: "Windows 評定與部署套件，可建立與修改系統映像"
+    access_tier: 1
+    access_reason: "建立/修改系統映像"
+
+  - package_id: "Microsoft.etl2pcapng"
+    risk_reason: "將 ETL 轉為 pcap 格式，可擷取與分析網路封包"
+    access_tier: 4
+    access_reason: "網路封包分析"
+
+  - package_id: "Microsoft.quicreach"
+    risk_reason: "QUIC 連線測試工具，可探測外部服務"
+    access_tier: 4
+    access_reason: "外部服務探測"
+
+  - package_id: "Microsoft.DSC"
+    risk_reason: "Desired State Configuration，可自動化系統組態變更"
+    mitre_tactic: "持久性與權限提升（Persistence / Privilege Escalation）"
+    mitre_technique: "T1543 系統服務"
+    red_team_use: "自動化修改系統組態，可植入持久性設定"
+    access_tier: 4
+    access_reason: "系統組態自動化"
+
+
+# =============================================================================
+# 🟢 低風險套件（正常用途但需注意，功能可能影響系統組態）
+# =============================================================================
+low_risk:
+  - package_id: "Microsoft.AppInstaller"
+    risk_reason: "winget 安裝器，可從網路下載並安裝任意 winget 套件"
+    access_tier: 4
+    access_reason: "winget 核心元件"
+
+  - package_id: "Microsoft.Azd"
+    risk_reason: "Azure Developer CLI，可部署應用程式至 Azure"
+    access_tier: 4
+    access_reason: "Azure 開發部署"
+
+  - package_id: "Microsoft.Bicep"
+    risk_reason: "Azure 基礎設施即程式碼，可建立/修改雲端資源"
+    access_tier: 4
+    access_reason: "Azure IaC"
+
+  - package_id: "Microsoft.FSLogix"
+    risk_reason: "Profile Container 管理，處理使用者設定檔"
+    access_tier: 4
+    access_reason: "Profile 管理"
+
+  - package_id: "Microsoft.IntegrationRuntime"
+    risk_reason: "Azure Data Factory 整合執行環境，連接內外部資料來源"
+    access_tier: 4
+    access_reason: "ADF 整合"
+
+  - package_id: "Microsoft.IntuneWSLPlugin"
+    risk_reason: "Intune WSL 外掛，管理 WSL 分配"
+    access_tier: 4
+    access_reason: "Intune 管理"
+
+  - package_id: "Microsoft.PowerToys"
+    risk_reason: "生產力工具集，部分功能（如 Hosts 編輯）可修改系統設定"
+    access_tier: 4
+    access_reason: "生產力工具"
+
+
+# =============================================================================
+# 分類規則（prefix → category）
+# 順序：最長前綴優先匹配，最後 fallback
+# =============================================================================
+categories:
+  - name: "☁️ Azure 雲端工具"
+    description: "Azure 雲端平台管理、部署、監控相關工具"
+    prefixes:
+      - "Microsoft.Azure."
+      - "Microsoft.AzureCLI"
+      - "Microsoft.AzureMonitorAgent"
+      - "Microsoft.AzureVPNClient"
+      - "Microsoft.Bicep"
+      - "Microsoft.CertifiedToolAzureVM"
+      - "Microsoft.CmdPalAzureExtension"
+      - "Microsoft.GlobalSecureAccessClient"
+      - "Microsoft.Azd"
+      - "Microsoft.AKSdesktop"
+
+  - name: "💻 開發工具與 IDE"
+    description: "軟體開發、程式碼編輯、建置、偵錯工具"
+    prefixes:
+      - "GitHub."
+      - "Microsoft.VisualStudio."
+      - "Microsoft.VisualStudioCode"
+      - "Microsoft.VisualTrueType"
+      - "Microsoft.Git"
+      - "Microsoft.NuGet"
+      - "Microsoft.ApplicationInspector"
+      - "Microsoft.Aspire"
+      - "Microsoft.DebugDiag"
+      - "Microsoft.DevSkim."
+      - "Microsoft.Edit"
+      - "Microsoft.PICT"
+      - "Microsoft.PIX"
+      - "Microsoft.PerfView"
+      - "Microsoft.Promptflow"
+      - "Microsoft.SBOMTool"
+      - "Microsoft.SmartDump"
+      - "Microsoft.TimeTravelDebugging"
+      - "Microsoft.VSDotNetLogCollect"
+      - "Microsoft.VSIXBootstrapper"
+      - "Microsoft.VSTOR"
+      - "Microsoft.WinDbg"
+      - "Microsoft.WingetCreate"
+
+  - name: "🔧 .NET 開發與執行環境"
+    description: ".NET SDK、Runtime、ASP.NET Core 等開發與部署元件"
+    prefixes:
+      - "Microsoft.DotNet."
+
+  - name: "🗄️ 資料庫工具"
+    description: "SQL Server、資料庫管理、資料遷移工具"
+    prefixes:
+      - "Microsoft.SQLServer."
+      - "Microsoft.SQLServerManagementStudio"
+      - "Microsoft.SqlPackage"
+      - "Microsoft.Sqlcmd"
+      - "Microsoft.msodbcsql."
+      - "Microsoft.CLRTypesSQLServer."
+      - "Microsoft.DataMigrationAssistant"
+      - "Microsoft.DataTools."
+      - "Microsoft.Garnet."
+      - "Microsoft.IntegrationRuntime"
+      - "Microsoft.ReportBuilder"
+
+  - name: "📊 商業智慧與 AI 工具"
+    description: "Power BI、資料分析、AI/ML、Foundry 相關工具"
+    prefixes:
+      - "Microsoft.PowerBI"
+      - "Microsoft.PowerBIReportBuilder"
+      - "Microsoft.PowerBIReportServer"
+      - "Microsoft.FoundryLocal"
+      - "Microsoft.FuzzyLookupAddExcel"
+      - "Microsoft.LightGBM"
+      - "Microsoft.M365AgentsPlayground"
+      - "Microsoft.Tokenizer"
+
+  - name: "🏢 Office 與生產力工具"
+    description: "Microsoft 365、Teams、OneDrive 等辦公生產力工具"
+    prefixes:
+      - "Microsoft.Office"
+      - "Microsoft.OfficeDeploymentTool"
+      - "Microsoft.OneDrive"
+      - "Microsoft.OneLakeFileExplorer"
+      - "Microsoft.OneNoteDiagnostics"
+      - "Microsoft.PowerAppsCLI"
+      - "Microsoft.PowerAutomateDesktop"
+      - "Microsoft.PowerAutomateProcessMining"
+      - "Microsoft.PurviewInformationProtection"
+      - "Microsoft.RMSClient"
+      - "Microsoft.RemoteDesktopClient"
+      - "Microsoft.RemoteDesktopMMRService"
+      - "Microsoft.RemoteHelp"
+      - "Microsoft.TeamMate"
+      - "Microsoft.Teams"
+      - "Microsoft.TeamsTxNDI"
+      - "Microsoft.VisioViewer"
+      - "Microsoft.WindowsApp"
+      - "Microsoft.HwpConverter"
+      - "Microsoft.AmendmentAppWordService"
+
+  - name: "🖥️ Windows 系統管理"
+    description: "Windows 作業系統管理、部署、診斷、組態工具"
+    prefixes:
+      - "Microsoft.AdministrativeTemplates"
+      - "Microsoft.AppInstaller"
+      - "Microsoft.AppInstallerFileBuilder"
+      - "Microsoft.BTP"
+      - "Microsoft.DSC"
+      - "Microsoft.DTrace"
+      - "Microsoft.DependencyAgent"
+      - "Microsoft.DeploymentToolkit"
+      - "Microsoft.DiskSpd"
+      - "Microsoft.EventLogExpert"
+      - "Microsoft.FSLogix"
+      - "Microsoft.IntuneWSLPlugin"
+      - "Microsoft.Kanagawa"
+      - "Microsoft.LAPS"
+      - "Microsoft.LogCheetah"
+      - "Microsoft.LogParser"
+      - "Microsoft.MFCMapi"
+      - "Microsoft.MaliciousSoftwareRemovalTool"
+      - "Microsoft.MediaCreationTool"
+      - "Microsoft.MouseWithoutBorders"
+      - "Microsoft.MouseandKeyboardCenter"
+      - "Microsoft.OSCDIMG"
+      - "Microsoft.OSConfig"
+      - "Microsoft.PowerShell"
+      - "Microsoft.PowerToys"
+      - "Microsoft.PrintMetadataTroubleshooter"
+      - "Microsoft.ProfileExplorer"
+      - "Microsoft.SaRACmd"
+      - "Microsoft.SafetyScanner"
+      - "Microsoft.ScreenRecorder"
+      - "Microsoft.SetupDiag"
+      - "Microsoft.SurfaceApp"
+      - "Microsoft.SurfaceHubRecoveryTool"
+      - "Microsoft.UpdateAssistant"
+      - "Microsoft.WSL"
+      - "Microsoft.Win32ContentPrepTool"
+      - "Microsoft.WinAppCli"
+      - "Microsoft.WindowsAdminCenter"
+      - "Microsoft.WindowsCloudIOProtectionDriver"
+      - "Microsoft.WindowsDeviceRecoveryTool"
+      - "Microsoft.WindowsInstallationAssistant"
+      - "Microsoft.WindowsPCHealthCheck"
+      - "Microsoft.WindowsTerminal"
+      - "Microsoft.WindowsVirtualDesktopAgent"
+      - "Microsoft.WindowsVirtualDesktopBootloader"
+      - "Microsoft.XMLNotepad"
+      - "Microsoft.winfile"
+      - "Microsoft.APM"
+
+  - name: "🛡️ 資安與合規工具"
+    description: "安全性掃描、合規檢查、加密與憑證管理"
+    prefixes:
+      - "Microsoft.AppControlPolicyWizard"
+      - "Microsoft.AppLockerPolicyConverter"
+      - "Microsoft.DefenderForCloud."
+      - "Microsoft.EnterpriseStateClassify"
+      - "Microsoft.SecurityComplianceToolkit."
+      - "Microsoft.SymCryptUnitTest"
+
+  - name: "🔍 Sysinternals 診斷工具套件"
+    description: "Microsoft Sysinternals 系統診斷與監控工具"
+    prefixes:
+      - "Microsoft.Sysinternals."
+
+  - name: "🌐 網路與 Web 工具"
+    description: "網路診斷、IIS、Web 部署、通訊協定分析"
+    prefixes:
+      - "Microsoft.IIS."
+      - "Microsoft.IISManagerRemoteAdministration"
+      - "Microsoft.ASRTestTool"
+      - "Microsoft.AccountLockoutStatus"
+      - "Microsoft.IdFix"
+      - "Microsoft.LingeringObjectLiquidator"
+      - "Microsoft.Ntttcp"
+      - "Microsoft.Pave"
+      - "Microsoft.ProjectTelescope"
+      - "Microsoft.WebDeploy"
+      - "Microsoft.bitsmanager"
+      - "Microsoft.err"
+      - "Microsoft.etl2pcapng"
+      - "Microsoft.quicreach"
+
+  - name: "📦 執行環境與程式庫"
+    description: "VC++ Redistributable、WinUI、Windows App Runtime、Java 等執行環境"
+    prefixes:
+      - "Microsoft.VCRedist."
+      - "Microsoft.VCLibs."
+      - "Microsoft.UI.Xaml."
+      - "Microsoft.WindowsAppRuntime."
+      - "Microsoft.OpenJDK."
+      - "Microsoft.DirectX"
+      - "Microsoft.DirectXTex."
+      - "Microsoft.IronPython."
+      - "Microsoft.OpenCLGLVulkanCompatibilityPack"
+      - "Microsoft.DotNet.Native."
+
+  - name: "🔨 Windows SDK 與驅動開發"
+    description: "Windows SDK、WDK、驅動程式開發與硬體測試工具"
+    prefixes:
+      - "Microsoft.WindowsSDK."
+      - "Microsoft.WindowsWDK."
+      - "Microsoft.WindowsApplicationDriver"
+      - "Microsoft.WindowsBusesTracing"
+      - "Microsoft.WindowsMIDIServicesSDK"
+      - "Microsoft.HIDTools."
+      - "Microsoft.MIDI."
+      - "Microsoft.MITT"
+      - "Microsoft.MUTT"
+
+  - name: "📋 應用程式封裝與部署"
+    description: "MSIX 封裝、應用程式部署與散佈工具"
+    prefixes:
+      - "Microsoft.MSIX"
+      - "Microsoft.Wassette"
+
+  - name: "🤖 Bot 與 API 工具"
+    description: "Bot Framework、OpenAPI、微服務相關工具"
+    prefixes:
+      - "Microsoft.CmdPalGitHubExtension"
+      - "Microsoft.OpenAPI."
+      - "Microsoft.ServiceFabric"
+
+  - name: "🌐 瀏覽器"
+    description: "Microsoft Edge 瀏覽器與相關元件"
+    prefixes:
+      - "Microsoft.Edge"

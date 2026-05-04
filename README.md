@@ -34,6 +34,7 @@ python main.py
 - 結果自動寫入 `generated/` 資料夾
 
 執行後會產生（每次執行建立獨立時間戳記資料夾 `generated/YYYYMMDD_HHMMSS/`）：
+
 - **firewall-rules_YYYYMMDD_HHMMSS.md** — 防火牆規則維護清單
 - **diff-report_YYYYMMDD_HHMMSS.md** — 與前次分析的變更對比報告
 - **deploy-tls_YYYYMMDD_HHMMSS.sh** — Azure CLI 部署腳本（TLS Inspection，Path 層級，Draft 模式）
@@ -176,6 +177,7 @@ firewall:
 ### 套件清單與資安報告
 
 `packages-list.md` 包含：
+
 - **分類摘要** — 16 個分類，每個分類的套件數量
 - **資安風險評估** — 🔴 高 / 🟡 中 / 🟢 低風險標注
 - **紅隊工具對照** — MITRE ATT&CK 戰術對應
@@ -199,12 +201,15 @@ python main.py
 
 ### 專案結構
 
-```
+```text
 ├── main.py                        # CLI 入口
 ├── config.yaml                    # 允許/封鎖清單與防火牆設定
+├── packages-security.yaml         # 套件資安評估（人工維護）
+├── .markdownlint.yaml             # markdownlint 設定
 ├── requirements.txt               # Python 依賴
 ├── pyproject.toml                 # pytest 設定
-├── packages-list.md               # 套件分類與資安報告
+├── packages-list.md               # 套件分類與資安報告（可自動產生）
+├── SOP.md                         # 維護作業標準程序
 ├── generated/                     # 程式產出檔案（稽核留存）
 │   ├── firewall-rules.md          # 防火牆規則維護清單
 │   ├── diff-report.md             # 與前次分析的變更對比報告
@@ -222,7 +227,8 @@ python main.py
 │   ├── download_scripts.py        # 下載腳本產生器（Bash/PowerShell）
 │   ├── package_discovery.py       # 遞迴掃描 winget-pkgs 探索套件
 │   ├── blocklist.py               # 允許/封鎖清單 fnmatch 過濾
-│   └── wsl_analyzer.py            # WSL 發行版下載分析
+│   ├── wsl_analyzer.py            # WSL 發行版下載分析
+│   └── packages_list_generator.py # 套件清單自動產生器
 └── tests/
     ├── test_audit.py
     ├── test_models.py
@@ -233,6 +239,7 @@ python main.py
     ├── test_download_scripts.py
     ├── test_blocklist.py
     ├── test_package_discovery.py
+    ├── test_packages_list_generator.py  # 套件清單產生器測試
     ├── test_wsl_analyzer.py       # WSL 分析器測試
     └── test_integration.py        # 整合測試（需網路）
 ```
@@ -260,7 +267,7 @@ python -m pytest tests/test_blocklist.py::TestIsBlocked::test_edge_beta_blocked 
 
 ### 核心流程
 
-```
+```text
 使用者輸入套件 ID 或 --wsl
     │
     ├─── winget 套件 ─────────────────────────────────────┐
@@ -302,6 +309,7 @@ formatters.py ── 輸出 JSON / CSV / CLI / Markdown
 ### 新增封鎖規則
 
 編輯 `config.yaml` 的 `blocklist.packages`，支援 `fnmatch` 萬用字元：
+
 - `Microsoft.*.Beta` — 匹配所有 Beta 版
 - `Microsoft.VisualStudio.*.Community` — 匹配所有年份的 VS Community
 

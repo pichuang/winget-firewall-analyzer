@@ -1,0 +1,21 @@
+# markdownlint 設定
+# 參考：https://github.com/DavidAnson/markdownlint/blob/main/schema/.markdownlint.yaml
+
+# MD013 — 行長度限制
+# 繁體中文內容與表格常超過 80 字元，放寬至 200
+MD013:
+  line_length: 200
+  tables: false
+
+# MD024 — 允許不同層級下的重複標題
+# CHANGELOG 中每次更新都有「版本更新」「新增套件」等重複標題
+MD024:
+  siblings_only: true
+
+# MD034 — 裸 URL
+# CHANGELOG 中的操作人員欄位包含 hostname@domain，非真正 URL
+MD034: false
+
+# MD060 — 表格欄位樣式
+# 本專案表格使用 GFM 標準格式，separator 與 data 行樣式不同屬正常
+MD060: false

@@ -393,10 +393,10 @@ def format_markdown(
         "",
         "```bash",
         "# 套用所有規則（JSON 格式）",
-        f"python main.py {' '.join(m.package_id for m in manifests)} -f json > generated/rules.json",
+        "python main.py --all -f json",
         "",
         "# 產生 Azure CLI 部署指令",
-        f"python main.py {' '.join(m.package_id for m in manifests)} -f cli > generated/deploy.sh",
+        "python main.py --all -f cli",
         "```",
         "",
     ])
@@ -553,7 +553,7 @@ def format_markdown(
                 "",
                 f"**規則名稱**: `{pr.name}`",
                 "",
-                "```",
+                "```yaml",
                 "targetUrls:",
             ])
             for url in pr.target_urls:
@@ -568,7 +568,7 @@ def format_markdown(
                 "",
                 f"**規則名稱**: `{fr.name}`",
                 "",
-                "```",
+                "```yaml",
                 "targetFqdns:",
             ])
             for fqdn in fr.target_fqdns:
@@ -596,10 +596,12 @@ def format_markdown(
         "",
         "- 建議定期重新執行分析，確認套件版本更新後下載路徑是否變更",
         "- 若有新版本發佈，重新產生規則並比對差異：",
+        "",
         "  ```bash",
-        f"  python main.py {' '.join(m.package_id for m in manifests)} -f md > generated/firewall-rules-new.md",
+        "  python main.py --all -f md",
         "  diff generated/firewall-rules.md generated/firewall-rules-new.md",
         "  ```",
+        "",
         "- 版本號已正規化為萬用字元 `*`，多數情況下版本更新不需修改規則",
         "- 若安裝檔的下載來源（FQDN）變更，則需更新防火牆規則",
         "",
