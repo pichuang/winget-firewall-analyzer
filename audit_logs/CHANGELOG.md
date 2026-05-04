@@ -1,5 +1,31 @@
 # winget 套件變更記錄（稽核用）
 
+## 2026-05-04 19:45:20 UTC+08:00
+
+- **操作人員**：pichuang@fly-wired.homecloud.intranet
+- **分析套件數**：279
+
+### 版本更新
+
+| 套件 | 舊版本 | 新版本 |
+|---|---|---|
+| `Microsoft.APM` | 0.11.0 | 0.12.1 |
+| `Microsoft.Azd` | 1.24.300 | 1.24.400 |
+| `Microsoft.EdgeDriver` | 147.0.3912.86 | 147.0.3912.98 |
+| `Microsoft.OneDrive` | 26.062.0402.0002 | 26.063.0405.0002 |
+| `Microsoft.OpenJDK.11` | 11.0.30.7 | 11.0.31.11 |
+| `Microsoft.OpenJDK.25` | 25.0.2.10 | 25.0.3.9 |
+| `Microsoft.WinAppCli` | 0.3.0 | 0.3.1 |
+| `Microsoft.WindowsAppRuntime.1.8` | 1.8.6 | 8000.836.2153.0 |
+
+### 新增套件
+
+- `Microsoft.DotNet.Native.Runtime` v2.2.28604.0
+
+未變更套件：270 個
+
+---
+
 ## 2026-05-01 18:06:14 UTC+08:00
 
 - **操作人員**：pichuang@fly-wired.homecloud.intranet
