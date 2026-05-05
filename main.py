@@ -16,6 +16,7 @@ import yaml
 from src.blocklist import filter_packages
 from src.download_scripts import generate_download_bash, generate_download_ps1
 from src.formatters import format_azure_cli, format_csv, format_json, format_markdown
+from src.formatters_powershell import format_azure_powershell
 from src.models import FirewallRule, PackageManifest
 from src.package_discovery import discover_all_packages
 from src.redirect_tracer import trace_redirects
@@ -320,7 +321,7 @@ async def main_async(args: argparse.Namespace) -> None:
         bash_script = generate_download_bash(all_manifests)
         ps1_script = generate_download_ps1(all_manifests)
 
-        # 產生兩份部署腳本：TLS Inspection（path 層級）與 FQDN 層級
+        # 產生部署腳本：Bash 版（TLS + FQDN）
         deploy_tls_script = format_azure_cli(
             all_rules,
             firewall_policy_name=fw_policy_name,
@@ -342,24 +343,57 @@ async def main_async(args: argparse.Namespace) -> None:
             subscription_id=fw_subscription_id,
         )
 
+        # 產生部署腳本：PowerShell 5.1 版（TLS + FQDN）
+        deploy_tls_ps1_script = format_azure_powershell(
+            all_rules,
+            firewall_policy_name=fw_policy_name,
+            resource_group=fw_resource_group,
+            rule_collection_group_name=rcg_name,
+            rule_collection_name=rc_name,
+            priority=priority,
+            rule_filter="tls",
+            subscription_id=fw_subscription_id,
+        )
+        deploy_fqdn_ps1_script = format_azure_powershell(
+            all_rules,
+            firewall_policy_name=fw_policy_name,
+            resource_group=fw_resource_group,
+            rule_collection_group_name=rcg_name,
+            rule_collection_name=rc_name,
+            priority=priority,
+            rule_filter="fqdn",
+            subscription_id=fw_subscription_id,
+        )
+
         bash_path = generated_dir / f"download_{ts}.sh"
         ps1_path = generated_dir / f"download_{ts}.ps1"
         deploy_tls_path = generated_dir / f"deploy-tls_{ts}.sh"
         deploy_fqdn_path = generated_dir / f"deploy-fqdn_{ts}.sh"
+        deploy_tls_ps1_path = generated_dir / f"deploy-tls_{ts}.ps1"
+        deploy_fqdn_ps1_path = generated_dir / f"deploy-fqdn_{ts}.ps1"
 
         bash_path.write_text(bash_script, encoding="utf-8")
         ps1_path.write_text(ps1_script, encoding="utf-8")
         deploy_tls_path.write_text(deploy_tls_script, encoding="utf-8")
         deploy_fqdn_path.write_text(deploy_fqdn_script, encoding="utf-8")
+        # PowerShell 5.1 需要 UTF-8 with BOM 才能正確顯示繁體中文
+        deploy_tls_ps1_path.write_text(
+            "\ufeff" + deploy_tls_ps1_script, encoding="utf-8"
+        )
+        deploy_fqdn_ps1_path.write_text(
+            "\ufeff" + deploy_fqdn_ps1_script, encoding="utf-8"
+        )
         bash_path.chmod(0o755)
         deploy_tls_path.chmod(0o755)
         deploy_fqdn_path.chmod(0o755)
 
         print(f"\n📥 已產生腳本：", file=sys.stderr)
-        print(f"   下載 Bash:          {bash_path.resolve()}", file=sys.stderr)
-        print(f"   下載 PowerShell:    {ps1_path.resolve()}", file=sys.stderr)
-        print(f"   部署 TLS (Draft):   {deploy_tls_path.resolve()}", file=sys.stderr)
-        print(f"   部署 FQDN (Draft):  {deploy_fqdn_path.resolve()}", file=sys.stderr)
+        print(f"   下載 Bash:              {bash_path.resolve()}", file=sys.stderr)
+        print(f"   下載 PowerShell:        {ps1_path.resolve()}", file=sys.stderr)
+        print(f"   部署 TLS (Bash):        {deploy_tls_path.resolve()}", file=sys.stderr)
+        print(f"   部署 FQDN (Bash):       {deploy_fqdn_path.resolve()}", file=sys.stderr)
+        print(f"   部署 TLS (PowerShell):  {deploy_tls_ps1_path.resolve()}", file=sys.stderr)
+        print(f"   部署 FQDN (PowerShell): {deploy_fqdn_ps1_path.resolve()}", file=sys.stderr)
 
     # 寫入稽核日誌
     if all_manifests:
@@ -369,6 +403,8 @@ async def main_async(args: argparse.Namespace) -> None:
             output_files["download.ps1"] = str(generated_dir / f"download_{ts}.ps1")
             output_files["deploy-tls.sh"] = str(generated_dir / f"deploy-tls_{ts}.sh")
             output_files["deploy-fqdn.sh"] = str(generated_dir / f"deploy-fqdn_{ts}.sh")
+            output_files["deploy-tls.ps1"] = str(generated_dir / f"deploy-tls_{ts}.ps1")
+            output_files["deploy-fqdn.ps1"] = str(generated_dir / f"deploy-fqdn_{ts}.ps1")
 
         # 取得前次稽核日誌（在寫入新日誌之前）
         from src.audit import AUDIT_DIR
@@ -488,8 +524,8 @@ def _create_github_release(
         "",
         "1. 下載 zip 解壓縮",
         "2. 依據環境選擇部署腳本：",
-        "   - 已啟用 TLS Inspection → `deploy-tls_*.sh`",
-        "   - 未啟用 TLS Inspection → `deploy-fqdn_*.sh`",
+        "   - 已啟用 TLS Inspection → `deploy-tls_*.sh`（Bash）或 `deploy-tls_*.ps1`（PowerShell）",
+        "   - 未啟用 TLS Inspection → `deploy-fqdn_*.sh`（Bash）或 `deploy-fqdn_*.ps1`（PowerShell）",
         "3. 修改腳本中的 `POLICY_NAME` 和 `RESOURCE_GROUP` 變數",
         "4. 執行腳本（Draft 模式，不會直接套用）",
         "5. 在 Azure Portal 確認 Draft 後執行 `draft deploy`",

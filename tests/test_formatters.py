@@ -8,6 +8,7 @@ import json
 
 from src.models import Confidence, FirewallRule, InstallerInfo, PackageManifest, RedirectHop
 from src.formatters import format_azure_cli, format_csv, format_json, format_markdown
+from src.formatters_powershell import format_azure_powershell
 
 
 def _make_test_rules() -> list[FirewallRule]:
@@ -256,3 +257,91 @@ class TestFormatMarkdown:
         assert "`rcg-1100-mirror-winget`" in output
         assert "`action-allow-mirror`" in output
         assert "`1100`" in output
+
+
+class TestFormatAzurePowershell:
+    """測試 PowerShell 5.1 部署腳本輸出"""
+
+    def test_contains_requires_version(self) -> None:
+        """應包含 #Requires -Version 5.1"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules)
+        assert "#Requires -Version 5.1" in output
+
+    def test_contains_strict_mode(self) -> None:
+        """應包含 Set-StrictMode"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules)
+        assert "Set-StrictMode -Version Latest" in output
+
+    def test_contains_az_commands(self) -> None:
+        """應包含 az CLI 指令"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules)
+        assert '"network", "firewall", "policy"' in output
+
+    def test_contains_rule_names(self) -> None:
+        """應包含規則名稱"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules)
+        assert "mirror-to-ms-git-https" in output
+
+    def test_contains_invoke_azcli_helper(self) -> None:
+        """應包含 Invoke-AzCli 輔助函式"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules)
+        assert "function Invoke-AzCli" in output
+        assert "$LASTEXITCODE" in output
+
+    def test_contains_case_sensitive_comparison(self) -> None:
+        """規則比對應使用 case-sensitive 比較"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules)
+        assert "-cne" in output
+
+    def test_no_jq_dependency(self) -> None:
+        """不應依賴 jq"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules)
+        assert "jq" not in output.lower()
+
+    def test_contains_draft_deploy_instructions(self) -> None:
+        """應包含 Draft deploy 指引"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules)
+        assert "draft deploy" in output
+
+    def test_tls_filter(self) -> None:
+        """TLS 模式應僅包含 target_urls 規則"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules, rule_filter="tls")
+        assert "TLS Inspection" in output
+        assert "--target-urls" in output
+
+    def test_fqdn_filter(self) -> None:
+        """FQDN 模式應僅包含 target_fqdns 規則"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules, rule_filter="fqdn")
+        assert "FQDN" in output
+        assert "--target-fqdns" in output
+
+    def test_source_ip_groups(self) -> None:
+        """使用 source_ip_groups 時應產出 --source-ip-groups"""
+        rules = [
+            FirewallRule(
+                name="test-rule",
+                target_fqdns=["example.com"],
+                source_ip_groups=["ipgroup-corp"],
+                package_id="Test.Package",
+            ),
+        ]
+        output = format_azure_powershell(rules)
+        assert "--source-ip-groups" in output
+        assert "ipgroup-corp" in output
+
+    def test_subscription_check(self) -> None:
+        """應包含訂閱 ID 檢查"""
+        rules = _make_test_rules()
+        output = format_azure_powershell(rules, subscription_id="test-sub-123")
+        assert "test-sub-123" in output
+        assert "$ExpectedSubscriptionId" in output

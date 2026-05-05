@@ -82,8 +82,10 @@ python main.py
 |---|---|
 | `firewall-rules_*.md` | 防火牆規則維護清單（主要審閱文件） |
 | `diff-report_*.md` | 與前次分析的變更對比報告 |
-| `deploy-tls_*.sh` | Azure CLI 部署腳本（TLS Inspection / Path 層級） |
-| `deploy-fqdn_*.sh` | Azure CLI 部署腳本（FQDN 層級備用） |
+| `deploy-tls_*.sh` | Bash 部署腳本（TLS Inspection / Path 層級） |
+| `deploy-fqdn_*.sh` | Bash 部署腳本（FQDN 層級備用） |
+| `deploy-tls_*.ps1` | PowerShell 5.1 部署腳本（TLS Inspection / Path 層級） |
+| `deploy-fqdn_*.ps1` | PowerShell 5.1 部署腳本（FQDN 層級備用） |
 | `download_*.sh` | Bash 下載腳本 |
 | `download_*.ps1` | PowerShell 下載腳本 |
 
@@ -205,9 +207,10 @@ az account show --query "{name:name, id:id}" -o table
 
 ### 部署流程
 
-產出的部署腳本預設為 **Draft 模式**（腳本內指令已註解），需手動取消註解再執行：
+產出的部署腳本預設為 **Draft 模式**，需手動確認後執行 deploy：
 
 ```bash
+# Bash 環境
 # 1. 檢閱部署腳本
 cat generated/YYYYMMDD_HHMMSS/deploy-tls_*.sh
 
@@ -217,16 +220,25 @@ cat generated/YYYYMMDD_HHMMSS/deploy-tls_*.sh
 #    - rule_collection_group_name: "rcg-1100-mirror-winget"
 
 # 3. 在測試環境先行驗證（建議）
-# 4. 正式部署（取消腳本內的註解後執行）
+# 4. 執行部署腳本
 bash generated/YYYYMMDD_HHMMSS/deploy-tls_*.sh
+```
+
+```powershell
+# PowerShell 環境（5.1 以上）
+# 1. 檢閱部署腳本
+Get-Content generated\YYYYMMDD_HHMMSS\deploy-tls_*.ps1
+
+# 2. 執行部署腳本
+.\generated\YYYYMMDD_HHMMSS\deploy-tls_YYYYMMDD_HHMMSS.ps1
 ```
 
 ### TLS Inspection vs FQDN 層級
 
 | 腳本 | 規則精細度 | 條件 |
 |---|---|---|
-| `deploy-tls_*.sh` | URL Path 層級（`targetUrls`） | 需啟用 Azure Firewall TLS Inspection |
-| `deploy-fqdn_*.sh` | FQDN 層級（`targetFqdns`） | 不需 TLS Inspection，較寬鬆 |
+| `deploy-tls_*.sh` / `deploy-tls_*.ps1` | URL Path 層級（`targetUrls`） | 需啟用 Azure Firewall TLS Inspection |
+| `deploy-fqdn_*.sh` / `deploy-fqdn_*.ps1` | FQDN 層級（`targetFqdns`） | 不需 TLS Inspection，較寬鬆 |
 
 > ⚠️ 建議優先使用 TLS Inspection (Path 層級) 規則，最小化開放範圍。
 

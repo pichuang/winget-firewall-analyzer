@@ -37,8 +37,10 @@ python main.py
 
 - **firewall-rules_YYYYMMDD_HHMMSS.md** — 防火牆規則維護清單
 - **diff-report_YYYYMMDD_HHMMSS.md** — 與前次分析的變更對比報告
-- **deploy-tls_YYYYMMDD_HHMMSS.sh** — Azure CLI 部署腳本（TLS Inspection，Path 層級，Draft 模式）
-- **deploy-fqdn_YYYYMMDD_HHMMSS.sh** — Azure CLI 部署腳本（FQDN 層級，Draft 模式）
+- **deploy-tls_YYYYMMDD_HHMMSS.sh** — Bash 部署腳本（TLS Inspection，Path 層級，Draft 模式）
+- **deploy-fqdn_YYYYMMDD_HHMMSS.sh** — Bash 部署腳本（FQDN 層級，Draft 模式）
+- **deploy-tls_YYYYMMDD_HHMMSS.ps1** — PowerShell 5.1 部署腳本（TLS Inspection，Path 層級，Draft 模式）
+- **deploy-fqdn_YYYYMMDD_HHMMSS.ps1** — PowerShell 5.1 部署腳本（FQDN 層級，Draft 模式）
 - **download_YYYYMMDD_HHMMSS.sh** — Bash 一鍵下載腳本（curl）
 - **download_YYYYMMDD_HHMMSS.ps1** — PowerShell 一鍵下載腳本
 
@@ -171,7 +173,7 @@ firewall:
     - "10.0.0.0/8"
 ```
 
-- 設定 `source_ip_groups` 時，`deploy.sh` 預設使用 `--source-ip-groups`，並以註解附帶 `--source-addresses` 備用
+- 設定 `source_ip_groups` 時，部署腳本預設使用 `--source-ip-groups`，並以註解附帶 `--source-addresses` 備用
 - 未設定 IP Group 時，自動使用 `--source-addresses`
 
 ### 套件清單與資安報告
@@ -213,7 +215,10 @@ python main.py
 ├── generated/                     # 程式產出檔案（稽核留存）
 │   ├── firewall-rules.md          # 防火牆規則維護清單
 │   ├── diff-report.md             # 與前次分析的變更對比報告
-│   ├── deploy.sh                  # Azure CLI 部署腳本
+│   ├── deploy-tls.sh              # Bash 部署腳本（TLS Inspection）
+│   ├── deploy-fqdn.sh             # Bash 部署腳本（FQDN 層級）
+│   ├── deploy-tls.ps1             # PowerShell 5.1 部署腳本（TLS Inspection）
+│   ├── deploy-fqdn.ps1            # PowerShell 5.1 部署腳本（FQDN 層級）
 │   ├── download.sh                # Bash 一鍵下載腳本
 │   └── download.ps1               # PowerShell 一鍵下載腳本
 ├── audit_logs/                    # 稽核日誌
@@ -224,6 +229,7 @@ python main.py
 │   ├── redirect_tracer.py         # HTTP 重導向鏈追蹤（HEAD 優先，GET fallback）
 │   ├── rule_generator.py          # Azure Firewall 規則產生器
 │   ├── formatters.py              # 輸出格式化（JSON/CSV/CLI/Markdown）
+│   ├── formatters_powershell.py   # PowerShell 5.1 部署腳本格式化器
 │   ├── download_scripts.py        # 下載腳本產生器（Bash/PowerShell）
 │   ├── package_discovery.py       # 遞迴掃描 winget-pkgs 探索套件
 │   ├── blocklist.py               # 允許/封鎖清單 fnmatch 過濾
