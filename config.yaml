@@ -264,6 +264,9 @@ blocklist:
 # Azure Firewall Policy 規則設定
 # =============================================================================
 firewall:
+  # Azure 訂閱 ID（部署腳本會驗證當前 az CLI 是否指向此訂閱）
+  subscription_id: ""
+
   # Azure Firewall Policy 與 Resource Group 名稱
   firewall_policy_name: "afwp-global-01"
   resource_group: "rg-vdss-afwp-prd-global"

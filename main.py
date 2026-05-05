@@ -267,6 +267,7 @@ async def main_async(args: argparse.Namespace) -> None:
     priority = firewall_config.get("priority", 1100)
     fw_policy_name = firewall_config.get("firewall_policy_name", "<FIREWALL_POLICY_NAME>")
     fw_resource_group = firewall_config.get("resource_group", "<RESOURCE_GROUP>")
+    fw_subscription_id = firewall_config.get("subscription_id", "")
 
     # 時間戳記（用於產出資料夾名稱）
     from datetime import datetime, timedelta, timezone
@@ -297,6 +298,7 @@ async def main_async(args: argparse.Namespace) -> None:
             rule_collection_name=rc_name,
             priority=priority,
             rule_filter="tls",
+            subscription_id=fw_subscription_id,
         )
     elif args.format == "md":
         output = format_markdown(
@@ -327,6 +329,7 @@ async def main_async(args: argparse.Namespace) -> None:
             rule_collection_name=rc_name,
             priority=priority,
             rule_filter="tls",
+            subscription_id=fw_subscription_id,
         )
         deploy_fqdn_script = format_azure_cli(
             all_rules,
@@ -336,6 +339,7 @@ async def main_async(args: argparse.Namespace) -> None:
             rule_collection_name=rc_name,
             priority=priority,
             rule_filter="fqdn",
+            subscription_id=fw_subscription_id,
         )
 
         bash_path = generated_dir / f"download_{ts}.sh"

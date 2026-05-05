@@ -194,7 +194,12 @@ pip install -r requirements.txt
 - **RCG / Rule Collection 也須冪等**：若已存在則跳過建立，不因重複執行而報錯
 - **RCG 與 RC 名稱統一**：不論 TLS 或 FQDN 模式，使用相同的 `rule_collection_group_name` 與 `rule_collection_name`（來自 `config.yaml`），確保 Azure Firewall Policy 中僅有一組 RCG + RC 可供維護，避免產生多組規則集合
 - **部署摘要**：執行結束時顯示新增、更新、跳過、失敗的規則數量
-- **前置檢查**：腳本開頭檢查 `az login`、Firewall Policy 是否存在、`jq` 是否安裝
+- **前置檢查**：腳本開頭依序執行以下檢查：
+  1. `az config set extension.dynamic_install_allow_preview=true` — 啟用擴充功能自動安裝（含 preview）
+  2. 確認 `jq` 已安裝
+  3. 確認 `az login` 已完成
+  4. 確認 Azure 訂閱 ID 與 `config.yaml` 中的 `firewall.subscription_id` 一致（若有設定）
+  5. 確認 Firewall Policy 存在
 
 ### 輸出格式
 
