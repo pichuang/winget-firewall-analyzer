@@ -1,5 +1,28 @@
 # winget 套件變更記錄（稽核用）
 
+## 2026-05-05 09:43:59 UTC+08:00
+
+- **操作人員**：pichuang@fly-by-cyber.local
+- **分析套件數**：283
+
+### 版本更新
+
+| 套件 | 舊版本 | 新版本 |
+|---|---|---|
+| `Microsoft.OpenJDK.21` | 21.0.10.7 | 21.0.11.10 |
+| `Microsoft.msodbcsql.17` | 17.10.6.1 | 17.11.1.1 |
+
+### 新增套件
+
+- `Microsoft.AccessDatabaseEngine2016` v16.0.5044.1000
+- `Microsoft.AdvertisingEditor` v11.31.21766
+- `Microsoft.IIS.ApplicationRequestRouting` v3.0.05311
+- `Microsoft.eBPFforWindows` v1.1.0
+
+未變更套件：277 個
+
+---
+
 ## 2026-05-04 19:45:20 UTC+08:00
 
 - **操作人員**：pichuang@fly-wired.homecloud.intranet
